@@ -11,7 +11,7 @@ client = discord.Client()
 permittedChannels = []
 userCharacters = {}
 verbose = False
-
+random.seed()
 
 @client.event
 async def on_ready():
@@ -85,7 +85,7 @@ async def on_message(message: discord.Message):
                 skillReq += result
 
             response = response[:-2]
-            response += "===> " + str(skillReq)
+            response += " ===> " + str(skillReq)
             await send(response)
 
         if re.search("([0-9]+,\ *)*[0-9]+@[0-9]+$", msgstring):
