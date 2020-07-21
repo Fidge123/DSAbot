@@ -51,3 +51,12 @@ $ python DSAbot.py
 
 $ exit
 ```
+
+## Run tests
+
+Use the following command to run tests
+
+``` sh-session
+pipenv run python -m unittest UnitTests/bot_tests.py
+```
+
