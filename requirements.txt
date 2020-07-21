@@ -1,0 +1,3 @@
+discord~=1.0.1
+python-dotenv~=0.14.0
+coverage~=5.2
