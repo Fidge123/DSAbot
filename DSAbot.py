@@ -56,8 +56,8 @@ async def on_message(message: discord.Message):
             return
 
         if re.search(r"^!*[0-9]+([dw])[0-9]+$", msgstring, re.IGNORECASE):
-            diestring = msgstring
-            diestring.upper()
+            diestring = msgstring.upper()
+
             if "W" in diestring:
                 diesplit = diestring.split("W")
             else:
