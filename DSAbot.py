@@ -66,10 +66,18 @@ async def on_message(message: discord.Message):
 
             await send(response)
 
-        if re.search("^([0-9]+,\ *)*[0-9]+$", msgstring):
+
+        if re.search("^([0-9]+,\ *)*[0-9]+(@[0-9]+)*$", msgstring):
             diestring = msgstring
             diestring.replace(" ", "")
-            diesplit = msgstring.split(",")
+            skillLevel = False
+
+            if "@" in diestring:
+                skillSplit = diestring.split("@")
+                skillLevel = int(skillSplit[1])
+                diestring = skillSplit[0]
+
+            diesplit = diestring.split(",")
 
             response = author.mention + "\n"
             skillReq = 0
@@ -82,39 +90,19 @@ async def on_message(message: discord.Message):
 
                 response += str(roll) + ", "
                 skillReq += result
-
             response = response[:-2]
-            response += " ===> " + str(skillReq)
-            await send(response)
 
-        if re.search("([0-9]+,\ *)*[0-9]+@[0-9]+$", msgstring):
-            diestring = msgstring
-            diestring.replace(" ", "")
-            skillSplit = diestring.split("@")
-            skillLevel = int(skillSplit[1])
-            diesplit = skillSplit[0].split(",")
+            if skillLevel:
+                remainder = skillLevel - skillReq
+            
+            response += " ===> " + str(-skillReq)
 
-            response = author.mention + "\n"
-            skillReq = 0
-
-            for attr in diesplit:
-                roll = random.randint(1, 20)
-                result = roll - int(attr)
-
-                if result < 0: result = 0
-
-                response += str(roll) + ", "
-                skillReq += result
-
-            remainder = skillLevel - skillReq
-
-            response = response[:-2]
-            response += " ===> " + str(skillReq)
-
-            if remainder < 0:
-                response += "\nQS: 0 FAIL"
-            else:
-                response += "\nQS: " + str(remainder//3 + 1)
+            if skillLevel:
+                response += "\n(" + str(skillLevel) + " - " + str(skillReq) + ") "
+                if remainder < 0:
+                    response += "QS: 0 FAIL"
+                else:
+                    response += "QS: " + str(remainder//3 + 1)
 
             await send(response)
 
