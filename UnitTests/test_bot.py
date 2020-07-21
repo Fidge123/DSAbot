@@ -68,6 +68,3 @@ class TestDSABot(TestCase):
                 if "d" in m.content.lower():
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with("<@1337>\n1, 1, 1, 1, 1")
-
-
-
