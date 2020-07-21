@@ -5,16 +5,18 @@ import re
 import random
 
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
+TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
 permittedChannels = []
 userCharacters = {}
 verbose = False
 random.seed()
 
+
 @client.event
 async def on_ready():
-    print(f'{client.user} has connected to Discord!')
+    print(f"{client.user} has connected to Discord!")
+
 
 @client.event
 async def on_message(message: discord.Message):
@@ -23,19 +25,17 @@ async def on_message(message: discord.Message):
     author: discord.member.Member = message.author
     channel: discord.TextChannel = message.channel
 
-
     if message.author == client.user:
         return
 
     if "SUMMON" in msgstring:
-            if channel not in permittedChannels:
-                permittedChannels.append(channel)
-                await send("I am listening for rolls here")
-            else:
-                await send("I am already listening")
+        if channel not in permittedChannels:
+            permittedChannels.append(channel)
+            await send("I am listening for rolls here")
+        else:
+            await send("I am already listening")
 
     if channel in permittedChannels:
-
 
         if "BEGONE" in msgstring:
             if channel in permittedChannels:
@@ -48,7 +48,7 @@ async def on_message(message: discord.Message):
             await client.close()
             return
 
-        if re.search("^!*[0-9]+(D|d|w|W)[0-9]+$", msgstring):
+        if re.search(r"^!*[0-9]+([dw])[0-9]+$", msgstring, re.IGNORECASE):
             diestring = msgstring
             diestring.upper()
             if "W" in diestring:
@@ -61,49 +61,48 @@ async def on_message(message: discord.Message):
             for dieammount in range(int(diesplit[0])):
                 roll = random.randint(1, int(diesplit[1]))
                 response = response + str(roll) + ", "
-            
+
             response = response[:-2]
 
             await send(response)
 
-
-        if re.search("^([0-9]+,\ *)*[0-9]+(@[0-9]+)*$", msgstring):
+        if re.search(r"^([0-9]+,\s*)*[0-9]+(@[0-9]+)*$", msgstring):
             diestring = msgstring
             diestring.replace(" ", "")
-            skillLevel = False
+            skill_level = False
 
             if "@" in diestring:
-                skillSplit = diestring.split("@")
-                skillLevel = int(skillSplit[1])
-                diestring = skillSplit[0]
+                skill_split = diestring.split("@")
+                skill_level = int(skill_split[1])
+                diestring = skill_split[0]
 
             diesplit = diestring.split(",")
 
             response = author.mention + "\n"
-            skillReq = 0
+            skill_req = 0
 
             for attr in diesplit:
                 roll = random.randint(1, 20)
                 result = roll - int(attr)
 
-                if result < 0: result = 0
+                if result < 0:
+                    result = 0
 
                 response += str(roll) + ", "
-                skillReq += result
+                skill_req += result
             response = response[:-2]
 
-            if skillLevel:
-                remainder = skillLevel - skillReq
-            
-            response += " ===> " + str(-skillReq)
+            response += " ===> " + str(-skill_req)
 
-            if skillLevel:
-                response += "\n(" + str(skillLevel) + " - " + str(skillReq) + ") "
+            if skill_level:
+                remainder = skill_level - skill_req
+                response += "\n(" + str(skill_level) + " - " + str(skill_req) + ") "
                 if remainder < 0:
                     response += "QS: 0 FAIL"
                 else:
-                    response += "QS: " + str(remainder//3 + 1)
+                    response += "QS: " + str(remainder // 3 + 1)
 
             await send(response)
+
 
 client.run(TOKEN)
