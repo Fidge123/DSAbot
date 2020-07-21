@@ -48,7 +48,7 @@ async def on_message(message: discord.Message):
             await client.close()
             return
 
-        if re.search("^!*[0-9]+(D|d|w|W)[0-9]+$", msgstring):
+        if re.search(r"^!*[0-9]+([dw])[0-9]+$", msgstring, re.IGNORECASE):
             diestring = msgstring
             diestring.upper()
             if "W" in diestring:
@@ -66,8 +66,7 @@ async def on_message(message: discord.Message):
 
             await send(response)
 
-
-        if re.search("^([0-9]+,\ *)*[0-9]+(@[0-9]+)*$", msgstring):
+        if re.search(r"^([0-9]+,\s*)*[0-9]+(@[0-9]+)*$", msgstring):
             diestring = msgstring
             diestring.replace(" ", "")
             skill_level = False
@@ -93,13 +92,11 @@ async def on_message(message: discord.Message):
                 skill_req += result
             response = response[:-2]
 
-            if skillLevel:
-                remainder = skillLevel - skillReq
-            
-            response += " ===> " + str(-skillReq)
+            response += " ===> " + str(-skill_req)
 
-            if skillLevel:
-                response += "\n(" + str(skillLevel) + " - " + str(skillReq) + ") "
+            if skill_level:
+                remainder = skill_level - skill_req
+                response += "\n(" + str(skill_level) + " - " + str(skill_req) + ") "
                 if remainder < 0:
                     response += "QS: 0 FAIL"
                 else:
