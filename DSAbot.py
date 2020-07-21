@@ -1,11 +1,9 @@
 import discord
-from dotenv import load_dotenv
 import os
 import re
 import random
 import persistence
 
-load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
 permittedChannels = []
