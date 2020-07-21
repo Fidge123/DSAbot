@@ -59,15 +59,15 @@ class TestDSABot(TestCase):
     def test_smoke(self, mock_randint: MagicMock):
         # Set Up
         mock_randint.return_value = 1
-        summon = self.message("SUMMON")
-        roll = self.message("5d10")
+        messages = ["SUMMON", "5d10", "BEGONE"]
 
-        # Test SUMMON
-        self.loop.run_until_complete(on_message(summon))
+        for m in messages:
+            with self.subTest(msg=m):
+                m = self.message(m)
+                self.loop.run_until_complete(on_message(m))
+                if "d" in m.content.lower():
+                    mock_randint.assert_called_with(1, 10)
+                    m.channel.send.assert_called_with("<@1337>\n1, 1, 1, 1, 1")
 
-        # Test rolling
-        self.loop.run_until_complete(on_message(roll))
 
-        # assert
-        mock_randint.assert_called_with(1, 10)
-        roll.channel.send.assert_called_with("<@1337>\n1, 1, 1, 1, 1")
+
