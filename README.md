@@ -1,6 +1,6 @@
 # D3Bot - **D**SA **D**iscord **D**ice Bot
 
-A bot that makes it easy to roll skill throws for Das Schwarze Auge (The dark eye) especially 5th edition.
+A bot that makes it easy to roll skill checks for Das Schwarze Auge (The dark eye) especially 5th edition.
 
 ## Discord Token
 
@@ -49,6 +49,7 @@ Launching subshell in virtual environment…
 $ python DSAbot.py
 ...
 
+# To leave the virtualenv shell
 $ exit
 ```
 
@@ -57,6 +58,6 @@ $ exit
 Use the following command to run tests
 
 ``` sh-session
-pipenv run python -m unittest UnitTests/bot_tests.py
+$ pipenv run python -m unittest UnitTests/bot_tests.py
 ```
 
