@@ -54,9 +54,14 @@ $ exit
 
 ## Run tests
 
-Use the following command to run tests
+Use the following command to run tests and generate coverage
 
 ``` sh-session
-pipenv run python -m unittest UnitTests/bot_tests.py
+pipenv run tests
 ```
 
+After that it is possible to generate a coverage report by running
+
+``` sh-session
+pipenv run cov
+```

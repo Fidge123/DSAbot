@@ -3,6 +3,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from DSAbot import on_message
+from persistence import init_db
 
 
 class AsyncMock(MagicMock):
@@ -51,6 +52,7 @@ class TestDSABot(TestCase):
         cls.loop = asyncio.get_event_loop()
         cls.testchannel = MockChannel(1, AsyncMock())
         cls.testauthor = MockAuthor("Author", "<@1337>")
+        init_db()
 
     def message(self, msg):
         return MockMessage(msg, self.testauthor, self.testchannel, AsyncMock())

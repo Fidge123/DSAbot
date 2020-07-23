@@ -1,7 +1,9 @@
-import discord
 import os
-import re
 import random
+import re
+
+import discord
+
 import persistence
 
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -20,7 +22,6 @@ async def on_ready():
     for channel_id in channel_ids:
         new = client.get_channel(channel_id[0])
         permittedChannels.append(new)
-
 
 
 @client.event
@@ -111,6 +112,5 @@ async def on_message(message: discord.Message):
 
 
 if __name__ == "__main__":
-
     persistence.init_db()
     client.run(TOKEN)
