@@ -1,6 +1,6 @@
 # D3Bot - **D**SA **D**iscord **D**ice Bot
 
-A bot that makes it easy to roll skill throws for Das Schwarze Auge (The dark eye) especially 5th edition.
+A bot that makes it easy to roll skill checks for Das Schwarze Auge (The dark eye) especially 5th edition.
 
 ## Discord Token
 
