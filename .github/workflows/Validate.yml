@@ -1,0 +1,46 @@
+name: Validation
+on:
+  - push
+  - pull_request
+jobs:
+  test:
+    name: Test-Suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python environment
+        uses: actions/setup-python@v1.1.1
+        with:
+          python-version: 3.8
+      - uses: dschep/install-pipenv-action@v1
+      - name: Setup pipenv
+        run: |
+          pipenv install --dev
+      - name: Run unittests/coverage
+        run: |
+          pipenv run tests
+          pipenv run cov | tee report.txt
+          exit $?
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v1
+        with:
+          name: coverage_report
+          path: report.txt
+
+  Lint:
+    name: Commit Hooks
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1.1.1
+      with:
+        python-version: 3.x
+    - name: set PY
+      run: echo "::set-env name=PY::$(python --version --version | sha256sum | cut -d' ' -f1)"
+    - uses: actions/cache@v1
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
+    - uses: pre-commit/action@v1.0.1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}

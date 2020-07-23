@@ -1,7 +1,9 @@
-import discord
 import os
-import re
 import random
+import re
+
+import discord
+
 import persistence
 
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -20,7 +22,6 @@ async def on_ready():
     for channel_id in channel_ids:
         new = client.get_channel(channel_id[0])
         permittedChannels.append(new)
-
 
 
 @client.event
@@ -55,19 +56,17 @@ async def on_message(message: discord.Message):
             await client.close()
             return
 
-        if re.search(r"^!*[0-9]+([dw])[0-9]+$", msgstring, re.IGNORECASE):
-            diestring = msgstring
-            diestring.upper()
-            if "W" in diestring:
-                diesplit = diestring.split("W")
-            else:
-                diesplit = diestring.split("D")
-
+        dicecode = re.search(
+            r"^!*(?P<amount>[0-9]+)[dw](?P<sides>[0-9]+)$", msgstring, re.IGNORECASE
+        )
+        if dicecode:
+            dieamount = int(dicecode.group("amount"))
+            diesides = int(dicecode.group("sides"))
             response = author.mention + "\n"
 
-            for dieammount in range(int(diesplit[0])):
-                roll = random.randint(1, int(diesplit[1]))
-                response = response + str(roll) + ", "
+            for _ in range(dieamount):
+                roll = random.randint(1, diesides)
+                response += str(roll) + ", "
 
             response = response[:-2]
 
@@ -113,6 +112,5 @@ async def on_message(message: discord.Message):
 
 
 if __name__ == "__main__":
-
     persistence.init_db()
     client.run(TOKEN)

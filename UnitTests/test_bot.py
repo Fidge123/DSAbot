@@ -3,6 +3,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from DSAbot import on_message
+from persistence import init_db
 
 
 class AsyncMock(MagicMock):
@@ -51,6 +52,7 @@ class TestDSABot(TestCase):
         cls.loop = asyncio.get_event_loop()
         cls.testchannel = MockChannel(1, AsyncMock())
         cls.testauthor = MockAuthor("Author", "<@1337>")
+        init_db()
 
     def message(self, msg):
         return MockMessage(msg, self.testauthor, self.testchannel, AsyncMock())
@@ -59,15 +61,12 @@ class TestDSABot(TestCase):
     def test_smoke(self, mock_randint: MagicMock):
         # Set Up
         mock_randint.return_value = 1
-        summon = self.message("SUMMON")
-        roll = self.message("5d10")
+        messages = ["SUMMON", "5d10", "BEGONE"]
 
-        # Test SUMMON
-        self.loop.run_until_complete(on_message(summon))
-
-        # Test rolling
-        self.loop.run_until_complete(on_message(roll))
-
-        # assert
-        mock_randint.assert_called_with(1, 10)
-        roll.channel.send.assert_called_with("<@1337>\n1, 1, 1, 1, 1")
+        for m in messages:
+            with self.subTest(msg=m):
+                m = self.message(m)
+                self.loop.run_until_complete(on_message(m))
+                if "d" in m.content.lower():
+                    mock_randint.assert_called_with(1, 10)
+                    m.channel.send.assert_called_with("<@1337>\n1, 1, 1, 1, 1")
