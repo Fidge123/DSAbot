@@ -95,13 +95,17 @@ async def on_message(message: discord.Message):
                 .split(" ")
             )
             rolls = []
+            add = int(skill_check.group("add") or 0)
+            sub = int(skill_check.group("sub") or 0)
 
             for attr in attributes:
                 rolls.append(
                     {"attr": int(attr), "roll": random.randint(1, 20),}
                 )
 
-            skill_req = sum(map(lambda x: max([x["roll"] - x["attr"], 0]), rolls))
+            skill_req = sum(
+                map(lambda x: max([x["roll"] - x["attr"] - add + sub, 0]), rolls)
+            )
 
             response = "{author}\n{rolls} ===> {skill_req}".format(
                 author=author.mention,

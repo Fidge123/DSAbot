@@ -94,6 +94,16 @@ class TestDSABot(TestCase):
         self.skill_check(
             "8, 8, 8 @ 0", "<@1337>\n14, 14, 14 ===> -18\n(0 - 18 = -18 FP) QS: 0 FAIL"
         )
+        self.skill_check(
+            "!13,14,8@12+2", "<@1337>\n14, 14, 14 ===> -4\n(12 - 4 = 8 FP) QS: 3"
+        )
+        self.skill_check("!13,14,8-3", "<@1337>\n14, 14, 14 ===> -16")
+        self.skill_check(
+            "13, 14, 8 @ 12 + 1", "<@1337>\n14, 14, 14 ===> -5\n(12 - 5 = 7 FP) QS: 3"
+        )
+        self.skill_check(
+            "8, 8, 8 @ 0 + 6", "<@1337>\n14, 14, 14 ===> 0\n(0 - 0 = 0 FP) QS: 1",
+        )
         self.skill_check("8", "<@1337>\n14 ===> -6")
         self.skill_check(
             "14 14 14 14 14 @ 0",
