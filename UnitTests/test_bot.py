@@ -70,3 +70,47 @@ class TestDSABot(TestCase):
                 if "d" in m.content.lower():
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with("<@1337>\n1, 1, 1, 1, 1")
+
+    @patch("random.randint", new_callable=MagicMock())
+    def test_smoke_skillcheck(self, mock_randint: MagicMock):
+        # Set Up
+        mock_randint.return_value = 14
+        messages = ["SUMMON", "!13,14,8@12", "BEGONE"]
+
+        for m in messages:
+            with self.subTest(msg=m):
+                m = self.message(m)
+                self.loop.run_until_complete(on_message(m))
+                if "!" in m.content.lower():
+                    mock_randint.assert_called_with(1, 20)
+                    m.channel.send.assert_called_with(
+                        "<@1337>\n14, 14, 14 ===> -7\n(12 - 7 = 5) QS: 2"
+                    )
+
+    @patch("random.randint", new_callable=MagicMock())
+    def test_smoke_skillcheck2(self, mock_randint: MagicMock):
+        # Set Up
+        mock_randint.return_value = 14
+        messages = ["SUMMON", "!13,14,8", "BEGONE"]
+
+        for m in messages:
+            with self.subTest(msg=m):
+                m = self.message(m)
+                self.loop.run_until_complete(on_message(m))
+                if "!" in m.content.lower():
+                    mock_randint.assert_called_with(1, 20)
+                    m.channel.send.assert_called_with("<@1337>\n14, 14, 14 ===> -7")
+
+    @patch("random.randint", new_callable=MagicMock())
+    def test_smoke_skillcheck3(self, mock_randint: MagicMock):
+        # Set Up
+        mock_randint.return_value = 14
+        messages = ["SUMMON", "13, 14, 8 @ 12", "BEGONE"]
+
+        for m in messages:
+            with self.subTest(msg=m):
+                m = self.message(m)
+                self.loop.run_until_complete(on_message(m))
+                if "!" in m.content.lower():
+                    mock_randint.assert_called_with(1, 20)
+                    m.channel.send.assert_called_with("<@1337>\n14, 14, 14 ===> -7")
