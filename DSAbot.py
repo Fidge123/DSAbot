@@ -72,7 +72,7 @@ async def on_message(message: discord.Message):
             await send(response)
 
         skill_check = re.search(
-            r"^!?(?P<first>[0-9]+),\s?(?P<second>[0-9]+),\s?(?P<third>[0-9]+)\s?(@\s?(?P<skill>[0-9]+))?$",
+            r"^!?(?P<first>[0-9]+),\s?(?P<second>[0-9]+),\s?(?P<third>[0-9]+)\s?(@\s?(?P<FW>[0-9]+))?$",
             msgstring,
             re.IGNORECASE,
         )
@@ -103,18 +103,16 @@ async def on_message(message: discord.Message):
                 skill_req=-skill_req,
             )
 
-            if skill_check.group("skill"):
-                skill_level = int(skill_check.group("skill"))
-                remainder = skill_level - skill_req
-                response += "\n({skill_level} - {skill_req} = {FP})".format(
-                    skill_level=skill_level,
-                    skill_req=skill_req,
-                    FP=skill_level - skill_req,
+            if skill_check.group("FW"):
+                FW = int(skill_check.group("FW"))
+                FP = FW - skill_req
+                response += "\n({FW} - {skill_req} = {FP} FP)".format(
+                    FW=FW, skill_req=skill_req, FP=FP,
                 )
-                if remainder < 0:
+                if FP < 0:
                     response += " QS: 0 FAIL"
                 else:
-                    response += " QS: {}".format(remainder // 3 + 1)
+                    response += " QS: {}".format(FP // 3 + 1)
 
             await send(response)
 
