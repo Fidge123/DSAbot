@@ -125,6 +125,7 @@ class TestDSABot(TestCase):
                     m.channel.send.assert_called_with("fullCache")
                 elif "cache" in m.content.lower():
                     m.channel.send.assert_called_with("cache")
+
     @patch("random.randint", new_callable=MagicMock())
     def test_arbitrarydie(self, mock_randint=MagicMock):
         mock_randint.return_value = 6
