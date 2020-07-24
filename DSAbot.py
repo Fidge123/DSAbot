@@ -56,7 +56,7 @@ async def on_message(message: discord.Message):
             return
 
         dicecode = re.search(
-            r"^!*(?P<amount>[0-9]+)[dw](?P<sides>[0-9]+)$", msgstring, re.IGNORECASE
+            r"^!?(?P<amount>[0-9]+)[dw](?P<sides>[0-9]+)$", msgstring, re.IGNORECASE
         )
         if dicecode:
             dieamount = int(dicecode.group("amount"))
@@ -123,6 +123,20 @@ async def on_message(message: discord.Message):
                     response += " QS: 0 FAIL"
                 else:
                     response += " QS: {}".format(FP // 3 + 1)
+
+            await send(response)
+
+        debug_code = re.search(
+            r"^debug:(?P<debugCommand>[a-z]*)$", msgstring, re.IGNORECASE
+        )
+
+        if debug_code:
+
+            if debug_code.group("debugCommand") == "cache":
+                response = "cache"
+
+            if debug_code.group("debugCommand") == "fullCache":
+                response = "fullCache"
 
             await send(response)
 
