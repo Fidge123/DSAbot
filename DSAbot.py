@@ -134,6 +134,20 @@ async def on_message(message: discord.Message):
 
             await send(response)
 
+        debug_code = re.search(
+            r"^debug:(?P<debugCommand>[a-z]*)$", msgstring, re.IGNORECASE
+        )
+
+        if debug_code:
+
+            if debug_code.group("debugCommand") == "cache":
+                response = "cache"
+
+            if debug_code.group("debugCommand") == "fullCache":
+                response = "fullCache"
+
+            await send(response)
+
 
 if __name__ == "__main__":
     persistence.init_db()

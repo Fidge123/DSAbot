@@ -114,6 +114,18 @@ class TestDSABot(TestCase):
             "<@1337>\n14, 14, 14, 14, 14 ===> 0\n(0 - 0 = 0 FP) QS: 1",
         )
 
+    def test_debug(self):
+        messages = ["SUMMON", "debug:cache", "debug:fullCache", "BEGONE"]
+
+        for m in messages:
+            with self.subTest(msg=m):
+                m = self.message(m)
+                self.loop.run_until_complete(on_message(m))
+                if "full" in m.content.lower():
+                    m.channel.send.assert_called_with("fullCache")
+                elif "cache" in m.content.lower():
+                    m.channel.send.assert_called_with("cache")
+
     @patch("random.randint", new_callable=MagicMock())
     def test_arbitrarydie(self, mock_randint=MagicMock):
         mock_randint.return_value = 6
