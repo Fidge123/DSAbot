@@ -27,10 +27,10 @@ $ brew install pipenv
 $ sudo dnf install pipenv
 ```
 
-Once `pipenv` is installed, you need to install the dependencies.
+Once `pipenv` is installed, you need to install the dependencies and dev dependencies.
 
 ``` sh-session
-$ pipenv install
+$ pipenv install --dev
 ```
 
 Afterwards execute the script via `pipenv` 
