@@ -77,7 +77,6 @@ async def on_message(message: discord.Message):
             re.IGNORECASE,
         )
         if skill_check:
-            # response2 = "\n(${skill_level} - ${skill_req} = ${FP}) QS: ${QS}"
             skill_req = 0
 
             rolls = [
