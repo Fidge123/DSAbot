@@ -56,18 +56,24 @@ async def on_message(message: discord.Message):
             return
 
         dicecode = re.search(
-            r"^!*(?P<amount>[0-9]+)[dw](?P<sides>[0-9]+)$", msgstring, re.IGNORECASE
+            r"^!*(?P<amount>[0-9]+)[dw](?P<sides>[0-9]+)(\+(?P<add>[0-9]+))?$", msgstring, re.IGNORECASE
         )
         if dicecode:
             dieamount = int(dicecode.group("amount"))
             diesides = int(dicecode.group("sides"))
             response = author.mention + "\n"
+            
+            if dicecode.group("add"):
+                aggregate = int(dicecode.group("add"))
+            else: 
+                aggregate = 0
 
             for _ in range(dieamount):
                 roll = random.randint(1, diesides)
                 response += str(roll) + ", "
+                aggregate += roll
 
-            response = response[:-2]
+            response = response[:-2] + " = " + str(aggregate)
 
             await send(response)
 
