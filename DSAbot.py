@@ -71,35 +71,45 @@ async def on_message(message: discord.Message):
 
             await send(response)
 
+        # The regex matches the following:
+        # 1. Optional exclamation mark
+        # 2. A non-zero amount of numbers followed by comma or space (captured as `attr`)
+        # 3. An @ followed by a number (captured as `FW`)
+        # 4. A + modifier (captured as `add`)
+        # 5. A - modifier (captured as `sub`)
+
         skill_check = re.search(
-            r"^!?(?P<first>[0-9]+),\s?(?P<second>[0-9]+),\s?(?P<third>[0-9]+)\s?(@\s?(?P<FW>[0-9]+))?$",
+            r"^!?(?P<attr>(?:[0-9]+,?\ ?)+)\ ?(?:@\ ?(?P<FW>[0-9]+))?\ ?(?:\+\ ?(?P<add>[0-9]+))?(?:\-\ ?(?P<sub>[0-9]+))?$",
             msgstring,
             re.IGNORECASE,
         )
+
         if skill_check:
-            skill_req = 0
 
-            rolls = [
-                {
-                    "attr": int(skill_check.group("first")),
-                    "roll": random.randint(1, 20),
-                },
-                {
-                    "attr": int(skill_check.group("second")),
-                    "roll": random.randint(1, 20),
-                },
-                {
-                    "attr": int(skill_check.group("third")),
-                    "roll": random.randint(1, 20),
-                },
-            ]
-            skill_req = sum(map(lambda x: max([x["roll"] - x["attr"], 0]), rolls))
+            # sanitize special characters and split into list of numbers
+            attributes = (
+                skill_check.group("attr")
+                .strip()
+                .replace(",", " ")
+                .replace("  ", " ")
+                .split(" ")
+            )
+            rolls = []
+            add = int(skill_check.group("add") or 0)
+            sub = int(skill_check.group("sub") or 0)
 
-            response = "{author}\n{roll1}, {roll2}, {roll3} ===> {skill_req}".format(
+            for attr in attributes:
+                rolls.append(
+                    {"attr": int(attr), "roll": random.randint(1, 20),}
+                )
+
+            skill_req = sum(
+                map(lambda x: max([x["roll"] - x["attr"] - add + sub, 0]), rolls)
+            )
+
+            response = "{author}\n{rolls} ===> {skill_req}".format(
                 author=author.mention,
-                roll1=rolls[0]["roll"],
-                roll2=rolls[1]["roll"],
-                roll3=rolls[2]["roll"],
+                rolls=", ".join(map(lambda x: str(x["roll"]), rolls)),
                 skill_req=-skill_req,
             )
 
