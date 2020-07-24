@@ -71,7 +71,7 @@ class TestDSABot(TestCase):
     def test_smoke(self, mock_randint: MagicMock):
         # Set Up
         mock_randint.return_value = 1
-        messages = ["SUMMON", "5d10",  "5w10+5", "BEGONE"]
+        messages = ["SUMMON", "5d10", "5w10+5", "BEGONE"]
 
         for m in messages:
             with self.subTest(msg=m):
