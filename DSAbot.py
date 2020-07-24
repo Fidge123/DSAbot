@@ -45,10 +45,9 @@ async def on_message(message: discord.Message):
     if channel in permittedChannels:
 
         if "BEGONE" in msgstring:
-            if channel in permittedChannels:
-                permittedChannels.remove(channel)
-                persistence.remove_channel(channel)
-                await send("I have left")
+            permittedChannels.remove(channel)
+            persistence.remove_channel(channel)
+            await send("I have left")
 
         if "DIE" in msgstring:
             await message.add_reaction("\U0001f480")
@@ -72,41 +71,48 @@ async def on_message(message: discord.Message):
 
             await send(response)
 
-        if re.search(r"^([0-9]+,\s*)*[0-9]+(@[0-9]+)*$", msgstring):
-            diestring = msgstring
-            diestring.replace(" ", "")
-            skill_level = False
-
-            if "@" in diestring:
-                skill_split = diestring.split("@")
-                skill_level = int(skill_split[1])
-                diestring = skill_split[0]
-
-            diesplit = diestring.split(",")
-
-            response = author.mention + "\n"
+        skill_check = re.search(
+            r"^!?(?P<first>[0-9]+),\s?(?P<second>[0-9]+),\s?(?P<third>[0-9]+)\s?(@\s?(?P<FW>[0-9]+))?$",
+            msgstring,
+            re.IGNORECASE,
+        )
+        if skill_check:
             skill_req = 0
 
-            for attr in diesplit:
-                roll = random.randint(1, 20)
-                result = roll - int(attr)
+            rolls = [
+                {
+                    "attr": int(skill_check.group("first")),
+                    "roll": random.randint(1, 20),
+                },
+                {
+                    "attr": int(skill_check.group("second")),
+                    "roll": random.randint(1, 20),
+                },
+                {
+                    "attr": int(skill_check.group("third")),
+                    "roll": random.randint(1, 20),
+                },
+            ]
+            skill_req = sum(map(lambda x: max([x["roll"] - x["attr"], 0]), rolls))
 
-                if result < 0:
-                    result = 0
+            response = "{author}\n{roll1}, {roll2}, {roll3} ===> {skill_req}".format(
+                author=author.mention,
+                roll1=rolls[0]["roll"],
+                roll2=rolls[1]["roll"],
+                roll3=rolls[2]["roll"],
+                skill_req=-skill_req,
+            )
 
-                response += str(roll) + ", "
-                skill_req += result
-            response = response[:-2]
-
-            response += " ===> " + str(-skill_req)
-
-            if skill_level:
-                remainder = skill_level - skill_req
-                response += "\n(" + str(skill_level) + " - " + str(skill_req) + ") "
-                if remainder < 0:
-                    response += "QS: 0 FAIL"
+            if skill_check.group("FW"):
+                FW = int(skill_check.group("FW"))
+                FP = FW - skill_req
+                response += "\n({FW} - {skill_req} = {FP} FP)".format(
+                    FW=FW, skill_req=skill_req, FP=FP,
+                )
+                if FP < 0:
+                    response += " QS: 0 FAIL"
                 else:
-                    response += "QS: " + str(remainder // 3 + 1)
+                    response += " QS: {}".format(FP // 3 + 1)
 
             await send(response)
 
