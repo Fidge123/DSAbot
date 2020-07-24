@@ -117,5 +117,4 @@ class TestDSABot(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_arbitrarydie(self, mock_randint=MagicMock):
         mock_randint.return_value = 6
-        self.skill_check( "2W6", "<@1337>\n6, 6 = 12"
-            )
+        self.skill_check("2W6", "<@1337>\n6, 6 = 12")
