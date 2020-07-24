@@ -100,7 +100,7 @@ async def on_message(message: discord.Message):
 
             for attr in attributes:
                 rolls.append(
-                    {"attr": int(attr), "roll": random.randint(1, 20), }
+                    {"attr": int(attr), "roll": random.randint(1, 20),}
                 )
 
             skill_req = sum(
