@@ -130,7 +130,7 @@ async def on_message(message: discord.Message):
                 if FP < 0:
                     response += " QS: 0 FAIL"
                 else:
-                    response += " QS: {}".format(FP // 3 + 1)
+                    response += " QS: {}".format(max([FP - 1, 0]) // 3 + 1)
 
             await send(response)
 
