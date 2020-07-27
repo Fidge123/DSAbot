@@ -29,7 +29,6 @@ async def on_ready():
         number_notes[note[0]] = note[1]
 
 
-
 @client.event
 async def on_message(message: discord.Message):
     msgstring: str = message.content.strip("` ")
@@ -140,17 +139,24 @@ async def on_message(message: discord.Message):
 
             await send(response)
 
-        number_code = re.search(r"^note:(?P<id>[a-z]*)->(?P<number>(\+|-)?[0-9]*)$", msgstring, re.IGNORECASE)
+        number_code = re.search(
+            r"^note:(?P<id>[a-z]*)->(?P<number>(\+|-)?[0-9]*)$",
+            msgstring,
+            re.IGNORECASE,
+        )
         if number_code:
-            
-            if not(number_code.group("id") in number_notes):
+
+            if not (number_code.group("id") in number_notes):
                 number_notes[number_code.group("id")] = 0
 
             number_notes[number_code.group("id")] += int(number_code.group("number"))
-            response = "{} is now {}".format(number_code.group("id"), number_notes[number_code.group("id")])
-            persistence.persist_note(number_code.group("id"),number_notes[number_code.group("id")])
+            response = "{} is now {}".format(
+                number_code.group("id"), number_notes[number_code.group("id")]
+            )
+            persistence.persist_note(
+                number_code.group("id"), number_notes[number_code.group("id")]
+            )
             await send(response)
-
 
         debug_code = re.search(
             r"^debug:(?P<debugCommand>[a-z]*)$", msgstring, re.IGNORECASE
