@@ -20,13 +20,11 @@ async def on_ready():
     print(f"{client.user} has connected to Discord!")
     channel_ids = persistence.load_channels()
 
-    print(channel_ids)
     for channel_id in channel_ids:
         new = client.get_channel(channel_id[0])
         permittedChannels.append(new)
 
     notes = persistence.load_notes()
-    print(notes)
     for note in notes:
         number_notes[note[0]] = note[1]
 
