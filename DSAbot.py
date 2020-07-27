@@ -10,6 +10,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
 permittedChannels = []
 userCharacters = {}
+number_notes = {}
 verbose = False
 random.seed()
 
@@ -19,9 +20,16 @@ async def on_ready():
     print(f"{client.user} has connected to Discord!")
     channel_ids = persistence.load_channels()
 
+    print(channel_ids)
     for channel_id in channel_ids:
         new = client.get_channel(channel_id[0])
         permittedChannels.append(new)
+
+    notes = persistence.load_notes()
+    print(notes)
+    for note in notes:
+        number_notes[note[0]] = note[1]
+
 
 
 @client.event
@@ -134,17 +142,34 @@ async def on_message(message: discord.Message):
 
             await send(response)
 
+        number_code = re.search(r"^note:(?P<id>[a-z]*)->(?P<number>(\+|-)?[0-9]*)$", msgstring, re.IGNORECASE)
+        if number_code:
+            
+            if not(number_code.group("id") in number_notes):
+                number_notes[number_code.group("id")] = 0
+
+            number_notes[number_code.group("id")] += int(number_code.group("number"))
+            response = "{} is now {}".format(number_code.group("id"), number_notes[number_code.group("id")])
+            persistence.persist_note(number_code.group("id"),number_notes[number_code.group("id")])
+            await send(response)
+
+
         debug_code = re.search(
             r"^debug:(?P<debugCommand>[a-z]*)$", msgstring, re.IGNORECASE
         )
 
         if debug_code:
 
+            response = "no debug"
+
             if debug_code.group("debugCommand") == "cache":
                 response = "cache"
 
             if debug_code.group("debugCommand") == "fullCache":
                 response = "fullCache"
+
+            if debug_code.group("debugCommand") == "numberNotes":
+                response = str(number_notes)
 
             await send(response)
 
