@@ -143,6 +143,20 @@ class TestDSABot(TestCase):
                 elif "cache" in m.content.lower():
                     m.channel.send.assert_called_with("cache")
 
+    def test_notes(self):
+        messages = ["SUMMON", "note:blub->7", "note:klik->8", "note:klik->9", "BEGONE"]
+
+        for m in messages:
+            with self.subTest(msg=m):
+                m = self.message(m)
+                self.loop.run_until_complete(on_message(m))
+                if "blub" in m.content.lower():
+                    m.channel.send.assert_called_with("blub is now 7")
+                elif "8" in m.content.lower():
+                    m.channel.send.assert_called_with("klik is now 8")
+                elif "9" in m.content.lower():
+                    m.channel.send.assert_called_with("klik is now 17")
+
     @patch("random.randint", new_callable=MagicMock())
     def test_arbitrarydie(self, mock_randint=MagicMock):
         mock_randint.return_value = 6
