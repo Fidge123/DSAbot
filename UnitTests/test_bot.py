@@ -86,6 +86,23 @@ class TestDSABot(TestCase):
                     m.channel.send.assert_called_with("<@1337>\n1, 1, 1, 1, 1 = 10")
 
     @patch("random.randint", new_callable=MagicMock())
+    def test_leading_d(self, mock_randint: MagicMock):
+        mock_randint.return_value = 1
+        messages = ["SUMMON", "d10", "w12+5", "BEGONE"]
+
+        for m in messages:
+            with self.subTest(msg=m):
+                m = self.message(m)
+                self.loop.run_until_complete(on_message(m))
+                if "d" in m.content.lower():
+                    mock_randint.assert_called_with(1, 10)
+                    m.channel.send.assert_called_with("<@1337>\n1 = 1")
+
+                if "w" in m.content.lower():
+                    mock_randint.assert_called_with(1, 12)
+                    m.channel.send.assert_called_with("<@1337>\n1 = 6")
+
+    @patch("random.randint", new_callable=MagicMock())
     def test_skillcheck(self, mock_randint: MagicMock):
         mock_randint.return_value = 14
         self.skill_check(
