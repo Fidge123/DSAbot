@@ -60,17 +60,16 @@ async def on_message(message: discord.Message):
             await client.close()
             return
 
-        # The regex matches the following:
-        # 1. Optional exclamation mark
-        # 2. <Number of dice> and <Number of sides> divided by "d" or "w"
-        # 3. A + modifier (captured as `add`)
-        # 4. A - modifier (captured as `sub`)
-        # 5. Anything else is matched as a comment
-
         dicecode = re.search(
-            r"^!?(?P<amount>[0-9]*)[dw](?P<sides>[0-9]+)(\+(?P<add>[0-9]+))?(\-(?P<sub>[0-9]+))?(?P<comment>.*?)$",
+            r"""
+            ^!?                                     # Optional exclamation mark
+            (?P<amount>[0-9]*)[dw](?P<sides>[0-9]+) # <Number of dice> and <Number of sides> divided by "d" or "w"
+            (?:\+\ ?(?P<add>[0-9]+))?               # A + modifier (captured as `add`)
+            (?:\-\ ?(?P<sub>[0-9]+))?               # A - modifier (captured as `sub`)
+            (?P<comment>.*?)$                       # Anything else is lazy-matched as a comment
+            """,
             msgstring,
-            re.IGNORECASE,
+            re.VERBOSE | re.IGNORECASE,
         )
         if dicecode:
             dieamount = int(dicecode.group("amount") or 1)
@@ -95,18 +94,17 @@ async def on_message(message: discord.Message):
 
             return await send(response)
 
-        # The regex matches the following:
-        # 1. Optional exclamation mark
-        # 2. A non-zero amount of numbers divided by comma or space (captured as `attr`)
-        # 3. An @ followed by a number (captured as `FW`)
-        # 4. A + modifier (captured as `add`)
-        # 5. A - modifier (captured as `sub`)
-        # 6. Anything else is matched as a comment
-
         skill_check = re.search(
-            r"^!?(?P<attr>(?:[0-9]+,?\ ?)+)\ ?(?:@\ ?(?P<FW>[0-9]+))?\ ?(?:\+\ ?(?P<add>[0-9]+))?(?:\-\ ?(?P<sub>[0-9]+))?(?P<comment>.*?)$",
+            r"""
+            ^!?                           # Optional exclamation mark
+            (?P<attr>(?:[0-9]+,?\ ?)+)\ ? # A non-zero amount of numbers divided by comma or space (captured as `attr`)
+            (?:@\ ?(?P<FW>[0-9]+))?\ ?    # An @ followed by a number (captured as `FW`)
+            (?:\+\ ?(?P<add>[0-9]+))?     # A + modifier (captured as `add`)
+            (?:\-\ ?(?P<sub>[0-9]+))?     # A - modifier (captured as `sub`)
+            (?P<comment>.*?)$             # Anything else is lazy-matched as a comment
+            """,
             msgstring,
-            re.IGNORECASE,
+            re.VERBOSE | re.IGNORECASE,
         )
 
         if skill_check:
