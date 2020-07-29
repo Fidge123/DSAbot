@@ -79,11 +79,13 @@ class TestDSABot(TestCase):
                 self.loop.run_until_complete(on_message(m))
                 if "d" in m.content.lower():
                     mock_randint.assert_called_with(1, 10)
-                    m.channel.send.assert_called_with("<@1337>\n1, 1, 1, 1, 1 = 5")
+                    m.channel.send.assert_called_with("<@1337> \n1 + 1 + 1 + 1 + 1 = 5")
 
                 if "w" in m.content.lower():
                     mock_randint.assert_called_with(1, 10)
-                    m.channel.send.assert_called_with("<@1337>\n1, 1, 1, 1, 1 = 10")
+                    m.channel.send.assert_called_with(
+                        "<@1337> \n1 + 1 + 1 + 1 + 1 (+5) = 10"
+                    )
 
     @patch("random.randint", new_callable=MagicMock())
     def test_leading_d(self, mock_randint: MagicMock):
@@ -96,39 +98,47 @@ class TestDSABot(TestCase):
                 self.loop.run_until_complete(on_message(m))
                 if "d" in m.content.lower():
                     mock_randint.assert_called_with(1, 10)
-                    m.channel.send.assert_called_with("<@1337>\n1 = 1")
+                    m.channel.send.assert_called_with("<@1337> \n1 = 1")
 
                 if "w" in m.content.lower():
                     mock_randint.assert_called_with(1, 12)
-                    m.channel.send.assert_called_with("<@1337>\n1 = 6")
+                    m.channel.send.assert_called_with("<@1337> \n1 (+5) = 6")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_skillcheck(self, mock_randint: MagicMock):
         mock_randint.return_value = 14
         self.skill_check(
-            "!13,14,8@12", "<@1337>\n14, 14, 14 ===> -7\n(12 - 7 = 5 FP) QS: 2"
+            "!13,14,8@12", "<@1337> \n14, 14, 14 ===> -7\n(12 - 7 = 5 FP) QS: 2"
         )
-        self.skill_check("!13,14,8", "<@1337>\n14, 14, 14 ===> -7")
+        self.skill_check("!13,14,8", "<@1337> \n14, 14, 14 ===> -7")
         self.skill_check(
-            "13, 14, 8 @ 12", "<@1337>\n14, 14, 14 ===> -7\n(12 - 7 = 5 FP) QS: 2"
-        )
-        self.skill_check(
-            "8, 8, 8 @ 0", "<@1337>\n14, 14, 14 ===> -18\n(0 - 18 = -18 FP) QS: 0 FAIL"
+            "13, 14, 8 @ 12", "<@1337> \n14, 14, 14 ===> -7\n(12 - 7 = 5 FP) QS: 2"
         )
         self.skill_check(
-            "!13,14,8@12+2", "<@1337>\n14, 14, 14 ===> -4\n(12 - 4 = 8 FP) QS: 3"
-        )
-        self.skill_check("!13,14,8-3", "<@1337>\n14, 14, 14 ===> -16")
-        self.skill_check(
-            "13, 14, 8 @ 12 + 1", "<@1337>\n14, 14, 14 ===> -5\n(12 - 5 = 7 FP) QS: 3"
+            "8, 8, 8 @ 0", "<@1337> \n14, 14, 14 ===> -18\n(0 - 18 = -18 FP) QS: 0 FAIL"
         )
         self.skill_check(
-            "8, 8, 8 @ 0 + 6", "<@1337>\n14, 14, 14 ===> 0\n(0 - 0 = 0 FP) QS: 1",
+            "!13,14,8@12+2", "<@1337> \n14, 14, 14 ===> -4\n(12 - 4 = 8 FP) QS: 3"
         )
-        self.skill_check("8", "<@1337>\n14 ===> -6")
+        self.skill_check("!13,14,8-3", "<@1337> \n14, 14, 14 ===> -16")
+        self.skill_check(
+            "13, 14, 8 @ 12 + 1", "<@1337> \n14, 14, 14 ===> -5\n(12 - 5 = 7 FP) QS: 3"
+        )
+        self.skill_check(
+            "8, 8, 8 @ 0 + 6", "<@1337> \n14, 14, 14 ===> 0\n(0 - 0 = 0 FP) QS: 1",
+        )
+        self.skill_check("8", "<@1337> \n14 ===> -6")
         self.skill_check(
             "14 14 14 14 14 @ 0",
-            "<@1337>\n14, 14, 14, 14, 14 ===> 0\n(0 - 0 = 0 FP) QS: 1",
+            "<@1337> \n14, 14, 14, 14, 14 ===> 0\n(0 - 0 = 0 FP) QS: 1",
+        )
+        self.skill_check(
+            "13, 14, 8 @ 12 Sinnesschärfe",
+            "<@1337> Sinnesschärfe\n14, 14, 14 ===> -7\n(12 - 7 = 5 FP) QS: 2",
+        )
+        self.skill_check(
+            "8, 8, 8 @ 0  Ignifaxius  ",
+            "<@1337> Ignifaxius\n14, 14, 14 ===> -18\n(0 - 18 = -18 FP) QS: 0 FAIL",
         )
 
     def test_debug(self):
@@ -160,4 +170,6 @@ class TestDSABot(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_arbitrarydie(self, mock_randint=MagicMock):
         mock_randint.return_value = 6
-        self.skill_check("2W6", "<@1337>\n6, 6 = 12")
+        self.skill_check("2W6", "<@1337> \n6 + 6 = 12")
+        self.skill_check("!3d6+4-6 Lanze", "<@1337> Lanze\n6 + 6 + 6 (-2) = 16")
+        self.skill_check("!3d20   Drachenodem  ", "<@1337> Drachenodem\n6 + 6 + 6 = 18")

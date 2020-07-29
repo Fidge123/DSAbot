@@ -61,40 +61,52 @@ async def on_message(message: discord.Message):
             return
 
         dicecode = re.search(
-            r"^!*(?P<amount>[0-9]*)[dw](?P<sides>[0-9]+)(\+(?P<add>[0-9]+))?(\-(?P<sub>[0-9]+))?$",
+            r"""
+            ^!?                                     # Optional exclamation mark
+            (?P<amount>[0-9]*)[dw](?P<sides>[0-9]+) # <Number of dice> and <Number of sides> divided by "d" or "w"
+            (?:\+\ ?(?P<add>[0-9]+))?               # A + modifier (captured as `add`)
+            (?:\-\ ?(?P<sub>[0-9]+))?               # A - modifier (captured as `sub`)
+            (?P<comment>.*?)$                       # Anything else is lazy-matched as a comment
+            """,
             msgstring,
-            re.IGNORECASE,
+            re.VERBOSE | re.IGNORECASE,
         )
         if dicecode:
             dieamount = int(dicecode.group("amount") or 1)
             diesides = int(dicecode.group("sides"))
-            response = author.mention + "\n"
             result_array = []
             aggregate = 0
 
             add = int(dicecode.group("add") or 0)
             sub = int(dicecode.group("sub") or 0)
+            modifier_string = (" ({:+d})").format(add - sub) if add - sub != 0 else ""
 
             for _ in range(dieamount):
                 roll = random.randint(1, diesides)
                 result_array.append(str(roll))
                 aggregate += roll
 
-            response += (", ").join(result_array) + " = " + str(aggregate + add - sub)
+            response = "{author} {comment}\n{results}{modifier} = {FP}".format(
+                author=author.mention,
+                comment=dicecode.group("comment").strip(),
+                results=(" + ").join(result_array),
+                modifier=modifier_string,
+                FP=aggregate + add - sub,
+            )
 
-            await send(response)
-
-        # The regex matches the following:
-        # 1. Optional exclamation mark
-        # 2. A non-zero amount of numbers followed by comma or space (captured as `attr`)
-        # 3. An @ followed by a number (captured as `FW`)
-        # 4. A + modifier (captured as `add`)
-        # 5. A - modifier (captured as `sub`)
+            return await send(response)
 
         skill_check = re.search(
-            r"^!?(?P<attr>(?:[0-9]+,?\ ?)+)\ ?(?:@\ ?(?P<FW>[0-9]+))?\ ?(?:\+\ ?(?P<add>[0-9]+))?(?:\-\ ?(?P<sub>[0-9]+))?$",
+            r"""
+            ^!?                           # Optional exclamation mark
+            (?P<attr>(?:[0-9]+,?\ ?)+)\ ? # A non-zero amount of numbers divided by comma or space (captured as `attr`)
+            (?:@\ ?(?P<FW>[0-9]+))?\ ?    # An @ followed by a number (captured as `FW`)
+            (?:\+\ ?(?P<add>[0-9]+))?     # A + modifier (captured as `add`)
+            (?:\-\ ?(?P<sub>[0-9]+))?     # A - modifier (captured as `sub`)
+            (?P<comment>.*?)$             # Anything else is lazy-matched as a comment
+            """,
             msgstring,
-            re.IGNORECASE,
+            re.VERBOSE | re.IGNORECASE,
         )
 
         if skill_check:
@@ -120,8 +132,9 @@ async def on_message(message: discord.Message):
                 map(lambda x: max([x["roll"] - x["attr"] - add + sub, 0]), rolls)
             )
 
-            response = "{author}\n{rolls} ===> {skill_req}".format(
+            response = "{author} {comment}\n{rolls} ===> {skill_req}".format(
                 author=author.mention,
+                comment=skill_check.group("comment").strip(),
                 rolls=", ".join(map(lambda x: str(x["roll"]), rolls)),
                 skill_req=-skill_req,
             )
@@ -137,7 +150,7 @@ async def on_message(message: discord.Message):
                 else:
                     response += " QS: {}".format(max([FP - 1, 0]) // 3 + 1)
 
-            await send(response)
+            return await send(response)
 
         number_code = re.search(
             r"^note:(?P<id>[a-z]*)->(?P<number>(\+|-)?[0-9]*)$",
@@ -156,7 +169,7 @@ async def on_message(message: discord.Message):
             persistence.persist_note(
                 number_code.group("id"), number_notes[number_code.group("id")]
             )
-            await send(response)
+            return await send(response)
 
         debug_code = re.search(
             r"^debug:(?P<debugCommand>[a-z]*)$", msgstring, re.IGNORECASE
@@ -175,7 +188,7 @@ async def on_message(message: discord.Message):
             if debug_code.group("debugCommand") == "numberNotes":
                 response = str(number_notes)
 
-            await send(response)
+            return await send(response)
 
 
 if __name__ == "__main__":
