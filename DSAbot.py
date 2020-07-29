@@ -79,16 +79,18 @@ async def on_message(message: discord.Message):
 
             add = int(dicecode.group("add") or 0)
             sub = int(dicecode.group("sub") or 0)
+            modifier_string = (" ({:+d})").format(add - sub) if add - sub != 0 else ""
 
             for _ in range(dieamount):
                 roll = random.randint(1, diesides)
                 result_array.append(str(roll))
                 aggregate += roll
 
-            response = "{author} {comment}\n{results} = {FP}".format(
+            response = "{author} {comment}\n{results}{modifier} = {FP}".format(
                 author=author.mention,
                 comment=dicecode.group("comment").strip(),
-                results=(", ").join(result_array),
+                results=(" + ").join(result_array),
+                modifier=modifier_string,
                 FP=aggregate + add - sub,
             )
 

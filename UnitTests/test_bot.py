@@ -79,11 +79,13 @@ class TestDSABot(TestCase):
                 self.loop.run_until_complete(on_message(m))
                 if "d" in m.content.lower():
                     mock_randint.assert_called_with(1, 10)
-                    m.channel.send.assert_called_with("<@1337> \n1, 1, 1, 1, 1 = 5")
+                    m.channel.send.assert_called_with("<@1337> \n1 + 1 + 1 + 1 + 1 = 5")
 
                 if "w" in m.content.lower():
                     mock_randint.assert_called_with(1, 10)
-                    m.channel.send.assert_called_with("<@1337> \n1, 1, 1, 1, 1 = 10")
+                    m.channel.send.assert_called_with(
+                        "<@1337> \n1 + 1 + 1 + 1 + 1 (+5) = 10"
+                    )
 
     @patch("random.randint", new_callable=MagicMock())
     def test_leading_d(self, mock_randint: MagicMock):
@@ -100,7 +102,7 @@ class TestDSABot(TestCase):
 
                 if "w" in m.content.lower():
                     mock_randint.assert_called_with(1, 12)
-                    m.channel.send.assert_called_with("<@1337> \n1 = 6")
+                    m.channel.send.assert_called_with("<@1337> \n1 (+5) = 6")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_skillcheck(self, mock_randint: MagicMock):
@@ -168,6 +170,6 @@ class TestDSABot(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_arbitrarydie(self, mock_randint=MagicMock):
         mock_randint.return_value = 6
-        self.skill_check("2W6", "<@1337> \n6, 6 = 12")
-        self.skill_check("!3d6+4 Lanze", "<@1337> Lanze\n6, 6, 6 = 22")
-        self.skill_check("!3d20   Drachenodem  ", "<@1337> Drachenodem\n6, 6, 6 = 18")
+        self.skill_check("2W6", "<@1337> \n6 + 6 = 12")
+        self.skill_check("!3d6+4-6 Lanze", "<@1337> Lanze\n6 + 6 + 6 (-2) = 16")
+        self.skill_check("!3d20   Drachenodem  ", "<@1337> Drachenodem\n6 + 6 + 6 = 18")
