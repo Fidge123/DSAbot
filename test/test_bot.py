@@ -2,8 +2,8 @@ import asyncio
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from bot.DSAbot import on_message
-from bot.persistence import init_db
+from bot.bot import on_message
+from bot import persistence
 
 
 class AsyncMock(MagicMock):
@@ -46,13 +46,13 @@ class MockMessage:
 
 
 # noinspection PyTypeChecker
-class TestDSABot(TestCase):
+class TestBot(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.loop = asyncio.get_event_loop()
         cls.testchannel = MockChannel(1, AsyncMock())
         cls.testauthor = MockAuthor("Author", "<@1337>")
-        init_db()
+        persistence.init_db()
 
     def message(self, msg):
         return MockMessage(msg, self.testauthor, self.testchannel, AsyncMock())

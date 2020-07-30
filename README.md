@@ -50,7 +50,7 @@ $ pipenv install --dev
 Afterwards execute the script via `pipenv` 
 
 ``` sh-session
-$ pipenv run python DSAbot.py
+$ pipenv run start
 ```
 
 or active the `virtualenv` to run it as you would normally.
@@ -60,7 +60,7 @@ $ pipenv shell
 Loading .env environment variables…
 Launching subshell in virtual environment…
 
-$ python DSAbot.py
+$ python bot/__main__.py
 ...
 
 $ exit
@@ -71,7 +71,7 @@ $ exit
 Use the following command to run tests and generate coverage
 
 ``` sh-session
-pipenv run tests
+pipenv run test
 ```
 
 After that it is possible to generate a coverage report by running

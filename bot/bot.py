@@ -4,7 +4,7 @@ import re
 
 import discord
 
-from bot import persistence, dice_roll, skill_check, note
+from bot import persistence, dice_roll, note, skill_check
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
@@ -90,6 +90,6 @@ async def on_message(message: discord.Message):
             return await send(response)
 
 
-if __name__ == "__main__":
+def run():
     persistence.init_db()
     client.run(TOKEN)
