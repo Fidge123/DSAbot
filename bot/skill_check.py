@@ -59,4 +59,3 @@ def create_response(regex_result, author):
                 response += " QS: {}".format(max([FP - 1, 0]) // 3 + 1)
 
         return response
-

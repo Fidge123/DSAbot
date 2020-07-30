@@ -25,8 +25,8 @@ async def on_ready():
         permittedChannels.append(new)
 
     notes = persistence.load_notes()
-    for note in notes:
-        number_notes[note[0]] = note[1]
+    for n in notes:
+        number_notes[n[0]] = n[1]
 
 
 @client.event

@@ -41,10 +41,12 @@ $ brew install pipenv
 $ sudo dnf install pipenv
 ```
 
-Once `pipenv` is installed, you need to install the dependencies and dev dependencies.
+Once `pipenv` is installed, you need to install the dependencies and dev dependencies and enable the `pre-commit` hooks (optional).
 
 ``` sh-session
 $ pipenv install --dev
+
+$ pipenv run pre-commit install
 ```
 
 Afterwards execute the script via `pipenv` 

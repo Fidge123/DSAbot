@@ -39,4 +39,3 @@ def create_response(regex_result, author):
             modifier=modifier_string,
             FP=aggregate + add - sub,
         )
-
