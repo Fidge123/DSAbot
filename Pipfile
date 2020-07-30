@@ -14,5 +14,7 @@ discord = "*"
 python_version = "3.8"
 
 [scripts]
-tests = "coverage run --source . -m unittest discover --verbose UnitTests"
+start = "python bot/DSAbot.py"
+test = "coverage run --source . -m unittest discover --verbose test"
+tests = "coverage run --source . -m unittest discover --verbose test"
 cov = "coverage report -m -i --fail-under=70 --skip-covered --skip-empty --debug=dataio"

@@ -2,8 +2,8 @@ import asyncio
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from DSAbot import on_message
-from persistence import init_db
+from bot.DSAbot import on_message
+from bot.persistence import init_db
 
 
 class AsyncMock(MagicMock):

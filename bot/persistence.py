@@ -1,11 +1,14 @@
 import sqlite3
 
+db_path = "bot/persistence.db"
+schema_path = "bot/schema.sql"
+
 
 def init_db():
-    with open("schema.sql", "r") as schemafile:
+    with open(schema_path, "r") as schemafile:
         commands = schemafile.read()
 
-    with sqlite3.connect("persistence.db") as connection:
+    with sqlite3.connect(db_path) as connection:
         connection.executescript(commands)
         connection.commit()
 
@@ -13,7 +16,7 @@ def init_db():
 
 
 def persist_channel(channel):
-    with sqlite3.connect("persistence.db") as connection:
+    with sqlite3.connect(db_path) as connection:
         connection.execute(
             "INSERT OR REPLACE INTO channels VALUES (?)", (str(channel.id),)
         )
@@ -23,7 +26,7 @@ def persist_channel(channel):
 
 
 def remove_channel(channel):
-    with sqlite3.connect("persistence.db") as connection:
+    with sqlite3.connect(db_path) as connection:
         connection.execute("DELETE FROM channels WHERE id=?", (str(channel.id),))
         connection.commit()
 
@@ -31,14 +34,14 @@ def remove_channel(channel):
 
 
 def load_channels():
-    with sqlite3.connect("persistence.db") as connection:
+    with sqlite3.connect(db_path) as connection:
         results = connection.execute("SELECT * FROM channels").fetchall()
 
     return results
 
 
 def persist_note(noteID, value):
-    with sqlite3.connect("persistence.db") as connection:
+    with sqlite3.connect(db_path) as connection:
         connection.execute(
             "INSERT OR REPLACE INTO numberNotes VALUES (?, ?)", (noteID, value,)
         )
@@ -48,14 +51,14 @@ def persist_note(noteID, value):
 
 
 def remove_note(noteID):
-    with sqlite3.connect("persistence.db") as connection:
+    with sqlite3.connect(db_path) as connection:
         connection.execute("DELETE FROM numberNotes WHERE id=?", (noteID,))
         connection.commit()
     return True
 
 
 def load_notes():
-    with sqlite3.connect("persistence.db") as connection:
+    with sqlite3.connect(db_path) as connection:
         results = connection.execute("SELECT * FROM numberNotes").fetchall()
 
     return results
