@@ -1,5 +1,4 @@
 import re
-import random
 
 from bot import persistence
 
