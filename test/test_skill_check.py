@@ -9,7 +9,7 @@ class MockAuthor:
         self.mention = "@{}".format(name)
 
 
-class TestDiceRoll(TestCase):
+class TestSkillCheck(TestCase):
     def test_parse(self):
         self.assertIsNotNone(skill_check.parse("13"))
         self.assertIsNotNone(skill_check.parse("1,12,18"))
