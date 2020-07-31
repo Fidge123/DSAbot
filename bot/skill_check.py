@@ -5,11 +5,11 @@ import random
 def parse(message):
     return re.search(
         r"""
-            ^!?                           # Optional exclamation mark
+            ^!?\ ?                        # Optional exclamation mark
             (?P<attr>(?:[0-9]+,?\ ?)+)\ ? # A non-zero amount of numbers divided by comma or space (captured as `attr`)
             (?:@\ ?(?P<FW>[0-9]+))?\ ?    # An @ followed by a number (captured as `FW`)
-            (?:\+\ ?(?P<add>[0-9]+))?     # A + modifier (captured as `add`)
-            (?:\-\ ?(?P<sub>[0-9]+))?     # A - modifier (captured as `sub`)
+            (?:\+\ ?(?P<add>[0-9]+))?\ ?  # A + modifier (captured as `add`)
+            (?:\-\ ?(?P<sub>[0-9]+))?\ ?  # A - modifier (captured as `sub`)
             (?P<comment>.*?)$             # Anything else is lazy-matched as a comment
         """,
         message,

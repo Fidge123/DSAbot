@@ -5,11 +5,11 @@ import random
 def parse(message):
     return re.search(
         r"""
-            ^!?                                     # Optional exclamation mark
-            (?P<amount>[0-9]*)[dw](?P<sides>[0-9]+) # <Number of dice> and <Number of sides> divided by "d" or "w"
-            (?:\+\ ?(?P<add>[0-9]+))?               # A + modifier (captured as `add`)
-            (?:\-\ ?(?P<sub>[0-9]+))?               # A - modifier (captured as `sub`)
-            (?P<comment>.*?)$                       # Anything else is lazy-matched as a comment
+            ^!?\ ?                                     # Optional exclamation mark
+            (?P<amount>[0-9]*)[dw](?P<sides>[0-9]+)\ ? # <Number of dice> and <Number of sides> divided by "d" or "w"
+            (?:\+\ ?(?P<add>[0-9]+))?\ ?               # A + modifier (captured as `add`)
+            (?:\-\ ?(?P<sub>[0-9]+))?\ ?               # A - modifier (captured as `sub`)
+            (?P<comment>.*?)$                          # Anything else is lazy-matched as a comment
         """,
         message,
         re.VERBOSE | re.IGNORECASE,
