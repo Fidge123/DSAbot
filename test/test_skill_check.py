@@ -9,6 +9,10 @@ class MockAuthor:
         self.mention = "@{}".format(name)
 
 
+def create_response(input):
+    return skill_check.create_response(skill_check.parse(input), MockAuthor("TestUser"))
+
+
 class TestSkillCheck(TestCase):
     def test_parse(self):
         self.assertIsNotNone(skill_check.parse("13"))
@@ -84,58 +88,40 @@ class TestSkillCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_response(self, mock_randint: MagicMock):
         mock_randint.return_value = 8
-        result = skill_check.create_response(
-            skill_check.parse("4"), MockAuthor("TestUser")
-        )
-        self.assertEqual(result, "@TestUser \n8 ===> -4")
-
-        result = skill_check.create_response(
-            skill_check.parse("12, 13, 6"), MockAuthor("TestUser")
-        )
-        self.assertEqual(result, "@TestUser \n8, 8, 8 ===> -2")
+        self.assertEqual(create_response("4"), "@TestUser \n8 ===> -4")
+        self.assertEqual(create_response("12, 13, 6"), "@TestUser \n8, 8, 8 ===> -2")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_response_with_fw(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
-        result = skill_check.create_response(
-            skill_check.parse("10,7@2"), MockAuthor("TestUser")
-        )
-        self.assertEqual(result, "@TestUser \n9, 9 ===> -2\n(2 - 2 = 0 FP) QS: 1")
-
-        result = skill_check.create_response(
-            skill_check.parse("!6,9,6@3"), MockAuthor("TestUser")
+        self.assertEqual(
+            create_response("10,7@2"), "@TestUser \n9, 9 ===> -2\n(2 - 2 = 0 FP) QS: 1"
         )
         self.assertEqual(
-            result, "@TestUser \n9, 9, 9 ===> -6\n(3 - 6 = -3 FP) QS: 0 FAIL"
+            create_response("!6,9,6@3"),
+            "@TestUser \n9, 9, 9 ===> -6\n(3 - 6 = -3 FP) QS: 0 FAIL",
         )
 
     @patch("random.randint", new_callable=MagicMock())
     def test_response_with_modifier(self, mock_randint: MagicMock):
         mock_randint.return_value = 10
-        result = skill_check.create_response(
-            skill_check.parse("10,7@2+3"), MockAuthor("TestUser")
-        )
-        self.assertEqual(result, "@TestUser \n10, 10 ===> 0\n(2 - 0 = 2 FP) QS: 1")
-
-        result = skill_check.create_response(
-            skill_check.parse("!12,10,14@7-1"), MockAuthor("TestUser")
-        )
-        self.assertEqual(result, "@TestUser \n10, 10, 10 ===> -1\n(7 - 1 = 6 FP) QS: 2")
-
-        result = skill_check.create_response(
-            skill_check.parse("!12,12,12@12 - 1"), MockAuthor("TestUser")
+        self.assertEqual(
+            create_response("10,7@2+3"),
+            "@TestUser \n10, 10 ===> 0\n(2 - 0 = 2 FP) QS: 1",
         )
         self.assertEqual(
-            result, "@TestUser \n10, 10, 10 ===> 0\n(12 - 0 = 12 FP) QS: 4"
+            create_response("!12,10,14@7-1"),
+            "@TestUser \n10, 10, 10 ===> -1\n(7 - 1 = 6 FP) QS: 2",
+        )
+        self.assertEqual(
+            create_response("!12,12,12@12 - 1"),
+            "@TestUser \n10, 10, 10 ===> 0\n(12 - 0 = 12 FP) QS: 4",
         )
 
     @patch("random.randint", new_callable=MagicMock())
     def test_response_with_comment(self, mock_randint: MagicMock):
         mock_randint.return_value = 10
-        result = skill_check.create_response(
-            skill_check.parse("! 12,12,12 @ 12 + 2 Sinnesschärfe"),
-            MockAuthor("TestUser"),
-        )
         self.assertEqual(
-            result, "@TestUser Sinnesschärfe\n10, 10, 10 ===> 0\n(12 - 0 = 12 FP) QS: 4"
+            create_response("! 12,12,12 @ 12 + 2 Sinnesschärfe"),
+            "@TestUser Sinnesschärfe\n10, 10, 10 ===> 0\n(12 - 0 = 12 FP) QS: 4",
         )

@@ -9,6 +9,10 @@ class MockAuthor:
         self.mention = "@{}".format(name)
 
 
+def create_response(input):
+    return dice_roll.create_response(dice_roll.parse(input), MockAuthor("TestUser"))
+
+
 class TestDiceRoll(TestCase):
     def test_parse_with_d_or_w(self):
         self.assertIsNotNone(dice_roll.parse("3d6"))
@@ -76,25 +80,13 @@ class TestDiceRoll(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_response(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        result = dice_roll.create_response(
-            dice_roll.parse("3d6"), MockAuthor("TestUser")
-        )
-        self.assertEqual(result, "@TestUser \n1 + 1 + 1 = 3")
+        self.assertEqual(create_response("3d6"), "@TestUser \n1 + 1 + 1 = 3")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_response_with_modifier(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        result = dice_roll.create_response(
-            dice_roll.parse("3d6 + 3"), MockAuthor("TestUser")
+        self.assertEqual(create_response("3d6 + 3"), "@TestUser \n1 + 1 + 1 (+3) = 6")
+        self.assertEqual(create_response("d6 - 4"), "@TestUser \n1 (-4) = -3")
+        self.assertEqual(
+            create_response("5d6 + 3-2"), "@TestUser \n1 + 1 + 1 + 1 + 1 (+1) = 6"
         )
-        self.assertEqual(result, "@TestUser \n1 + 1 + 1 (+3) = 6")
-
-        result = dice_roll.create_response(
-            dice_roll.parse("d6 - 4"), MockAuthor("TestUser")
-        )
-        self.assertEqual(result, "@TestUser \n1 (-4) = -3")
-
-        result = dice_roll.create_response(
-            dice_roll.parse("5d6 + 3-2"), MockAuthor("TestUser")
-        )
-        self.assertEqual(result, "@TestUser \n1 + 1 + 1 + 1 + 1 (+1) = 6")
