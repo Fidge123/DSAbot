@@ -90,7 +90,7 @@ class TestBot(TestCase):
                 if "@" in m.content:
                     mock_randint.assert_called_with(1, 20)
                     m.channel.send.assert_called_with(
-                        "<@1337> Verbergen\n1, 1, 1 ===> 0\n(10 - 0 = 10 FP) QS: 4"
+                        "<@1337> Verbergen\n1, 1, 1 ===> 0\n(10 - 0 = 10 FP) QS: 4\nKritischer Erfolg!"
                     )
 
     def test_debug(self):
