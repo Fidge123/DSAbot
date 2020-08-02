@@ -58,4 +58,9 @@ def create_response(regex_result, author):
             else:
                 response += " QS: {}".format(max([FP - 1, 0]) // 3 + 1)
 
+        if rolls.count(1) >= 2:
+            response += "\nKritischer Erfolg!"
+        if rolls.count(20) >= 2:
+            response += "\nPatzer!"
+            
         return response
