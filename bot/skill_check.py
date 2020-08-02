@@ -62,5 +62,5 @@ def create_response(regex_result, author):
             response += "\nKritischer Erfolg!"
         if rolls.count(20) >= 2:
             response += "\nPatzer!"
-            
+
         return response
