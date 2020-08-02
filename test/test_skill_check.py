@@ -125,3 +125,17 @@ class TestSkillCheck(TestCase):
             create_response("! 12,12,12 @ 12 + 2 Sinnesschärfe"),
             "@TestUser Sinnesschärfe\n10, 10, 10 ===> 0\n(12 - 0 = 12 FP) QS: 4",
         )
+
+    @patch("random.randint", new_callable=MagicMock())
+    def test_response_with_crit_and_fail(self, mock_randint: MagicMock):
+        mock_randint.return_value = 1
+        self.assertEqual(
+            create_response("!12,12,12 @ 12 - 3"),
+            "@TestUser\n1, 1, 1 ===> 0\n(12 - 0 = 12 FP) QS: 4\nKritischer Erfolg!",
+        )
+
+        mock_randint.return_value = 20
+        self.assertEqual(
+            create_response("!14,15,16 @ 12 + 3"),
+            "@TestUser\n20, 20, 20 ===> -6\n(12 - 6 = 6 FP) QS: 2\nPatzer!",
+        )
