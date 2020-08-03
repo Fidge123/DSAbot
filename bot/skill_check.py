@@ -40,6 +40,9 @@ def create_response(regex_result, author):
             map(lambda x: max([x["roll"] - x["attr"] - add + sub, 0]), rolls)
         )
 
+        crit = len(rolls) == 3 and list(map(lambda x: x["roll"], rolls)).count(1) >= 2
+        fail = len(rolls) == 3 and list(map(lambda x: x["roll"], rolls)).count(20) >= 2
+
         response = "{author} {comment}\n{rolls} ===> {skill_req}".format(
             author=author.mention,
             comment=regex_result.group("comment").strip(),
@@ -54,13 +57,19 @@ def create_response(regex_result, author):
                 FW=FW, skill_req=skill_req, FP=FP,
             )
             if FP < 0:
-                response += " QS: 0 FAIL"
+                if crit:
+                    response += " Automatisch bestanden"
+                else:
+                    response += " Nicht bestanden"
             else:
-                response += " QS: {}".format(max([FP - 1, 0]) // 3 + 1)
+                if fail:
+                    response += " Automatisch nicht bestanden"
+                else:
+                    response += " QS: {}".format(max([FP - 1, 0]) // 3 + 1)
 
-        if len(rolls) == 3 and list(map(lambda x: x["roll"], rolls)).count(1) >= 2:
-            response += "\nKritischer Erfolg!"
-        if len(rolls) == 3 and list(map(lambda x: x["roll"], rolls)).count(20) >= 2:
-            response += "\nPatzer!"
+        if crit:
+            response += "\n**Kritischer Erfolg!**"
+        if fail:
+            response += "\n**Patzer!**"
 
         return response

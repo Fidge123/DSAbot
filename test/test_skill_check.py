@@ -99,7 +99,7 @@ class TestSkillCheck(TestCase):
         )
         self.assertEqual(
             create_response("!6,9,6@3"),
-            "@TestUser \n9, 9, 9 ===> -6\n(3 - 6 = -3 FP) QS: 0 FAIL",
+            "@TestUser \n9, 9, 9 ===> -6\n(3 - 6 = -3 FP) Nicht bestanden",
         )
 
     @patch("random.randint", new_callable=MagicMock())
@@ -131,11 +131,11 @@ class TestSkillCheck(TestCase):
         mock_randint.return_value = 1
         self.assertEqual(
             create_response("!12,12,12 @ 12 - 3"),
-            "@TestUser \n1, 1, 1 ===> 0\n(12 - 0 = 12 FP) QS: 4\nKritischer Erfolg!",
+            "@TestUser \n1, 1, 1 ===> 0\n(12 - 0 = 12 FP) QS: 4\n**Kritischer Erfolg!**",
         )
 
         mock_randint.return_value = 20
         self.assertEqual(
             create_response("!14,15,16 @ 12 + 3"),
-            "@TestUser \n20, 20, 20 ===> -6\n(12 - 6 = 6 FP) QS: 2\nPatzer!",
+            "@TestUser \n20, 20, 20 ===> -6\n(12 - 6 = 6 FP) Automatisch nicht bestanden\n**Patzer!**",
         )
