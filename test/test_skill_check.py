@@ -10,75 +10,81 @@ class MockAuthor:
 
 
 def create_response(input):
-    return skill_check.create_response(skill_check.parse(input), MockAuthor("TestUser"))
+    return skill_check.create_response(
+        skill_check.is_skill_check(input), MockAuthor("TestUser")
+    )
 
 
 class TestSkillCheck(TestCase):
     def test_parse(self):
-        self.assertIsNotNone(skill_check.parse("13"))
-        self.assertIsNotNone(skill_check.parse("1,12,18"))
-        self.assertIsNotNone(skill_check.parse("8 19 1400"))
-        self.assertIsNotNone(skill_check.parse("2 2, 2, 2,2,2"))
+        self.assertIsNotNone(skill_check.is_skill_check("13"))
+        self.assertIsNotNone(skill_check.is_skill_check("1,12,18"))
+        self.assertIsNotNone(skill_check.is_skill_check("8 19 1400"))
+        self.assertIsNotNone(skill_check.is_skill_check("2 2, 2, 2,2,2"))
 
     def test_parse_with_fw(self):
-        self.assertIsNotNone(skill_check.parse("13@2"))
-        self.assertIsNotNone(skill_check.parse("1,12,18@18"))
-        self.assertIsNotNone(skill_check.parse("8 19 1400@0"))
-        self.assertIsNotNone(skill_check.parse("2 2, 2, 2,2,2@1400"))
+        self.assertIsNotNone(skill_check.is_skill_check("13@2"))
+        self.assertIsNotNone(skill_check.is_skill_check("1,12,18@18"))
+        self.assertIsNotNone(skill_check.is_skill_check("8 19 1400@0"))
+        self.assertIsNotNone(skill_check.is_skill_check("2 2, 2, 2,2,2@1400"))
 
     def test_parse_with_prefix(self):
-        self.assertIsNotNone(skill_check.parse("!13 1@2"))
-        self.assertIsNotNone(skill_check.parse("! 1,12,18@18"))
+        self.assertIsNotNone(skill_check.is_skill_check("!13 1@2"))
+        self.assertIsNotNone(skill_check.is_skill_check("! 1,12,18@18"))
 
-        self.assertIsNone(skill_check.parse("!!13 1@2"))
-        self.assertIsNone(skill_check.parse("!  1 13@0"))
-        self.assertIsNone(skill_check.parse("!?4"))
-        self.assertIsNone(skill_check.parse("#2,2,2@2"))
+        self.assertIsNone(skill_check.is_skill_check("!!13 1@2"))
+        self.assertIsNone(skill_check.is_skill_check("!  1 13@0"))
+        self.assertIsNone(skill_check.is_skill_check("!?4"))
+        self.assertIsNone(skill_check.is_skill_check("#2,2,2@2"))
 
     def test_parse_with_large_numbers(self):
-        self.assertIsNotNone(skill_check.parse("1337@1337"))
-        self.assertIsNotNone(skill_check.parse("100000 100000 1000000 @ 1000000"))
-        self.assertIsNotNone(skill_check.parse("9999999@88888888"))
+        self.assertIsNotNone(skill_check.is_skill_check("1337@1337"))
+        self.assertIsNotNone(
+            skill_check.is_skill_check("100000 100000 1000000 @ 1000000")
+        )
+        self.assertIsNotNone(skill_check.is_skill_check("9999999@88888888"))
 
     def test_parse_with_modifiers(self):
-        self.assertIsNotNone(skill_check.parse("12 12 12@8+3"))
-        self.assertIsNotNone(skill_check.parse("8,9,10-4"))
-        self.assertIsNotNone(skill_check.parse("!4 5 16 18@17-4"))
-        self.assertIsNotNone(skill_check.parse("!1 + 1 - 4"))
+        self.assertIsNotNone(skill_check.is_skill_check("12 12 12@8+3"))
+        self.assertIsNotNone(skill_check.is_skill_check("8,9,10-4"))
+        self.assertIsNotNone(skill_check.is_skill_check("!4 5 16 18@17-4"))
+        self.assertIsNotNone(skill_check.is_skill_check("!1 + 1 - 4"))
 
     def test_parse_with_comment(self):
-        self.assertIsNotNone(skill_check.parse("12 test"))
-        self.assertIsNotNone(skill_check.parse("!12,12@8+3 this is a comment"))
-        self.assertIsNotNone(skill_check.parse("!12,12@8-6 lolololol"))
-        self.assertIsNotNone(skill_check.parse("20 + 1 - 4 can I put anything here? 🤔"))
+        self.assertIsNotNone(skill_check.is_skill_check("12 test"))
+        self.assertIsNotNone(skill_check.is_skill_check("!12,12@8+3 this is a comment"))
+        self.assertIsNotNone(skill_check.is_skill_check("!12,12@8-6 lolololol"))
+        self.assertIsNotNone(
+            skill_check.is_skill_check("20 + 1 - 4 can I put anything here? 🤔")
+        )
 
     def test_parse_with_other_commands(self):
-        self.assertIsNone(skill_check.parse("d3"))
-        self.assertIsNone(skill_check.parse("note:foobar"))
-        self.assertIsNone(skill_check.parse("SUMMON"))
-        self.assertIsNone(skill_check.parse("BEGONE"))
-        self.assertIsNone(skill_check.parse("DIE"))
+        self.assertIsNone(skill_check.is_skill_check("d3"))
+        self.assertIsNone(skill_check.is_skill_check("note:foobar"))
+        self.assertIsNone(skill_check.is_skill_check("SUMMON"))
+        self.assertIsNone(skill_check.is_skill_check("BEGONE"))
+        self.assertIsNone(skill_check.is_skill_check("DIE"))
 
         # Careful, these are not None. Execution order matters!
         # self.assertIsNone(skill_check.parse("!3w6"))
         # self.assertIsNone(skill_check.parse("12d12+2"))
 
     def test_parse_results(self):
-        parsed = skill_check.parse("11,13,13@7-2 Sinnesschärfe")
+        parsed = skill_check.is_skill_check("11,13,13@7-2 Sinnesschärfe")
         self.assertEqual(parsed.group("attr"), "11,13,13")
         self.assertEqual(parsed.group("FW"), "7")
         self.assertEqual(parsed.group("add"), None)
         self.assertEqual(parsed.group("sub"), "2")
         self.assertEqual(parsed.group("comment"), "Sinnesschärfe")
 
-        parsed = skill_check.parse("1")
+        parsed = skill_check.is_skill_check("1")
         self.assertEqual(parsed.group("attr"), "1")
         self.assertEqual(parsed.group("FW"), None)
         self.assertEqual(parsed.group("add"), None)
         self.assertEqual(parsed.group("sub"), None)
         self.assertEqual(parsed.group("comment"), "")
 
-        parsed = skill_check.parse("!111 1337 42 1 1 @ 27 +1 - 2 🎉")
+        parsed = skill_check.is_skill_check("!111 1337 42 1 1 @ 27 +1 - 2 🎉")
         self.assertEqual(parsed.group("attr"), "111 1337 42 1 1 ")
         self.assertEqual(parsed.group("FW"), "27")
         self.assertEqual(parsed.group("add"), "1")
@@ -134,8 +140,32 @@ class TestSkillCheck(TestCase):
             "@TestUser \n1, 1, 1 ===> 0\n(12 - 0 = 12 FP) QS: 4\n**Kritischer Erfolg!**",
         )
 
+        # mock_randint.side_effect = [1, 9]
+        # self.assertEqual(
+        #     create_response("12 - 3"),
+        #     "@TestUser \n1 ===> 0\nBestätigungswurf: 9\n**Kritischer Erfolg!**",
+        # )
+
+        # mock_randint.side_effect = [1, 11]
+        # self.assertEqual(
+        #     create_response("12 - 3"),
+        #     "@TestUser \n1 ===> 0\nBestätigungswurf: 11\n**Erfolg!**",
+        # )
+
         mock_randint.return_value = 20
         self.assertEqual(
             create_response("!14,15,16 @ 12 + 3"),
             "@TestUser \n20, 20, 20 ===> -6\n(12 - 6 = 6 FP) Automatisch nicht bestanden\n**Patzer!**",
         )
+
+        # mock_randint.side_effect = [20, 18]
+        # self.assertEqual(
+        #     create_response("!14 + 3"),
+        #     "@TestUser \n20 ===> -3\nBestätigungswurf: 18\n**Patzer!**",
+        # )
+
+        # mock_randint.side_effect = [20, 15]
+        # self.assertEqual(
+        #     create_response("!14 + 3"),
+        #     "@TestUser \n20 ===> -3\nBestätigungswurf: 15\nNicht bestanden",
+        # )

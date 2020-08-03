@@ -1,8 +1,14 @@
 import re
-import random
+
+from bot.skill_check_helper import (
+    get_attributes,
+    roll_for_attr,
+    calc_skill_req,
+    rolls_to_str,
+)
 
 
-def parse(message):
+def is_skill_check(message):
     return re.search(
         r"""
             ^!?\ ?                        # Optional exclamation mark
@@ -17,44 +23,27 @@ def parse(message):
     )
 
 
-def create_response(regex_result, author):
-    if regex_result:
-        # sanitize special characters and split into list of numbers
-        attributes = (
-            regex_result.group("attr")
-            .strip()
-            .replace(",", " ")
-            .replace("  ", " ")
-            .split(" ")
-        )
-        rolls = []
-        add = int(regex_result.group("add") or 0)
-        sub = int(regex_result.group("sub") or 0)
+def create_response(parsed, author):
+    if parsed:
+        rolls = roll_for_attr(get_attributes(parsed.group("attr")))
+        skill_req = calc_skill_req(rolls, parsed.group("add"), parsed.group("sub"))
 
-        for attr in attributes:
-            rolls.append(
-                {"attr": int(attr), "roll": random.randint(1, 20),}
-            )
-
-        skill_req = sum(
-            map(lambda x: max([x["roll"] - x["attr"] - add + sub, 0]), rolls)
+        response = "{author} {comment}\n{rolls} ===> {skill_req}".format(
+            author=author.mention,
+            comment=parsed.group("comment").strip(),
+            rolls=rolls_to_str(rolls),
+            skill_req=-skill_req,
         )
 
         crit = len(rolls) == 3 and list(map(lambda x: x["roll"], rolls)).count(1) >= 2
         fail = len(rolls) == 3 and list(map(lambda x: x["roll"], rolls)).count(20) >= 2
 
-        response = "{author} {comment}\n{rolls} ===> {skill_req}".format(
-            author=author.mention,
-            comment=regex_result.group("comment").strip(),
-            rolls=", ".join(map(lambda x: str(x["roll"]), rolls)),
-            skill_req=-skill_req,
-        )
-
-        if regex_result.group("FW"):
-            FW = int(regex_result.group("FW"))
+        if parsed.group("FW"):
+            FW = int(parsed.group("FW"))
             FP = FW - skill_req
+            QS = max([FP - 1, 0]) // 3 + 1
             response += "\n({FW} - {skill_req} = {FP} FP)".format(
-                FW=FW, skill_req=skill_req, FP=FP,
+                FW=FW, skill_req=skill_req, FP=FP
             )
             if FP < 0:
                 if crit:
@@ -65,7 +54,7 @@ def create_response(regex_result, author):
                 if fail:
                     response += " Automatisch nicht bestanden"
                 else:
-                    response += " QS: {}".format(max([FP - 1, 0]) // 3 + 1)
+                    response += " QS: {}".format(QS)
 
         if crit:
             response += "\n**Kritischer Erfolg!**"
