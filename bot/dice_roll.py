@@ -8,7 +8,7 @@ def parse(message):
         r"""
             ^!?\ ?                                     # Optional exclamation mark
             (?P<amount>[0-9]*)[dw](?P<sides>[0-9]+)\ ? # <Number of dice> and <Number of sides> divided by "d" or "w"
-            (?P<mod>(\ ?[\+\-]\ ?[0-9]+)*)\ ?            # A modifier (captured as `mod`)
+            (?P<mod>(\ ?[\+\-]\ ?[0-9]+)*)\ ?          # A modifier (captured as `mod`)
             (?P<comment>.*?)$                          # Anything else is lazy-matched as a comment
         """,
         message,
