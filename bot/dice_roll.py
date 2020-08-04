@@ -1,6 +1,6 @@
 import re
 import random
-import parser
+from bot.string_math import calc
 
 
 def parse(message):
@@ -16,10 +16,6 @@ def parse(message):
     )
 
 
-def mod(mod: str):
-    return eval(parser.expr(mod).compile())
-
-
 def create_response(regex_result, author):
     if regex_result:
         die_amount = int(regex_result.group("amount") or 1)
@@ -27,7 +23,7 @@ def create_response(regex_result, author):
         result_array = []
         aggregate = 0
 
-        modifier = mod(regex_result.group("mod") or "0")
+        modifier = calc(regex_result.group("mod") or "0")
         modifier_string = (" ({:+d})").format(modifier) if modifier != 0 else ""
 
         for _ in range(die_amount):
