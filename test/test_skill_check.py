@@ -10,60 +10,90 @@ class MockAuthor:
 
 
 def create_response(input):
-    return skill_check.create_response(
-        skill_check.is_skill_check(input), MockAuthor("TestUser")
-    )
+    return str(skill_check.create_skill_check(input, MockAuthor("TestUser")))
 
 
 class TestSkillCheck(TestCase):
     def test_parse(self):
-        self.assertIsNotNone(skill_check.is_skill_check("13"))
-        self.assertIsNotNone(skill_check.is_skill_check("1,12,18"))
-        self.assertIsNotNone(skill_check.is_skill_check("8 19 1400"))
-        self.assertIsNotNone(skill_check.is_skill_check("2 2, 2, 2,2,2"))
+        self.assertIsNotNone(skill_check.create_skill_check("13", MockAuthor("")))
+        self.assertIsNotNone(skill_check.create_skill_check("1,12,18", MockAuthor("")))
+        self.assertIsNotNone(
+            skill_check.create_skill_check("8 19 1400", MockAuthor(""))
+        )
+        self.assertIsNotNone(
+            skill_check.create_skill_check("2 2, 2, 2,2,2", MockAuthor(""))
+        )
 
     def test_parse_with_fw(self):
-        self.assertIsNotNone(skill_check.is_skill_check("13@2"))
-        self.assertIsNotNone(skill_check.is_skill_check("1,12,18@18"))
-        self.assertIsNotNone(skill_check.is_skill_check("8 19 1400@0"))
-        self.assertIsNotNone(skill_check.is_skill_check("2 2, 2, 2,2,2@1400"))
+        self.assertIsNotNone(skill_check.create_skill_check("13@2", MockAuthor("")))
+        self.assertIsNotNone(
+            skill_check.create_skill_check("1,12,18@18", MockAuthor(""))
+        )
+        self.assertIsNotNone(
+            skill_check.create_skill_check("8 19 1400@0", MockAuthor(""))
+        )
+        self.assertIsNotNone(
+            skill_check.create_skill_check("2 2, 2, 2,2,2@1400", MockAuthor(""))
+        )
 
     def test_parse_with_prefix(self):
-        self.assertIsNotNone(skill_check.is_skill_check("!13 1@2"))
-        self.assertIsNotNone(skill_check.is_skill_check("! 1,12,18@18"))
+        self.assertIsNotNone(skill_check.create_skill_check("!13 1@2", MockAuthor("")))
+        self.assertIsNotNone(
+            skill_check.create_skill_check("! 1,12,18@18", MockAuthor(""))
+        )
 
-        self.assertIsNone(skill_check.is_skill_check("!!13 1@2"))
-        self.assertIsNone(skill_check.is_skill_check("!  1 13@0"))
-        self.assertIsNone(skill_check.is_skill_check("!?4"))
-        self.assertIsNone(skill_check.is_skill_check("#2,2,2@2"))
+        self.assertIsNone(skill_check.create_skill_check("!!13 1@2", MockAuthor("")))
+        self.assertIsNone(skill_check.create_skill_check("!  1 13@0", MockAuthor("")))
+        self.assertIsNone(skill_check.create_skill_check("!?4", MockAuthor("")))
+        self.assertIsNone(skill_check.create_skill_check("#2,2,2@2", MockAuthor("")))
 
     def test_parse_with_large_numbers(self):
-        self.assertIsNotNone(skill_check.is_skill_check("1337@1337"))
         self.assertIsNotNone(
-            skill_check.is_skill_check("100000 100000 1000000 @ 1000000")
+            skill_check.create_skill_check("1337@1337", MockAuthor(""))
         )
-        self.assertIsNotNone(skill_check.is_skill_check("9999999@88888888"))
+        self.assertIsNotNone(
+            skill_check.create_skill_check(
+                "100000 100000 1000000 @ 1000000", MockAuthor("")
+            )
+        )
+        self.assertIsNotNone(
+            skill_check.create_skill_check("9999999@88888888", MockAuthor(""))
+        )
 
     def test_parse_with_modifiers(self):
-        self.assertIsNotNone(skill_check.is_skill_check("12 12 12@8+3"))
-        self.assertIsNotNone(skill_check.is_skill_check("8,9,10-4"))
-        self.assertIsNotNone(skill_check.is_skill_check("!4 5 16 18@17-4"))
-        self.assertIsNotNone(skill_check.is_skill_check("!1 + 1 - 4"))
+        self.assertIsNotNone(
+            skill_check.create_skill_check("12 12 12@8+3", MockAuthor(""))
+        )
+        self.assertIsNotNone(skill_check.create_skill_check("8,9,10-4", MockAuthor("")))
+        self.assertIsNotNone(
+            skill_check.create_skill_check("!4 5 16 18@17-4", MockAuthor(""))
+        )
+        self.assertIsNotNone(
+            skill_check.create_skill_check("!1 + 1 - 4", MockAuthor(""))
+        )
 
     def test_parse_with_comment(self):
-        self.assertIsNotNone(skill_check.is_skill_check("12 test"))
-        self.assertIsNotNone(skill_check.is_skill_check("!12,12@8+3 this is a comment"))
-        self.assertIsNotNone(skill_check.is_skill_check("!12,12@8-6 lolololol"))
+        self.assertIsNotNone(skill_check.create_skill_check("12 test", MockAuthor("")))
         self.assertIsNotNone(
-            skill_check.is_skill_check("20 + 1 - 4 can I put anything here? 🤔")
+            skill_check.create_skill_check(
+                "!12,12@8+3 this is a comment", MockAuthor("")
+            )
+        )
+        self.assertIsNotNone(
+            skill_check.create_skill_check("!12,12@8-6 lolololol", MockAuthor(""))
+        )
+        self.assertIsNotNone(
+            skill_check.create_skill_check(
+                "20 + 1 - 4 can I put anything here? 🤔", MockAuthor("")
+            )
         )
 
     def test_parse_with_other_commands(self):
-        self.assertIsNone(skill_check.is_skill_check("d3"))
-        self.assertIsNone(skill_check.is_skill_check("note:foobar"))
-        self.assertIsNone(skill_check.is_skill_check("SUMMON"))
-        self.assertIsNone(skill_check.is_skill_check("BEGONE"))
-        self.assertIsNone(skill_check.is_skill_check("DIE"))
+        self.assertIsNone(skill_check.create_skill_check("d3", MockAuthor("")))
+        self.assertIsNone(skill_check.create_skill_check("note:foobar", MockAuthor("")))
+        self.assertIsNone(skill_check.create_skill_check("SUMMON", MockAuthor("")))
+        self.assertIsNone(skill_check.create_skill_check("BEGONE", MockAuthor("")))
+        self.assertIsNone(skill_check.create_skill_check("DIE", MockAuthor("")))
 
         # Careful, these are not None. Execution order matters!
         # self.assertIsNone(skill_check.parse("!3w6"))

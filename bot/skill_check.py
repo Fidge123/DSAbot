@@ -1,4 +1,5 @@
 import re
+from bot.string_math import calc
 
 from bot.skill_check_helper import (
     get_attributes,
@@ -8,57 +9,80 @@ from bot.skill_check_helper import (
 )
 
 
-def is_skill_check(message):
-    return re.search(
-        r"""
-            ^!?\ ?                        # Optional exclamation mark
-            (?P<attr>(?:[0-9]+,?\ ?)+)\ ? # A non-zero amount of numbers divided by comma or space (captured as `attr`)
-            (?:@\ ?(?P<FW>[0-9]+))?\ ?    # An @ followed by a number (captured as `FW`)
-            (?:\+\ ?(?P<add>[0-9]+))?\ ?  # A + modifier (captured as `add`)
-            (?:\-\ ?(?P<sub>[0-9]+))?\ ?  # A - modifier (captured as `sub`)
-            (?P<comment>.*?)$             # Anything else is lazy-matched as a comment
-        """,
-        message,
-        re.VERBOSE | re.IGNORECASE,
-    )
+matcher = re.compile(
+    r"""
+        ^!?\ ?                            # Optional exclamation mark
+        (?P<attr>(?:[0-9]+,?\ ?)+)\ ?     # A non-zero amount of numbers divided by comma or space (captured as `attr`)
+        (?:@\ ?(?P<FW>[0-9]+))?\ ?        # An @ followed by a number (captured as `FW`)
+        (?P<mod>(\ ?[\+\-]\ ?[0-9]+)*)\ ? # A modifier (captured as `mod`)
+        (?P<comment>.*?)$                 # Anything else is lazy-matched as a comment
+    """,
+    re.VERBOSE | re.IGNORECASE,
+)
 
 
-def create_response(parsed, author):
-    if parsed:
-        rolls = roll_for_attr(get_attributes(parsed.group("attr")))
-        skill_req = calc_skill_req(rolls, parsed.group("add"), parsed.group("sub"))
+class SkillCheck:
+    crit = False
+    fail = False
+    hasQS = False
 
+    def __init__(self, author, attr, FW, mod, comment):
+        self.author = author
+        self.rolls = roll_for_attr(get_attributes(attr))
+        self.skill_req = calc_skill_req(self.rolls, calc(mod or "0"))
+
+        if FW:
+            self.hasQS = True
+            self.FW = int(FW)
+            self.FP = self.FW - self.skill_req
+            self.QS = max([self.FP - 1, 0]) // 3 + 1
+
+        if len(self.rolls) == 3:
+            self.crit = list(map(lambda x: x["roll"], self.rolls)).count(1) >= 2
+            self.fail = list(map(lambda x: x["roll"], self.rolls)).count(20) >= 2
+
+        self.comment = comment.strip()
+
+    def __str__(self):
         response = "{author} {comment}\n{rolls} ===> {skill_req}".format(
-            author=author.mention,
-            comment=parsed.group("comment").strip(),
-            rolls=rolls_to_str(rolls),
-            skill_req=-skill_req,
+            author=self.author,
+            comment=self.comment,
+            rolls=rolls_to_str(self.rolls),
+            skill_req=-self.skill_req,
         )
 
-        crit = len(rolls) == 3 and list(map(lambda x: x["roll"], rolls)).count(1) >= 2
-        fail = len(rolls) == 3 and list(map(lambda x: x["roll"], rolls)).count(20) >= 2
-
-        if parsed.group("FW"):
-            FW = int(parsed.group("FW"))
-            FP = FW - skill_req
-            QS = max([FP - 1, 0]) // 3 + 1
+        if self.hasQS:
             response += "\n({FW} - {skill_req} = {FP} FP)".format(
-                FW=FW, skill_req=skill_req, FP=FP
+                FW=self.FW, skill_req=self.skill_req, FP=self.FP
             )
-            if FP < 0:
-                if crit:
+            if self.FP < 0:
+                if self.crit:
                     response += " Automatisch bestanden"
                 else:
                     response += " Nicht bestanden"
             else:
-                if fail:
+                if self.fail:
                     response += " Automatisch nicht bestanden"
                 else:
-                    response += " QS: {}".format(QS)
+                    response += " QS: {}".format(self.QS)
 
-        if crit:
+        if self.crit:
             response += "\n**Kritischer Erfolg!**"
-        if fail:
+        if self.fail:
             response += "\n**Patzer!**"
 
         return response
+
+
+def create_skill_check(message, author):
+    parsed = matcher.search(message)
+    if parsed:
+        return SkillCheck(
+            author.mention,
+            parsed.group("attr"),
+            parsed.group("FW"),
+            parsed.group("mod"),
+            parsed.group("comment"),
+        )
+    else:
+        return

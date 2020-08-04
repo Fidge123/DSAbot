@@ -64,9 +64,9 @@ async def on_message(message: discord.Message):
         if parsed_roll:
             return await send(dice_roll.create_response(parsed_roll, author))
 
-        parsed_roll = skill_check.is_skill_check(msgstring)
-        if parsed_roll:
-            return await send(skill_check.create_response(parsed_roll, author))
+        parsed_sc = skill_check.create_skill_check(msgstring, author)
+        if parsed_sc:
+            return await send(str(parsed_sc))
 
         number_code = note.parse(msgstring)
         if number_code:
