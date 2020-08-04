@@ -1,5 +1,3 @@
-# Adapted from https://github.com/pyparsing/pyparsing/blob/master/examples/simpleArith.py
-
 import operator
 from pyparsing import (
     ParserElement,
