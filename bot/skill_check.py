@@ -26,6 +26,9 @@ class SkillCheck:
     fail = False
     hasQS = False
 
+    res1 = "{author} {comment}\n{rolls} ===> {skill_req}{extra}"
+    res2 = "{author} {comment}\n{rolls} ===> {skill_req_n}\n({FW} - {skill_req} = {FP} FP) {result}"
+
     def __init__(self, author, attr, FW, mod, comment):
         self.author = author
         self.rolls = roll_for_attr(get_attributes(attr))
@@ -43,35 +46,49 @@ class SkillCheck:
 
         self.comment = comment.strip()
 
-    def __str__(self):
-        response = "{author} {comment}\n{rolls} ===> {skill_req}".format(
-            author=self.author,
-            comment=self.comment,
-            rolls=rolls_to_str(self.rolls),
-            skill_req=-self.skill_req,
-        )
+    def result_string(self):
+        if self.FP < 0 and self.crit:
+            return "Automatisch bestanden\n**Kritischer Erfolg!**"
+        if self.FP < 0 and self.fail:
+            return "Nicht bestanden\n**Patzer!**"
+        if self.FP < 0:
+            return "Nicht bestanden"
+        if self.FP >= 0 and self.fail:
+            return "Automatisch nicht bestanden\n**Patzer!**"
+        if self.FP >= 0 and self.crit:
+            return "QS: {}\n**Kritischer Erfolg!**".format(self.QS)
+        else:
+            return "QS: {}".format(self.QS)
 
-        if self.hasQS:
-            response += "\n({FW} - {skill_req} = {FP} FP)".format(
-                FW=self.FW, skill_req=self.skill_req, FP=self.FP
-            )
-            if self.FP < 0:
-                if self.crit:
-                    response += " Automatisch bestanden"
-                else:
-                    response += " Nicht bestanden"
-            else:
-                if self.fail:
-                    response += " Automatisch nicht bestanden"
-                else:
-                    response += " QS: {}".format(self.QS)
-
+    def extra_string(self):
         if self.crit:
-            response += "\n**Kritischer Erfolg!**"
+            return "\n**Kritischer Erfolg!**"
         if self.fail:
-            response += "\n**Patzer!**"
+            return "\n**Patzer!**"
+        else:
+            return ""
 
-        return response
+    def __str__(self):
+        if self.hasQS:
+            return self.res2.format(
+                author=self.author,
+                comment=self.comment,
+                rolls=rolls_to_str(self.rolls),
+                skill_req=self.skill_req,
+                skill_req_n=-self.skill_req,
+                FW=self.FW,
+                FP=self.FP,
+                result=self.result_string(),
+            )
+
+        else:
+            return self.res1.format(
+                author=self.author,
+                comment=self.comment,
+                rolls=rolls_to_str(self.rolls),
+                skill_req=-self.skill_req,
+                extra=self.extra_string(),
+            )
 
 
 def create_skill_check(message, author):
