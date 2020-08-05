@@ -1,20 +1,13 @@
 import operator
 from pyparsing import (
     ParserElement,
-    pyparsing_common,
+    pyparsing_common as ppc,
     oneOf,
     infixNotation,
     opAssoc,
 )
 
 ParserElement.enablePackrat()
-
-operand = pyparsing_common.integer
-
-signop = oneOf("+ -")
-multop = oneOf("* /")
-plusop = oneOf("+ -")
-
 opn = {"+": operator.add, "-": operator.sub, "*": operator.mul, "/": operator.truediv}
 
 
@@ -24,9 +17,9 @@ def evaluate(s):
     if len(s) == 1:
         return evaluate(s[0])
     if len(s) == 2 and s[0] == "-":
-        return -s[1]
+        return -evaluate(s[1])
     if len(s) == 2 and s[0] == "+":
-        return s[1]
+        return evaluate(s[1])
     if len(s) == 3 and s[1] in "+-*/":
         return opn[s[1]](evaluate(s[0]), evaluate(s[2]))
     if len(s) > 3 and s[1] in "+-*/":
@@ -37,11 +30,11 @@ def evaluate(s):
 
 def calc(input):
     expr = infixNotation(
-        operand,
+        ppc.integer,
         [
-            (signop, 1, opAssoc.RIGHT),
-            (multop, 2, opAssoc.LEFT),
-            (plusop, 2, opAssoc.LEFT),
+            (oneOf("+ -"), 1, opAssoc.RIGHT),
+            (oneOf("* /"), 2, opAssoc.LEFT),
+            (oneOf("+ -"), 2, opAssoc.LEFT),
         ],
     )
     return evaluate(expr.parseString(input))
