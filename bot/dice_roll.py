@@ -23,7 +23,7 @@ def create_response(regex_result, author):
         result_array = []
         aggregate = 0
 
-        modifier = calc(regex_result.group("mod") or "0")
+        modifier = int(calc(regex_result.group("mod") or "0"))
         modifier_string = (" ({:+d})").format(modifier) if modifier != 0 else ""
 
         for _ in range(die_amount):
