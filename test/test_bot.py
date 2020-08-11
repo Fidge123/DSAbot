@@ -22,6 +22,9 @@ class MockAuthor:
         self.name = channel_id
         self.mention = send
 
+    def __hash__(self):
+        return 123456789
+
     def __eq__(self, other):
         return str(self) == other
 
