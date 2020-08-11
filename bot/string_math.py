@@ -46,7 +46,7 @@ class EvalInfixOp(EvalBase):
         return res
 
 
-expr = infixNotation(
+grammar = infixNotation(
     ppc.integer.setParseAction(EvalConstant),
     [
         (oneOf("+ -"), 1, opAssoc.RIGHT, EvalSignOp),
@@ -57,4 +57,4 @@ expr = infixNotation(
 
 
 def calc(input):
-    return expr.parseString(input)[0].eval()
+    return grammar.parseString(input)[0].eval()

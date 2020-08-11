@@ -10,7 +10,7 @@ class MockAuthor:
 
 
 def create_response(input):
-    return dice_roll.create_response(dice_roll.parse(input), MockAuthor("TestUser"))
+    return dice_roll.create_response(input, MockAuthor("TestUser"))
 
 
 class TestDiceRoll(TestCase):

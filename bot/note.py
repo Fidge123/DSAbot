@@ -2,6 +2,14 @@ import re
 
 from bot import persistence
 
+number_notes = {}
+
+
+def on_load():
+    notes = persistence.load_notes()
+    for n in notes:
+        number_notes[n[0]] = n[1]
+
 
 def parse(message):
     return re.search(
@@ -9,9 +17,9 @@ def parse(message):
     )
 
 
-def create_response(regex_result, number_notes):
+def create_response(input):
+    regex_result = parse(input)
     if regex_result:
-
         if not (regex_result.group("id") in number_notes):
             number_notes[regex_result.group("id")] = 0
 

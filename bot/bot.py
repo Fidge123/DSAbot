@@ -4,13 +4,12 @@ import re
 
 import discord
 
-from bot import persistence, dice_roll, note, skill_check
+from bot import persistence, dice_roll, note, skill_check, generic_check
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
 permittedChannels = []
 userCharacters = {}
-number_notes = {}
 verbose = False
 random.seed()
 
@@ -18,15 +17,12 @@ random.seed()
 @client.event
 async def on_ready():
     print(f"{client.user} has connected to Discord!")
+    note.on_load()
     channel_ids = persistence.load_channels()
 
     for channel_id in channel_ids:
         new = client.get_channel(channel_id[0])
         permittedChannels.append(new)
-
-    notes = persistence.load_notes()
-    for n in notes:
-        number_notes[n[0]] = n[1]
 
 
 @client.event
@@ -60,17 +56,23 @@ async def on_message(message: discord.Message):
             await client.close()
             return
 
-        parsed_roll = dice_roll.parse(msgstring)
-        if parsed_roll:
-            return await send(dice_roll.create_response(parsed_roll, author))
+        response = dice_roll.create_response(msgstring, author)
+        if response:
+            return await send(response)
 
-        parsed_sc = skill_check.create_skill_check(msgstring, author)
-        if parsed_sc:
-            return await send(str(parsed_sc))
+        try:
+            return await send(str(skill_check.SkillCheck(msgstring, author)))
+        except ValueError:
+            pass
 
-        number_code = note.parse(msgstring)
-        if number_code:
-            return await send(note.create_response(number_code, number_notes))
+        try:
+            return await send(str(generic_check.GenericCheck(msgstring, author)))
+        except ValueError:
+            pass
+
+        response = note.create_response(msgstring)
+        if response:
+            return await send(response)
 
         debug_code = re.search(
             r"^debug:(?P<debugCommand>[a-z]*)$", msgstring, re.IGNORECASE
@@ -85,7 +87,7 @@ async def on_message(message: discord.Message):
                 response = "fullCache"
 
             if debug_code.group("debugCommand") == "numberNotes":
-                response = str(number_notes)
+                response = str(note.number_notes)
 
             return await send(response)
 
