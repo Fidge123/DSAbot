@@ -49,7 +49,7 @@ class GenericCheck:
         "modifier": lambda x: int(calc(x or "0")),
         "comment": lambda x: x.strip(),
     }
-    _response = "{author} {comment}\n{rolls} ===> {skill_req}{extra}"
+    _response = "{author} {comment}\n{rolls} ===> {skill_req}{result}"
 
     def __init__(self, message, author):
         parsed = self.matcher.search(message)
@@ -65,7 +65,7 @@ class GenericCheck:
             raise ValueError
 
     def __str__(self):
-        return self._response.format(**self.data, extra=self._get_extra(),)
+        return self._response.format(**self.data, result=self._get_result(),)
 
     def _skill_req(self):
         skill_req = 0
@@ -73,7 +73,7 @@ class GenericCheck:
             skill_req += max([roll - (attr + self.data["modifier"]), 0])
         return skill_req
 
-    def _get_extra(self):
+    def _get_result(self):
         if self.data["rolls"].critical_success:
             return "\n**Kritischer Erfolg!**"
         if self.data["rolls"].botch:
