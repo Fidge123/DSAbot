@@ -70,7 +70,7 @@ async def on_message(message: discord.Message):
         except ValueError:
             pass
 
-        response = note.create_response(msgstring)
+        response = note.create_response(msgstring, author)
         if response:
             return await send(response)
 
