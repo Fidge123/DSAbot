@@ -1,6 +1,5 @@
 import re
 
-from bot.string_math import calc
 from bot.checks.generic_check import GenericCheck
 
 
@@ -15,37 +14,50 @@ class SkillCheck(GenericCheck):
         """,
         re.VERBOSE | re.IGNORECASE,
     )
-    transform = {
-        "attributes": lambda x: [int(a) for a in re.split(r"[, ]+", x.strip(", "))],
-        "SR": lambda x: int(x),
-        "modifier": lambda x: int(calc(x or "0")),
-        "comment": lambda x: x.strip(),
-    }
-    _response = "{author} {comment}\n{rolls} ===> {skill_req}\n({SR} - {skill_req} = {SP} FP) {result}"
+    transform = {**GenericCheck.transform, "SR": lambda x: int(x)}
+    _response = "{author} {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\nFW {SR:<4}{diffs} = {SP} FP\n{result}\n```"
+    _routine = "{author} {comment}\n```py\nRoutineprobe: {SP} FP = QS {QL}\n```"
+
+    @property
+    def diffs(self):
+
+        return [
+            min([eav - roll, 0])
+            for eav, roll in zip(self.data["EAV"], self.data["rolls"])
+        ]
 
     @property
     def skill_points(self):
-        return self.data["SR"] - self.data["skill_req"]
+        return self.data["SR"] + sum(self.diffs)
 
     @property
-    def quality_level(self):
-        return min([max([self.skill_points - 1, 0]) // 3 + 1, 6])
+    def routine(self):
+        attr_ge_13 = all([attr >= 13 for attr in self.data["attributes"]])
+        sr_ge_10 = self.data["SR"] >= 10 + 3 * -self.data["modifier"]
+        return attr_ge_13 and sr_ge_10
+
+    def ql(self, skill_points):
+        return min([max([skill_points - 1, 0]) // 3 + 1, 6])
 
     def __str__(self):
-        return self._response.format(
-            **self.data, SP=self.skill_points, result=self._get_result(),
-        )
+        if self.routine:
+            sp = self.data["SR"] - self.data["SR"] // 2  # Rounds up
+            return self._routine.format(**self.data, SP=sp, QL=self.ql(sp))
+        else:
+            self.data["diffs"] = "".join("{:>4}".format(d or "") for d in self.diffs)
+            self.data["SP"] = self.skill_points
+            return super().__str__()
 
     def _get_result(self):
         if self.skill_points < 0 and self.data["rolls"].critical_success:
-            return "Automatisch bestanden\n**Kritischer Erfolg!**"
+            return "Kritischer Erfolg! - Automatisch bestanden"
         if self.skill_points < 0 and self.data["rolls"].botch:
-            return "Nicht bestanden\n**Patzer!**"
+            return "Patzer!"
         if self.skill_points < 0:
             return "Nicht bestanden"
         if self.skill_points >= 0 and self.data["rolls"].botch:
-            return "Automatisch nicht bestanden\n**Patzer!**"
+            return "Patzer! - Automatisch nicht bestanden"
         if self.skill_points >= 0 and self.data["rolls"].critical_success:
-            return "QS: {}\n**Kritischer Erfolg!**".format(self.quality_level)
+            return "Kritischer Erfolg! (QS {})".format(self.ql(self.skill_points))
         else:
-            return "QS: {}".format(self.quality_level)
+            return "Bestanden mit QS {}".format(self.ql(self.skill_points))

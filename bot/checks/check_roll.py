@@ -22,7 +22,9 @@ class CheckRolls:
         return self.rolls[key]
 
     def __str__(self):
-        return ", ".join(str(roll) for roll in self.rolls)
+        return "".join("{:>4}".format(roll) for roll in self.rolls)
+
+        # return ", ".join(str(roll) for roll in self.rolls)
 
     def __format__(self, spec):
         if spec in ["", "s"]:

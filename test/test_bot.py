@@ -94,12 +94,25 @@ class TestBot(TestCase):
                 if i == 3:
                     mock_randint.assert_called_with(1, 20)
                     m.channel.send.assert_called_with(
-                        "<@1337> Verbergen\n1, 1, 1 ===> 0\n(10 - 0 = 10 FP) QS: 4\n**Kritischer Erfolg!**"
+                        "<@1337> Verbergen\n"
+                        "```py\n"
+                        "EEW:      9   9   9\n"
+                        "Würfel:   1   1   1\n"
+                        "FW 10               = 10 FP\n"
+                        "Kritischer Erfolg! (QS 4)\n"
+                        "```",
                     )
 
                 if i == 4:
                     mock_randint.assert_called_with(1, 20)
-                    m.channel.send.assert_called_with("<@1337> Schwimmen\n1, 1 ===> 0")
+                    m.channel.send.assert_called_with(
+                        "<@1337> Schwimmen\n"
+                        "```py\n"
+                        "EEW:     14  14\n"
+                        "Würfel:   1   1\n"
+                        "Bestanden\n"
+                        "```",
+                    )
 
     def test_debug(self):
         messages = ["SUMMON", "debug:cache", "debug:fullCache", "BEGONE"]

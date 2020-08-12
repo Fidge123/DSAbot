@@ -2,6 +2,7 @@ import re
 
 from bot.string_math import calc
 from bot.checks.check_roll import CheckRolls
+from bot.checks.attributes import Attributes
 
 
 class GenericCheck:
@@ -15,11 +16,14 @@ class GenericCheck:
         re.VERBOSE | re.IGNORECASE,
     )
     transform = {
-        "attributes": lambda x: [int(attr) for attr in re.split(r"[, ]+", x.strip())],
+        "attributes": lambda x: Attributes(
+            [int(attr) for attr in re.split(r"[, ]+", x.strip(", "))]
+        ),
         "modifier": lambda x: int(calc(x or "0")),
         "comment": lambda x: x.strip(),
     }
-    _response = "{author} {comment}\n{rolls} ===> {skill_req}{result}"
+    _response = "{author} {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\n{result}\n```"
+    _impossible = "{author} {comment}\n```py\nEEW:{EAV}\nProbe nicht möglich\n```"
 
     def __init__(self, message, author):
         parsed = self.matcher.search(message)
@@ -28,25 +32,29 @@ class GenericCheck:
             for name, value in parsed.groupdict().items():
                 self.data[name] = self.transform[name](value)
             self.data["author"] = author.mention
+            self.data["EAV"] = Attributes(
+                [attr + self.data["modifier"] for attr in self.data["attributes"]]
+            )
 
             self.data["rolls"] = CheckRolls(len(self.data["attributes"]))
-            self.data["skill_req"] = self._skill_req()
         else:
             raise ValueError
 
     def __str__(self):
+        if self.impossible:
+            return self._impossible.format(**self.data)
         return self._response.format(**self.data, result=self._get_result(),)
 
-    def _skill_req(self):
-        skill_req = 0
-        for attr, roll in zip(self.data["attributes"], self.data["rolls"]):
-            skill_req += max([roll - (attr + self.data["modifier"]), 0])
-        return skill_req
+    @property
+    def impossible(self):
+        return any(eav <= 0 for eav in self.data["EAV"])
 
     def _get_result(self):
         if self.data["rolls"].critical_success:
-            return "\n**Kritischer Erfolg!**"
+            return "Kritischer Erfolg!"
         if self.data["rolls"].botch:
-            return "\n**Patzer!**"
+            return "Patzer!"
+        if all(roll < eav for roll, eav in zip(self.data["rolls"], self.data["EAV"])):
+            return "Bestanden"
         else:
-            return ""
+            return "Nicht bestanden"
