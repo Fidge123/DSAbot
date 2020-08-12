@@ -52,7 +52,7 @@ It also allows giving multiple modifiers which are summed up and automatically d
 @User Kraftakt  
 EEW:     11  11  12
 Würfel:   1   1  18
-FW 10           -6 = 4 FP
+FW 10            -6 = 4 FP
 Kritischer Erfolg! (QS 2)
 ```
 
@@ -158,18 +158,6 @@ Bestanden mit QS 3
 **TODO**
 - [ ] Reference number notes as attributes
 
-### Attribute Check
-
-No specific rolls are implemented yet. You can use the generic roll as a workaround.
-
-### Close Combat
-
-No specific rolls are implemented yet. You can use the generic roll as a workaround.
-
-### Ranged Combat
-
-No specific rolls are implemented yet. You can use the generic roll as a workaround.
-
 ### Generic Checks
 
 These follow almost the same guidelines as skill checks but allow any number of attributes and don't support adding skill rating. It shows the minimum needed skill rating to succeed after the arrow.
@@ -260,6 +248,43 @@ EEW:     7
 Würfel:  5
 Bestanden
 ```
+
+### Attribute Check
+
+No specific rolls are implemented yet. You can use the generic roll as a workaround.
+
+### Close Combat
+
+No specific rolls are implemented yet. You can use the generic roll as a workaround.
+
+### Ranged Combat
+
+No specific rolls are implemented yet. You can use the generic roll as a workaround.
+
+### Numeric Notes
+
+You can save a keyword-number combination
+
+> note_id->42
+
+> note_id is now 42
+
+If the note already existed it will be updated
+
+> note_id->+2
+
+> note_id is now 44
+
+> note_id->-2
+
+> note_id is now 42
+
+You can see all your notes as a list by writing `notes`
+
+> notes
+
+> note_id: 42
+> other  :  1
 
 # Development
 
