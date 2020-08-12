@@ -114,15 +114,26 @@ class TestBot(TestCase):
                     m.channel.send.assert_called_with("cache")
 
     def test_notes(self):
-        messages = ["SUMMON", "note:blub->7", "note:klik->8", "note:klik->9", "BEGONE"]
+        messages = [
+            "SUMMON",
+            "note:blub->7",
+            "note:klik->8",
+            "note:klik->9",
+            "notes",
+            "BEGONE",
+        ]
 
-        for m in messages:
+        for i, m in enumerate(messages):
             with self.subTest(msg=m):
                 m = self.message(m)
                 self.loop.run_until_complete(on_message(m))
-                if "blub" in m.content.lower():
-                    m.channel.send.assert_called_with("blub is now 7")
-                elif "8" in m.content.lower():
-                    m.channel.send.assert_called_with("klik is now 8")
-                elif "9" in m.content.lower():
-                    m.channel.send.assert_called_with("klik is now 17")
+                if i == 1:
+                    m.channel.send.assert_called_with("<@1337> blub is now 7")
+                if i == 2:
+                    m.channel.send.assert_called_with("<@1337> klik is now 8")
+                if i == 3:
+                    m.channel.send.assert_called_with("<@1337> klik is now 17")
+                if i == 4:
+                    m.channel.send.assert_called_with(
+                        "<@1337>\n```blub:  7\nklik: 17```"
+                    )

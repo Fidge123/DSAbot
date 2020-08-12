@@ -45,8 +45,10 @@ def create_response(message, user):
         number_notes[user_hash][create_note.group("id")] += int(
             create_note.group("number")
         )
-        response = "{} is now {}".format(
-            create_note.group("id"), number_notes[user_hash][create_note.group("id")]
+        response = "{user} {noteid} is now {value}".format(
+            user=user.mention,
+            noteid=create_note.group("id"),
+            value=number_notes[user_hash][create_note.group("id")],
         )
         persistence.persist_note(
             create_note.group("id"),
@@ -58,6 +60,8 @@ def create_response(message, user):
     get_notes = get(message)
     if get_notes:
         if user_hash in number_notes:
-            return "```{}```".format(notes_to_str(user_hash))
+            return "{user}\n```{notes}```".format(
+                user=user.mention, notes=notes_to_str(user_hash)
+            )
         else:
-            return "Du hast keine Notizen."
+            return "{} Du hast keine Notizen.".format(user.mention)
