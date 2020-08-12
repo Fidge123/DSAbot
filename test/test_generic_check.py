@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from bot.skill_check import SkillCheck, GenericCheck
+from bot.checks import GenericCheck
 
 
 class MockAuthor:
@@ -9,11 +9,7 @@ class MockAuthor:
         self.mention = "@{}".format(name)
 
 
-def create_response(input):
-    return str(SkillCheck(input, MockAuthor("TestUser")))
-
-
-class TestSkillCheck(TestCase):
+class TestGenericCheck(TestCase):
     def test_parse(self):
         gc = GenericCheck("13", MockAuthor("TestUser"))
         self.assertEqual(gc.data["author"], "@TestUser")

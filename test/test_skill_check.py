@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from bot.skill_check import SkillCheck
+from bot.checks import SkillCheck
 
 
 class MockAuthor:
