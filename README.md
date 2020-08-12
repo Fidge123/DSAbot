@@ -28,9 +28,9 @@ If you want to roll for Kraftakt (Body Control) and you have a Fertigkeitswert (
 
 ```
 @User  
-EEW:    11  11  13   
-Würfel: 15   8  16  
-FW 4    -4      -3 = -3 FP  
+EEW:     11  11  13   
+Würfel:  15   8  16  
+FW 4     -4      -3 = -3 FP  
 Nicht bestanden  
 ```
 
@@ -38,8 +38,8 @@ In this example you have failed the check. If you succeed, it also calculated th
 
 ```
 @User  
-EEW:    11  11  13   
-Würfel:  4  10  14  
+EEW:     11  11  13   
+Würfel:   4  10  14  
 FW 4            -1 = 3 FP  
 Bestanden mit QS 1    
 ```
@@ -50,8 +50,8 @@ It also allows giving multiple modifiers which are summed up and automatically d
 
 ```
 @User Kraftakt  
-EEW:    11  11  12
-Würfel:  1   1  18
+EEW:     11  11  12
+Würfel:   1   1  18
 FW 10           -6 = 4 FP
 Kritischer Erfolg! (QS 2)
 ```
@@ -60,9 +60,9 @@ or
 
 ```
 @User Kraftakt  
-EEW:    11  11  12
-Würfel: 20  20   1
-FW 10   -9  -9      = -8 FP
+EEW:     11  11  12
+Würfel:  20  20   1
+FW 10    -9  -9      = -8 FP
 Patzer!
 ```
 
@@ -72,7 +72,7 @@ Impossible checks are detected automatically.
 
 ```
 @User   
-EEW:     0   1   9
+EEW:      0   1   9
 Probe nicht möglich
 ```
 
@@ -89,9 +89,9 @@ Routineprobe: 9 FP = QS 3
 
 ```
 @User   
-EEW:    12  12  13
-Würfel:  5  18  16
-FW 17       -6  -3 = 8 FP
+EEW:     12  12  13
+Würfel:   5  18  16
+FW 17        -6  -3 = 8 FP
 Bestanden mit QS 3
 ```
 
@@ -101,9 +101,9 @@ Checks can be retried by replying **Retry** or repeated with **Repeat**. Retries
 
 ```
 @User Kraftakt  
-EEW:    11  11  12
-Würfel: 20   1  18
-FW 10   -9      -6 = -5 FP
+EEW:     11  11  12
+Würfel:  20   1  18
+FW 10    -9      -6 = -5 FP
 Nicht bestanden
 ```
 
@@ -111,9 +111,9 @@ Nicht bestanden
 
 ```
 @User Zweiter Versuch - Kraftakt  
-EEW:    10  10  11
-Würfel:  6   9  16
-FW 10           -5 = 5 FP
+EEW:     10  10  11
+Würfel:   6   9  16
+FW 10            -5 = 5 FP
 Bestanden mit QS 2
 ```
 
@@ -123,9 +123,9 @@ or
 
 ```
 @User Zweite Probe - Kraftakt  
-EEW:    10  10  11
-Würfel:  6   9  16
-FW 10           -5 = 5 FP
+EEW:     10  10  11
+Würfel:   6   9  16
+FW 10            -5 = 5 FP
 Bestanden mit QS 2
 ```
 
@@ -135,9 +135,9 @@ You can also reply with **Schips** followed by a three **Keep**/**k** or **Rerol
 
 ```
 @User Kraftakt  
-EEW:    11  11  12
-Würfel: 20   1  18
-FW 10   -9      -6 = -5 FP
+EEW:     11  11  12
+Würfel:  20   1  18
+FW 10    -9      -6 = -5 FP
 Nicht bestanden
 ```
 
