@@ -20,7 +20,7 @@ class AttributeCheck(GenericCheck):
             return "Kritischer Erfolg!"
         if rolls.critical_success:
             return "Unbestätigter kritischer Erfolg!"
-        if rolls.botch and rolls.confirmation_roll <= self.data["EAV"][0]:
+        if rolls.botch and rolls.confirmation_roll > self.data["EAV"][0]:
             return "Patzer!"
         if rolls.botch:
             return "Unbestätigter Patzer!"
