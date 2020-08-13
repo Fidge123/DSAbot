@@ -54,16 +54,6 @@ class TestBot(TestCase):
     def message(self, msg):
         return MockMessage(msg, self.testauthor, self.testchannel, AsyncMock())
 
-    def skill_check(self, msg, result):
-        messages = ["SUMMON", msg, "BEGONE"]
-
-        for m in messages:
-            with self.subTest(msg=m):
-                m = self.message(m)
-                self.loop.run_until_complete(on_message(m))
-                if msg in m.content:
-                    m.channel.send.assert_called_with(result)
-
     @patch("random.randint", new_callable=MagicMock())
     def test_smoke(self, mock_randint: MagicMock):
         # Set Up
