@@ -65,6 +65,7 @@ class TestAttributeCheck(TestCase):
             "```",
         )
 
+        mock_randint.return_value = 20
         ac = AttributeCheck("!18 +3 💥", MockAuthor("TestUser"))
         self.assertEqual(ac.data["attributes"].attributes, [18])
         self.assertEqual(ac.data["EAV"].attributes, [21])
