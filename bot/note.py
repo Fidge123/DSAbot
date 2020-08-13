@@ -23,7 +23,7 @@ def create_note(note_id, value, user):
         number_notes[note_id] = 0
 
     number_notes[note_id] += int(value)
-    response = "{user} {note_id} is now {value}".format(
+    response = "{user} {note_id} ist jetzt {value}.".format(
         user=user.mention, note_id=note_id, value=number_notes[note_id],
     )
     persistence.persist_note(note_id, number_notes[note_id])
@@ -46,7 +46,7 @@ def delete_note(user, id):
         del number_notes[id]
         return response
     else:
-        return "{user} Es gibt keine Notiz {id}".format(user=user.mention, id=id)
+        return "{user} Es gibt keine Notiz {id}.".format(user=user.mention, id=id)
 
 
 def create_response(message, user):
