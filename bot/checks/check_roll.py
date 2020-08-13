@@ -10,6 +10,9 @@ class CheckRolls:
         if num == 1 and (self.critical_success or self.botch):
             self.confirmation_roll = random.randint(1, 20)
 
+    def reroll(self, i):
+        self.rolls[i] = random.randint(1, 20)
+
     @property
     def critical_success(self):
         check = len(self) == 3 and self.rolls.count(1) >= 2

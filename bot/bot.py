@@ -4,14 +4,11 @@ import re
 
 import discord
 
-from bot import persistence, dice_roll, note
-from bot.checks import SkillCheck, GenericCheck, AttributeCheck
+from bot import persistence, dice_roll, note, check
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
 permittedChannels = []
-userCharacters = {}
-verbose = False
 random.seed()
 
 
@@ -61,20 +58,9 @@ async def on_message(message: discord.Message):
         if response:
             return await send(response)
 
-        try:
-            return await send(str(SkillCheck(msgstring, author)))
-        except ValueError:
-            pass
-
-        try:
-            return await send(str(AttributeCheck(msgstring, author)))
-        except ValueError:
-            pass
-
-        try:
-            return await send(str(GenericCheck(msgstring, author)))
-        except ValueError:
-            pass
+        response = check.create_response(msgstring, author)
+        if response:
+            return await send(response)
 
         response = note.create_response(msgstring, author)
         if response:

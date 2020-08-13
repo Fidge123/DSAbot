@@ -137,10 +137,13 @@ class TestBot(TestCase):
     def test_notes(self):
         messages = [
             "SUMMON",
-            "note:blub->7",
-            "note:klik->8",
-            "note:klik->9",
+            "note:test_blub->7",
+            "note:test_klik->8",
+            "note:test_klik->9",
             "notes",
+            "delete note test_blub",
+            "delete note test_klik",
+            "delete note test_klik",
             "BEGONE",
         ]
 
@@ -149,12 +152,24 @@ class TestBot(TestCase):
                 m = self.message(m)
                 self.loop.run_until_complete(on_message(m))
                 if i == 1:
-                    m.channel.send.assert_called_with("<@1337> blub is now 7")
+                    m.channel.send.assert_called_with("<@1337> test_blub ist jetzt 7.")
                 if i == 2:
-                    m.channel.send.assert_called_with("<@1337> klik is now 8")
+                    m.channel.send.assert_called_with("<@1337> test_klik ist jetzt 8.")
                 if i == 3:
-                    m.channel.send.assert_called_with("<@1337> klik is now 17")
+                    m.channel.send.assert_called_with("<@1337> test_klik ist jetzt 17.")
                 if i == 4:
                     m.channel.send.assert_called_with(
-                        "<@1337>\n```blub :  7\nklik : 17```"
+                        "<@1337>\n```test_blub :  7\ntest_klik : 17```"
+                    )
+                if i == 5:
+                    m.channel.send.assert_called_with(
+                        "<@1337> test_blub war 7 und wurde nun gelöscht."
+                    )
+                if i == 6:
+                    m.channel.send.assert_called_with(
+                        "<@1337> test_klik war 17 und wurde nun gelöscht."
+                    )
+                if i == 7:
+                    m.channel.send.assert_called_with(
+                        "<@1337> Es gibt keine Notiz test_klik."
                     )
