@@ -279,17 +279,17 @@ No specific rolls are implemented yet. You can use the generic roll as a workaro
 
 You can save a keyword-number combination
 
-> note_id->42
+> note:note_id->42
 
 > note_id is now 42
 
 If the note already existed it will be updated
 
-> note_id->+2
+> note:note_id->+2
 
 > note_id is now 44
 
-> note_id->-2
+> note:note_id->-2
 
 > note_id is now 42
 
@@ -297,8 +297,8 @@ You can see all your notes as a list by writing `notes`
 
 > notes
 
-> note_id: 42
-> other  :  1
+> note_id : 42
+> other   :  1
 
 # Development
 
