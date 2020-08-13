@@ -32,13 +32,15 @@ class GenericCheck:
             for name, value in parsed.groupdict().items():
                 self.data[name] = self.transform[name](value)
             self.data["author"] = author.mention
-            self.data["EAV"] = Attributes(
-                [attr + self.data["modifier"] for attr in self.data["attributes"]]
-            )
-
-            self.data["rolls"] = CheckRolls(len(self.data["attributes"]))
+            self.recalculate()
         else:
             raise ValueError
+
+    def recalculate(self):
+        self.data["EAV"] = Attributes(
+            [attr + self.data["modifier"] for attr in self.data["attributes"]]
+        )
+        self.data["rolls"] = CheckRolls(len(self.data["attributes"]))
 
     def __str__(self):
         if self.impossible:

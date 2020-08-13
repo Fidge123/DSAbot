@@ -20,7 +20,6 @@ class SkillCheck(GenericCheck):
 
     @property
     def diffs(self):
-
         return [
             min([eav - roll, 0])
             for eav, roll in zip(self.data["EAV"], self.data["rolls"])
@@ -36,11 +35,15 @@ class SkillCheck(GenericCheck):
         sr_ge_10 = self.data["SR"] >= 10 + 3 * -self.data["modifier"]
         return attr_ge_13 and sr_ge_10
 
+    def force(self):
+        self._force = True
+
     def ql(self, skill_points):
         return min([max([skill_points - 1, 0]) // 3 + 1, 6])
 
     def __str__(self):
-        if self.routine:
+        if self.routine and not getattr(self, "_force", False):
+            self._force = False
             sp = self.data["SR"] - self.data["SR"] // 2  # Rounds up
             return self._routine.format(**self.data, SP=sp, QL=self.ql(sp))
         else:
