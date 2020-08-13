@@ -30,11 +30,9 @@ def create_check(msg, author):
 
 
 def schip_split(input):
-    words = input.split()
-    if len(words) == 1:
-        return [letter == "r" for letter in input]
-    else:
-        return [word.lower() == "reroll" for word in words]
+    input = re.sub(r"reroll\ ?", "r", input, re.IGNORECASE)
+    input = re.sub(r"keep\ ?", "k", input, re.IGNORECASE)
+    return [letter == "r" for letter in input]
 
 
 def create_response(msg, author):
