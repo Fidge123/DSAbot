@@ -153,14 +153,14 @@ class TestGenericCheck(TestCase):
 
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_modifier(self, mock_randint: MagicMock):
-        mock_randint.return_value = 8
+        mock_randint.return_value = 9
         gc = GenericCheck("11,13,13-2 Sinnesschärfe", MockAuthor("TestUser"))
         self.assertEqual(gc.data["attributes"].attributes, [11, 13, 13])
         self.assertEqual(gc.data["EAV"].attributes, [9, 11, 11])
         self.assertEqual(gc.data["modifier"], -2)
         self.assertEqual(gc.data["comment"], "Sinnesschärfe")
         self.assertEqual(gc.data["author"], "@TestUser")
-        self.assertEqual(gc.data["rolls"].rolls, [8, 8, 8])
+        self.assertEqual(gc.data["rolls"].rolls, [9, 9, 9])
         self.assertEqual(gc.data["rolls"].critical_success, False)
         self.assertEqual(gc.data["rolls"].botch, False)
         self.assertEqual(gc.impossible, False)
@@ -169,7 +169,7 @@ class TestGenericCheck(TestCase):
             "@TestUser Sinnesschärfe\n"
             "```py\n"
             "EEW:      9  11  11\n"
-            "Würfel:   8   8   8\n"
+            "Würfel:   9   9   9\n"
             "Bestanden\n"
             "```",
         )

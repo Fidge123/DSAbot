@@ -74,6 +74,7 @@ class TestBot(TestCase):
             "5w10+5",
             "12,12,12@10 -3 Verbergen",
             "12,12-3 + 5 Schwimmen",
+            "!12-3 + 5 Breitschwert",
             "BEGONE",
         ]
 
@@ -84,13 +85,11 @@ class TestBot(TestCase):
                 if i == 1:
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with("<@1337> \n1 + 1 + 1 + 1 + 1 = 5")
-
                 if i == 2:
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with(
                         "<@1337> \n1 + 1 + 1 + 1 + 1 (+5) = 10"
                     )
-
                 if i == 3:
                     mock_randint.assert_called_with(1, 20)
                     m.channel.send.assert_called_with(
@@ -102,7 +101,6 @@ class TestBot(TestCase):
                         "Kritischer Erfolg! (QS 4)\n"
                         "```",
                     )
-
                 if i == 4:
                     mock_randint.assert_called_with(1, 20)
                     m.channel.send.assert_called_with(
@@ -111,6 +109,16 @@ class TestBot(TestCase):
                         "EEW:     14  14\n"
                         "Würfel:   1   1\n"
                         "Bestanden\n"
+                        "```",
+                    )
+                if i == 5:
+                    mock_randint.assert_called_with(1, 20)
+                    m.channel.send.assert_called_with(
+                        "<@1337> Breitschwert\n"
+                        "```py\n"
+                        "EEW:     14\n"
+                        "Würfel:   1 --> 1\n"
+                        "Kritischer Erfolg!\n"
                         "```",
                     )
 

@@ -50,11 +50,12 @@ class GenericCheck:
         return any(eav <= 0 for eav in self.data["EAV"])
 
     def _get_result(self):
-        if self.data["rolls"].critical_success:
+        rolls: CheckRolls = self.data["rolls"]
+        if rolls.critical_success:
             return "Kritischer Erfolg!"
-        if self.data["rolls"].botch:
+        if rolls.botch:
             return "Patzer!"
-        if all(roll < eav for roll, eav in zip(self.data["rolls"], self.data["EAV"])):
+        if all(roll <= eav for roll, eav in zip(rolls, self.data["EAV"])):
             return "Bestanden"
         else:
             return "Nicht bestanden"

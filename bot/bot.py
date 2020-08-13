@@ -5,7 +5,7 @@ import re
 import discord
 
 from bot import persistence, dice_roll, note
-from bot.checks import SkillCheck, GenericCheck
+from bot.checks import SkillCheck, GenericCheck, AttributeCheck
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
@@ -63,6 +63,11 @@ async def on_message(message: discord.Message):
 
         try:
             return await send(str(SkillCheck(msgstring, author)))
+        except ValueError:
+            pass
+
+        try:
+            return await send(str(AttributeCheck(msgstring, author)))
         except ValueError:
             pass
 

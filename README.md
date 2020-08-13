@@ -203,8 +203,15 @@ Patzer!
 ```
 @User Wuchtschlag II
 EEW:    13
-Würfel:  1 --> 11
+Würfel:  1 --> 3
 Kritischer Erfolg!
+```
+
+```
+@User Wuchtschlag II
+EEW:    13
+Würfel:  1 --> 18
+Unbestätigter kritischer Erfolg
 ```
 
 ```
@@ -212,6 +219,13 @@ Kritischer Erfolg!
 EEW:    13
 Würfel: 20 --> 18
 Patzer!
+```
+
+```
+@User Wuchtschlag II
+EEW:    13
+Würfel: 20 --> 5
+Unbestätigter Patzer
 ```
 
 Impossible checks are detected automatically.
