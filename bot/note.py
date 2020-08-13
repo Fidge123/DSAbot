@@ -37,6 +37,18 @@ def get_notes(user):
         return "{} Es gibt keine Notizen.".format(user.mention)
 
 
+def delete_note(user, id):
+    if id in number_notes:
+        persistence.remove_note(id)
+        response = "{user} {id} war {value} und wurde nun gelöscht.".format(
+            user=user.mention, id=id, value=number_notes[id]
+        )
+        del number_notes[id]
+        return response
+    else:
+        return "{user} Es gibt keine Notiz {id}".format(user=user.mention, id=id)
+
+
 def create_response(message, user):
     create_match = re.search(
         r"^note:(?P<id>\w+)(->(?P<number>[\+\-]?[0-9]+))?$", message, re.IGNORECASE,
@@ -47,3 +59,7 @@ def create_response(message, user):
     get_match = re.search(r"^notes$", message, re.IGNORECASE)
     if get_match:
         return get_notes(user)
+
+    remove_match = re.search(r"^delete note (?P<id>\w+)$", message, re.IGNORECASE)
+    if remove_match:
+        return delete_note(user, remove_match.group("id"))
