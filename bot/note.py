@@ -7,48 +7,33 @@ number_notes = {}
 
 def on_load():
     notes = persistence.load_notes()
-    for (id, value, user) in notes:
-        if user not in number_notes:
-            number_notes[user] = {}
-
-        number_notes[user][id] = value
+    for (id, value) in notes:
+        number_notes[id] = value
 
 
-def notes_to_str(user_hash):
-    lk = max(map(len, number_notes[user_hash].keys()))
-    lv = max(map(lambda x: len(str(x)), number_notes[user_hash].values()))
-    return "\n".join(
-        [f"{k:<{lk}}: {v:>{lv}}" for k, v in number_notes[user_hash].items()]
-    )
+def notes_to_str():
+    lk = max(map(len, number_notes.keys()))
+    lv = max(map(lambda x: len(str(x)), number_notes.values()))
+    return "\n".join([f"{k:<{lk}}: {v:>{lv}}" for k, v in number_notes.items()])
 
 
 def create_note(note_id, value, user):
-    user_hash = str(hash(user))
-    if user_hash not in number_notes:
-        number_notes[user_hash] = {}
+    if note_id not in number_notes:
+        number_notes[note_id] = 0
 
-    if note_id not in number_notes[user_hash]:
-        number_notes[user_hash][note_id] = 0
-
-    number_notes[user_hash][note_id] += int(value)
+    number_notes[note_id] += int(value)
     response = "{user} {note_id} is now {value}".format(
-        user=user.mention, note_id=note_id, value=number_notes[user_hash][note_id],
+        user=user.mention, note_id=note_id, value=number_notes[note_id],
     )
-    persistence.persist_note(
-        note_id, number_notes[user_hash][note_id], user_hash,
-    )
+    persistence.persist_note(note_id, number_notes[note_id])
     return response
 
 
 def get_notes(user):
-    user_hash = str(hash(user))
-
-    if user_hash in number_notes:
-        return "{user}\n```{notes}```".format(
-            user=user.mention, notes=notes_to_str(user_hash)
-        )
+    if len(number_notes.items()):
+        return "{user}\n```{notes}```".format(user=user.mention, notes=notes_to_str())
     else:
-        return "{} Du hast keine Notizen.".format(user.mention)
+        return "{} Es gibt keine Notizen.".format(user.mention)
 
 
 def create_response(message, user):

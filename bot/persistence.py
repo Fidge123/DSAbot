@@ -40,10 +40,10 @@ def load_channels():
     return results
 
 
-def persist_note(noteID, value, user):
+def persist_note(noteID, value):
     with sqlite3.connect(db_path) as connection:
         connection.execute(
-            "INSERT OR REPLACE INTO numberNotes VALUES (?, ?, ?)", (noteID, value, user)
+            "INSERT OR REPLACE INTO numberNotes VALUES (?, ?)", (noteID, value)
         )
         connection.commit()
 
