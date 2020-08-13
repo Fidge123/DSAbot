@@ -156,5 +156,5 @@ class TestBot(TestCase):
                     m.channel.send.assert_called_with("<@1337> klik is now 17")
                 if i == 4:
                     m.channel.send.assert_called_with(
-                        "<@1337>\n```blub:  7\nklik: 17```"
+                        "<@1337>\n```blub :  7\nklik : 17```"
                     )
