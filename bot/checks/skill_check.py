@@ -6,11 +6,11 @@ from bot.checks.generic_check import GenericCheck
 class SkillCheck(GenericCheck):
     matcher = re.compile(
         r"""
-            ^!?\ ?                                 # Optional exclamation mark
-            (?P<attributes>(?:[0-9]+,?\ ?){3})\ ?  # A non-zero amount of numbers divided by comma or space
-            (?:@\ ?(?P<SR>[0-9]+))\ ?              # An @ followed by a number
-            (?P<modifier>(\ *[\+\-]\ *[0-9]+)*)\ ? # A modifier
-            (?P<comment>.*?)$                      # Anything else is lazy-matched as a comment
+            ^!?\ ?                                # Optional exclamation mark
+            (?P<attributes>(?:[0-9]+,?\ ?){3})\ ? # A non-zero amount of numbers divided by comma or space
+            (?:@\ ?(?P<SR>[0-9]+))\ ?             # An @ followed by a number
+            (?P<modifier>(\ *[\+\-]\ *[0-9]+)*)   # A modifier
+            (\ (?P<comment>.*?))?$                # Anything else is lazy-matched as a comment
         """,
         re.VERBOSE | re.IGNORECASE,
     )

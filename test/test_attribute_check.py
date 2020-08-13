@@ -66,6 +66,27 @@ class TestAttributeCheck(TestCase):
         )
 
         mock_randint.return_value = 20
+        ac = AttributeCheck("!18 💥", MockAuthor("TestUser"))
+        self.assertEqual(ac.data["attributes"].attributes, [18])
+        self.assertEqual(ac.data["EAV"].attributes, [18])
+        self.assertEqual(ac.data["modifier"], 0)
+        self.assertEqual(ac.data["comment"], "💥")
+        self.assertEqual(ac.data["author"], "@TestUser")
+        self.assertEqual(ac.data["rolls"].rolls, [20])
+        self.assertEqual(ac.data["rolls"].confirmation_roll, 20)
+        self.assertEqual(ac.data["rolls"].critical_success, False)
+        self.assertEqual(ac.data["rolls"].botch, True)
+        self.assertEqual(ac.impossible, False)
+        self.assertEqual(
+            str(ac),
+            "@TestUser 💥\n"
+            "```py\n"
+            "EEW:     18\n"
+            "Würfel:  20 --> 20\n"
+            "Patzer!\n"
+            "```",
+        )
+
         ac = AttributeCheck("!18 +3 💥", MockAuthor("TestUser"))
         self.assertEqual(ac.data["attributes"].attributes, [18])
         self.assertEqual(ac.data["EAV"].attributes, [21])
@@ -83,6 +104,6 @@ class TestAttributeCheck(TestCase):
             "```py\n"
             "EEW:     21\n"
             "Würfel:  20 --> 20\n"
-            "Patzer!\n"
+            "Unbestätigter Patzer\n"
             "```",
         )

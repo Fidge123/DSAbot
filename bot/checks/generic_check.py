@@ -8,10 +8,10 @@ from bot.checks.attributes import Attributes
 class GenericCheck:
     matcher = re.compile(
         r"""
-            ^!?\ ?                                 # Optional exclamation mark
-            (?P<attributes>(?:[0-9]+,?\ ?)+)\ ?    # A non-zero amount of numbers divided by comma or space
-            (?P<modifier>(\ *[\+\-]\ *[0-9]+)*)\ ? # A modifier
-            (?P<comment>.*?)$                      # Anything else is lazy-matched as a comment
+            ^!?\ ?                              # Optional exclamation mark
+            (?P<attributes>(?:[0-9]+,?\ ?)+)\ ? # A non-zero amount of numbers divided by comma or space
+            (?P<modifier>(\ *[\+\-]\ *[0-9]+)*) # A modifier
+            (\ (?P<comment>.*?))?$              # Anything else is lazy-matched as a comment
         """,
         re.VERBOSE | re.IGNORECASE,
     )
@@ -20,7 +20,7 @@ class GenericCheck:
             [int(attr) for attr in re.split(r"[, ]+", x.strip(", "))]
         ),
         "modifier": lambda x: int(calc(x or "0")),
-        "comment": lambda x: x.strip(),
+        "comment": lambda x: (x or "").strip(),
     }
     _response = "{author} {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\n{result}\n```"
     _impossible = "{author} {comment}\n```py\nEEW:{EAV}\nProbe nicht möglich\n```"
