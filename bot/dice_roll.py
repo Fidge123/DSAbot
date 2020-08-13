@@ -1,5 +1,6 @@
 import re
 import random
+from bot.string_math import calc
 
 
 def parse(message):
@@ -7,8 +8,7 @@ def parse(message):
         r"""
             ^!?\ ?                                     # Optional exclamation mark
             (?P<amount>[0-9]*)[dw](?P<sides>[0-9]+)\ ? # <Number of dice> and <Number of sides> divided by "d" or "w"
-            (?:\+\ ?(?P<add>[0-9]+))?\ ?               # A + modifier (captured as `add`)
-            (?:\-\ ?(?P<sub>[0-9]+))?\ ?               # A - modifier (captured as `sub`)
+            (?P<mod>(\ ?[\+\-]\ ?[0-9]+)*)\ ?          # A modifier (captured as `mod`)
             (?P<comment>.*?)$                          # Anything else is lazy-matched as a comment
         """,
         message,
@@ -16,16 +16,16 @@ def parse(message):
     )
 
 
-def create_response(regex_result, author):
+def create_response(input, author):
+    regex_result = parse(input)
     if regex_result:
         die_amount = int(regex_result.group("amount") or 1)
         die_sides = int(regex_result.group("sides"))
         result_array = []
         aggregate = 0
 
-        add = int(regex_result.group("add") or 0)
-        sub = int(regex_result.group("sub") or 0)
-        modifier_string = (" ({:+d})").format(add - sub) if add - sub != 0 else ""
+        modifier = int(calc(regex_result.group("mod") or "0"))
+        modifier_string = (" ({:+d})").format(modifier) if modifier != 0 else ""
 
         for _ in range(die_amount):
             roll = random.randint(1, die_sides)
@@ -37,5 +37,5 @@ def create_response(regex_result, author):
             comment=regex_result.group("comment").strip(),
             results=(" + ").join(result_array),
             modifier=modifier_string,
-            FP=aggregate + add - sub,
+            FP=aggregate + modifier,
         )

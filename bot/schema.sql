@@ -5,6 +5,6 @@ create table if not exists channels
 );
 create table if not exists numberNotes
 (
-	id TEXT NOT NULL PRIMARY KEY,
+	id text NOT NULL PRIMARY KEY,
 	content int
 );

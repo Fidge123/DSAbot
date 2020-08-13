@@ -9,6 +9,7 @@ pre-commit = "*"
 
 [packages]
 discord = "*"
+pyparsing = "*"
 
 [requires]
 python_version = "3.8"

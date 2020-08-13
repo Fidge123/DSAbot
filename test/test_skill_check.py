@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
-from bot import skill_check
+from bot.checks import SkillCheck
 
 
 class MockAuthor:
@@ -9,119 +9,270 @@ class MockAuthor:
         self.mention = "@{}".format(name)
 
 
-def create_response(input):
-    return skill_check.create_response(skill_check.parse(input), MockAuthor("TestUser"))
-
-
 class TestSkillCheck(TestCase):
     def test_parse(self):
-        self.assertIsNotNone(skill_check.parse("13"))
-        self.assertIsNotNone(skill_check.parse("1,12,18"))
-        self.assertIsNotNone(skill_check.parse("8 19 1400"))
-        self.assertIsNotNone(skill_check.parse("2 2, 2, 2,2,2"))
+        self.assertIsNotNone(SkillCheck("13 14 15@2", MockAuthor("TestUser")))
+        self.assertIsNotNone(SkillCheck("1,12,18@18", MockAuthor("TestUser")))
+        self.assertIsNotNone(SkillCheck("8 19 1400@0 + 14", MockAuthor("TestUser")))
+        self.assertIsNotNone(SkillCheck("2 2,2, @1400-2-2-2", MockAuthor("TU")))
+        self.assertIsNotNone(SkillCheck("!13 1 12@2 +1+1 Test", MockAuthor("TestUser")))
+        self.assertIsNotNone(SkillCheck("! 1,12,18@18 Krit", MockAuthor("TestUser")))
 
-    def test_parse_with_fw(self):
-        self.assertIsNotNone(skill_check.parse("13@2"))
-        self.assertIsNotNone(skill_check.parse("1,12,18@18"))
-        self.assertIsNotNone(skill_check.parse("8 19 1400@0"))
-        self.assertIsNotNone(skill_check.parse("2 2, 2, 2,2,2@1400"))
-
-    def test_parse_with_prefix(self):
-        self.assertIsNotNone(skill_check.parse("!13 1@2"))
-        self.assertIsNotNone(skill_check.parse("! 1,12,18@18"))
-
-        self.assertIsNone(skill_check.parse("!!13 1@2"))
-        self.assertIsNone(skill_check.parse("!  1 13@0"))
-        self.assertIsNone(skill_check.parse("!?4"))
-        self.assertIsNone(skill_check.parse("#2,2,2@2"))
-
-    def test_parse_with_large_numbers(self):
-        self.assertIsNotNone(skill_check.parse("1337@1337"))
-        self.assertIsNotNone(skill_check.parse("100000 100000 1000000 @ 1000000"))
-        self.assertIsNotNone(skill_check.parse("9999999@88888888"))
-
-    def test_parse_with_modifiers(self):
-        self.assertIsNotNone(skill_check.parse("12 12 12@8+3"))
-        self.assertIsNotNone(skill_check.parse("8,9,10-4"))
-        self.assertIsNotNone(skill_check.parse("!4 5 16 18@17-4"))
-        self.assertIsNotNone(skill_check.parse("!1 + 1 - 4"))
-
-    def test_parse_with_comment(self):
-        self.assertIsNotNone(skill_check.parse("12 test"))
-        self.assertIsNotNone(skill_check.parse("!12,12@8+3 this is a comment"))
-        self.assertIsNotNone(skill_check.parse("!12,12@8-6 lolololol"))
-        self.assertIsNotNone(skill_check.parse("20 + 1 - 4 can I put anything here? 🤔"))
+        with self.assertRaises(ValueError):
+            SkillCheck("!!13 1@2", MockAuthor("TestUser"))
+        with self.assertRaises(ValueError):
+            SkillCheck("!  1 13@0", MockAuthor("TestUser"))
+        with self.assertRaises(ValueError):
+            SkillCheck("!?4", MockAuthor("TestUser"))
+        with self.assertRaises(ValueError):
+            SkillCheck("#2,2,2@2", MockAuthor("TestUser"))
 
     def test_parse_with_other_commands(self):
-        self.assertIsNone(skill_check.parse("d3"))
-        self.assertIsNone(skill_check.parse("note:foobar"))
-        self.assertIsNone(skill_check.parse("SUMMON"))
-        self.assertIsNone(skill_check.parse("BEGONE"))
-        self.assertIsNone(skill_check.parse("DIE"))
-
-        # Careful, these are not None. Execution order matters!
-        # self.assertIsNone(skill_check.parse("!3w6"))
-        # self.assertIsNone(skill_check.parse("12d12+2"))
-
-    def test_parse_results(self):
-        parsed = skill_check.parse("11,13,13@7-2 Sinnesschärfe")
-        self.assertEqual(parsed.group("attr"), "11,13,13")
-        self.assertEqual(parsed.group("FW"), "7")
-        self.assertEqual(parsed.group("add"), None)
-        self.assertEqual(parsed.group("sub"), "2")
-        self.assertEqual(parsed.group("comment"), "Sinnesschärfe")
-
-        parsed = skill_check.parse("1")
-        self.assertEqual(parsed.group("attr"), "1")
-        self.assertEqual(parsed.group("FW"), None)
-        self.assertEqual(parsed.group("add"), None)
-        self.assertEqual(parsed.group("sub"), None)
-        self.assertEqual(parsed.group("comment"), "")
-
-        parsed = skill_check.parse("!111 1337 42 1 1 @ 27 +1 - 2 🎉")
-        self.assertEqual(parsed.group("attr"), "111 1337 42 1 1 ")
-        self.assertEqual(parsed.group("FW"), "27")
-        self.assertEqual(parsed.group("add"), "1")
-        self.assertEqual(parsed.group("sub"), "2")
-        self.assertEqual(parsed.group("comment"), "🎉")
+        with self.assertRaises(ValueError):
+            SkillCheck("d3", MockAuthor("TestUser"))
+        with self.assertRaises(ValueError):
+            SkillCheck("note:foobar", MockAuthor("TestUser"))
+        with self.assertRaises(ValueError):
+            SkillCheck("SUMMON", MockAuthor("TestUser"))
+        with self.assertRaises(ValueError):
+            SkillCheck("BEGONE", MockAuthor("TestUser"))
+        with self.assertRaises(ValueError):
+            SkillCheck("DIE", MockAuthor("TestUser"))
+        with self.assertRaises(ValueError):
+            SkillCheck("13,13,13+1", MockAuthor("TestUser"))
+        with self.assertRaises(ValueError):
+            SkillCheck("13", MockAuthor("TestUser"))
 
     @patch("random.randint", new_callable=MagicMock())
-    def test_response(self, mock_randint: MagicMock):
-        mock_randint.return_value = 8
-        self.assertEqual(create_response("4"), "@TestUser \n8 ===> -4")
-        self.assertEqual(create_response("12, 13, 6"), "@TestUser \n8, 8, 8 ===> -2")
+    def test_quality_level(self, mock_randint: MagicMock):
+        mock_randint.return_value = 2
+        sc = SkillCheck("11,9,9@0", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 0)
+        self.assertEqual(sc.ql(sc.skill_points), 1)
+
+        sc = SkillCheck("11,9,9@1", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 1)
+        self.assertEqual(sc.ql(sc.skill_points), 1)
+
+        sc = SkillCheck("11,9,9@2", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 2)
+        self.assertEqual(sc.ql(sc.skill_points), 1)
+
+        sc = SkillCheck("11,9,9@3", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 3)
+        self.assertEqual(sc.ql(sc.skill_points), 1)
+
+        sc = SkillCheck("11,9,9@4", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 4)
+        self.assertEqual(sc.ql(sc.skill_points), 2)
+
+        sc = SkillCheck("11,9,9@5", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 5)
+        self.assertEqual(sc.ql(sc.skill_points), 2)
+
+        sc = SkillCheck("11,9,9@6", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 6)
+        self.assertEqual(sc.ql(sc.skill_points), 2)
+
+        sc = SkillCheck("11,9,9@7", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 7)
+        self.assertEqual(sc.ql(sc.skill_points), 3)
+
+        sc = SkillCheck("11,9,9@8", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 8)
+        self.assertEqual(sc.ql(sc.skill_points), 3)
+
+        sc = SkillCheck("11,9,9@9", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 9)
+        self.assertEqual(sc.ql(sc.skill_points), 3)
+
+        sc = SkillCheck("11,9,9@10", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 10)
+        self.assertEqual(sc.ql(sc.skill_points), 4)
+
+        sc = SkillCheck("11,9,9@16", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 16)
+        self.assertEqual(sc.ql(sc.skill_points), 6)
+
+        sc = SkillCheck("11,9,9@26", MockAuthor("TestUser"))
+        self.assertEqual(sc.skill_points, 26)
+        self.assertEqual(sc.ql(sc.skill_points), 6)
 
     @patch("random.randint", new_callable=MagicMock())
-    def test_response_with_fw(self, mock_randint: MagicMock):
+    def test_end2end(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
+        sc = SkillCheck("11,9,9@4", MockAuthor("TestUser"))
+        self.assertEqual(sc.data["attributes"].attributes, [11, 9, 9])
+        self.assertEqual(sc.data["EAV"].attributes, [11, 9, 9])
+        self.assertEqual(sc.data["SR"], 4)
+        self.assertEqual(sc.data["modifier"], 0)
+        self.assertEqual(sc.data["comment"], "")
+        self.assertEqual(sc.data["rolls"].rolls, [9, 9, 9])
+        self.assertEqual(sc.data["rolls"].critical_success, False)
+        self.assertEqual(sc.data["rolls"].botch, False)
+        self.assertEqual(sc.routine, False)
+        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.diffs, [0, 0, 0])
+        self.assertEqual(sc.skill_points, 4)
         self.assertEqual(
-            create_response("10,7@2"), "@TestUser \n9, 9 ===> -2\n(2 - 2 = 0 FP) QS: 1"
+            str(sc),
+            "@TestUser \n"
+            "```py\n"
+            "EEW:     11   9   9\n"
+            "Würfel:   9   9   9\n"
+            "FW 4                = 4 FP\n"
+            "Bestanden mit QS 2\n"
+            "```",
         )
+
+        sc = SkillCheck("!13 14 15@6-2 Sinnesschärfe", MockAuthor("TU"))
+        self.assertEqual(sc.data["attributes"].attributes, [13, 14, 15])
+        self.assertEqual(sc.data["EAV"].attributes, [11, 12, 13])
+        self.assertEqual(sc.data["SR"], 6)
+        self.assertEqual(sc.data["modifier"], -2)
+        self.assertEqual(sc.data["comment"], "Sinnesschärfe")
+        self.assertEqual(sc.data["rolls"].rolls, [9, 9, 9])
+        self.assertEqual(sc.data["rolls"].critical_success, False)
+        self.assertEqual(sc.data["rolls"].botch, False)
+        self.assertEqual(sc.routine, False)
+        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.diffs, [0, 0, 0])
+        self.assertEqual(sc.skill_points, 6)
         self.assertEqual(
-            create_response("!6,9,6@3"),
-            "@TestUser \n9, 9, 9 ===> -6\n(3 - 6 = -3 FP) QS: 0 FAIL",
+            str(sc),
+            "@TU Sinnesschärfe\n"
+            "```py\n"
+            "EEW:     11  12  13\n"
+            "Würfel:   9   9   9\n"
+            "FW 6                = 6 FP\n"
+            "Bestanden mit QS 2\n"
+            "```",
+        )
+
+        sc = SkillCheck("!5 3, 4,@16 +1+1 -2- 2 🎉-1", MockAuthor("TestUser"))
+        self.assertEqual(sc.data["attributes"].attributes, [5, 3, 4])
+        self.assertEqual(sc.data["EAV"].attributes, [3, 1, 2])
+        self.assertEqual(sc.data["SR"], 16)
+        self.assertEqual(sc.data["modifier"], -2)
+        self.assertEqual(sc.data["comment"], "🎉-1")
+        self.assertEqual(sc.data["rolls"].rolls, [9, 9, 9])
+        self.assertEqual(sc.data["rolls"].critical_success, False)
+        self.assertEqual(sc.data["rolls"].botch, False)
+        self.assertEqual(sc.routine, False)
+        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.diffs, [-6, -8, -7])
+        self.assertEqual(sc.skill_points, -5)
+        self.assertEqual(
+            str(sc),
+            "@TestUser 🎉-1\n"
+            "```py\n"
+            "EEW:      3   1   2\n"
+            "Würfel:   9   9   9\n"
+            "FW 16    -6  -8  -7 = -5 FP\n"
+            "Nicht bestanden\n"
+            "```",
         )
 
     @patch("random.randint", new_callable=MagicMock())
-    def test_response_with_modifier(self, mock_randint: MagicMock):
-        mock_randint.return_value = 10
+    def test_end2end_crit_botch(self, mock_randint: MagicMock):
+        mock_randint.return_value = 1
+        sc = SkillCheck("2,3,4@4", MockAuthor("TestUser"))
+        self.assertEqual(sc.data["attributes"].attributes, [2, 3, 4])
+        self.assertEqual(sc.data["EAV"].attributes, [2, 3, 4])
+        self.assertEqual(sc.data["SR"], 4)
+        self.assertEqual(sc.data["modifier"], 0)
+        self.assertEqual(sc.data["comment"], "")
+        self.assertEqual(sc.data["rolls"].rolls, [1, 1, 1])
+        self.assertEqual(sc.data["rolls"].critical_success, True)
+        self.assertEqual(sc.data["rolls"].botch, False)
+        self.assertEqual(sc.routine, False)
+        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.diffs, [0, 0, 0])
+        self.assertEqual(sc.skill_points, 4)
         self.assertEqual(
-            create_response("10,7@2+3"),
-            "@TestUser \n10, 10 ===> 0\n(2 - 0 = 2 FP) QS: 1",
+            str(sc),
+            "@TestUser \n"
+            "```py\n"
+            "EEW:      2   3   4\n"
+            "Würfel:   1   1   1\n"
+            "FW 4                = 4 FP\n"
+            "Kritischer Erfolg! (QS 2)\n"
+            "```",
         )
+
+        mock_randint.return_value = 20
+        sc = SkillCheck("14 18 18@3 + 2", MockAuthor("TestUser"))
+        self.assertEqual(sc.data["attributes"].attributes, [14, 18, 18])
+        self.assertEqual(sc.data["EAV"].attributes, [16, 20, 20])
+        self.assertEqual(sc.data["SR"], 3)
+        self.assertEqual(sc.data["modifier"], 2)
+        self.assertEqual(sc.data["comment"], "")
+        self.assertEqual(sc.data["rolls"].rolls, [20, 20, 20])
+        self.assertEqual(sc.data["rolls"].critical_success, False)
+        self.assertEqual(sc.data["rolls"].botch, True)
+        self.assertEqual(sc.routine, False)
+        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.diffs, [-4, 0, 0])
+        self.assertEqual(sc.skill_points, -1)
         self.assertEqual(
-            create_response("!12,10,14@7-1"),
-            "@TestUser \n10, 10, 10 ===> -1\n(7 - 1 = 6 FP) QS: 2",
+            str(sc),
+            "@TestUser \n"
+            "```py\n"
+            "EEW:     16  20  20\n"
+            "Würfel:  20  20  20\n"
+            "FW 3     -4         = -1 FP\n"
+            "Patzer!\n"
+            "```",
         )
+
+        mock_randint.return_value = 20
+        sc = SkillCheck("18,18 18@3 + 2", MockAuthor("TestUser"))
+        self.assertEqual(sc.data["attributes"].attributes, [18, 18, 18])
+        self.assertEqual(sc.data["EAV"].attributes, [20, 20, 20])
+        self.assertEqual(sc.data["SR"], 3)
+        self.assertEqual(sc.data["modifier"], 2)
+        self.assertEqual(sc.data["comment"], "")
+        self.assertEqual(sc.data["rolls"].rolls, [20, 20, 20])
+        self.assertEqual(sc.data["rolls"].critical_success, False)
+        self.assertEqual(sc.data["rolls"].botch, True)
+        self.assertEqual(sc.routine, False)
+        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.diffs, [0, 0, 0])
+        self.assertEqual(sc.skill_points, 3)
         self.assertEqual(
-            create_response("!12,12,12@12 - 1"),
-            "@TestUser \n10, 10, 10 ===> 0\n(12 - 0 = 12 FP) QS: 4",
+            str(sc),
+            "@TestUser \n"
+            "```py\n"
+            "EEW:     20  20  20\n"
+            "Würfel:  20  20  20\n"
+            "FW 3                = 3 FP\n"
+            "Patzer! - Automatisch nicht bestanden\n"
+            "```",
         )
 
     @patch("random.randint", new_callable=MagicMock())
-    def test_response_with_comment(self, mock_randint: MagicMock):
-        mock_randint.return_value = 10
+    def test_end2end_routine_impossible(self, mock_randint: MagicMock):
+        mock_randint.return_value = 9
+        sc = SkillCheck("14, 14, 14 @ 7 + 1", MockAuthor("TestUser"))
+        self.assertEqual(sc.data["attributes"].attributes, [14, 14, 14])
+        self.assertEqual(sc.data["EAV"].attributes, [15, 15, 15])
+        self.assertEqual(sc.data["SR"], 7)
+        self.assertEqual(sc.data["modifier"], 1)
+        self.assertEqual(sc.data["comment"], "")
+        self.assertEqual(sc.routine, True)
+        self.assertEqual(sc.impossible, False)
         self.assertEqual(
-            create_response("! 12,12,12 @ 12 + 2 Sinnesschärfe"),
-            "@TestUser Sinnesschärfe\n10, 10, 10 ===> 0\n(12 - 0 = 12 FP) QS: 4",
+            str(sc), "@TestUser \n```py\n" "Routineprobe: 4 FP = QS 2\n```",
+        )
+
+        sc = SkillCheck("2,3,4@4-2", MockAuthor("TestUser"))
+        self.assertEqual(sc.data["attributes"].attributes, [2, 3, 4])
+        self.assertEqual(sc.data["EAV"].attributes, [0, 1, 2])
+        self.assertEqual(sc.data["SR"], 4)
+        self.assertEqual(sc.data["modifier"], -2)
+        self.assertEqual(sc.data["comment"], "")
+        self.assertEqual(sc.routine, False)
+        self.assertEqual(sc.impossible, True)
+        self.assertEqual(
+            str(sc), "@TestUser \n```py\nEEW:   0   1   2\nProbe nicht möglich\n```",
         )

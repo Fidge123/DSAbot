@@ -10,7 +10,7 @@ class MockAuthor:
 
 
 def create_response(input):
-    return dice_roll.create_response(dice_roll.parse(input), MockAuthor("TestUser"))
+    return dice_roll.create_response(input, MockAuthor("TestUser"))
 
 
 class TestDiceRoll(TestCase):
@@ -59,22 +59,19 @@ class TestDiceRoll(TestCase):
         parsed = dice_roll.parse("3d20-2 Sinnesschärfe")
         self.assertEqual(parsed.group("amount"), "3")
         self.assertEqual(parsed.group("sides"), "20")
-        self.assertEqual(parsed.group("add"), None)
-        self.assertEqual(parsed.group("sub"), "2")
+        self.assertEqual(parsed.group("mod"), "-2")
         self.assertEqual(parsed.group("comment"), "Sinnesschärfe")
 
         parsed = dice_roll.parse("! 1337w100 + 1 - 4")
         self.assertEqual(parsed.group("amount"), "1337")
         self.assertEqual(parsed.group("sides"), "100")
-        self.assertEqual(parsed.group("add"), "1")
-        self.assertEqual(parsed.group("sub"), "4")
+        self.assertEqual(parsed.group("mod"), "+ 1 - 4")
         self.assertEqual(parsed.group("comment"), "")
 
         parsed = dice_roll.parse("!13w3d20")
         self.assertEqual(parsed.group("amount"), "13")
         self.assertEqual(parsed.group("sides"), "3")
-        self.assertEqual(parsed.group("add"), None)
-        self.assertEqual(parsed.group("sub"), None)
+        self.assertEqual(parsed.group("mod"), "")
         self.assertEqual(parsed.group("comment"), "d20")
 
     @patch("random.randint", new_callable=MagicMock())
@@ -87,6 +84,7 @@ class TestDiceRoll(TestCase):
         mock_randint.return_value = 1
         self.assertEqual(create_response("3d6 + 3"), "@TestUser \n1 + 1 + 1 (+3) = 6")
         self.assertEqual(create_response("d6 - 4"), "@TestUser \n1 (-4) = -3")
+        self.assertEqual(create_response("d6 - 4 + 6 - 5"), "@TestUser \n1 (-3) = -2")
         self.assertEqual(
             create_response("5d6 + 3-2"), "@TestUser \n1 + 1 + 1 + 1 + 1 (+1) = 6"
         )
