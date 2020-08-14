@@ -1,4 +1,5 @@
 import re
+from discord import Member
 
 from bot.string_math import calc
 from bot.checks.check_roll import CheckRolls
@@ -25,7 +26,17 @@ class GenericCheck:
     _response = "{author} {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\n{result}\n```"
     _impossible = "{author} {comment}\n```py\nEEW:{EAV}\nProbe nicht möglich\n```"
 
-    def __init__(self, message, author):
+    @property
+    def impossible(self) -> bool:
+        return any(eav <= 0 for eav in self.data["EAV"])
+
+    def recalculate(self) -> None:
+        self.data["EAV"] = Attributes(
+            [attr + self.data["modifier"] for attr in self.data["attributes"]]
+        )
+        self.data["rolls"] = CheckRolls(len(self.data["attributes"]))
+
+    def __init__(self, message: str, author: Member):
         parsed = self.matcher.search(message)
         if parsed:
             self.data = {}
@@ -36,22 +47,12 @@ class GenericCheck:
         else:
             raise ValueError
 
-    def recalculate(self):
-        self.data["EAV"] = Attributes(
-            [attr + self.data["modifier"] for attr in self.data["attributes"]]
-        )
-        self.data["rolls"] = CheckRolls(len(self.data["attributes"]))
-
-    def __str__(self):
+    def __str__(self) -> str:
         if self.impossible:
             return self._impossible.format(**self.data)
         return self._response.format(**self.data, result=self._get_result(),)
 
-    @property
-    def impossible(self):
-        return any(eav <= 0 for eav in self.data["EAV"])
-
-    def _get_result(self):
+    def _get_result(self) -> str:
         rolls: CheckRolls = self.data["rolls"]
         if rolls.critical_success:
             return "Kritischer Erfolg!"

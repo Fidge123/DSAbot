@@ -42,7 +42,6 @@ class MockMessage:
         self.add_reaction = add_reaction
 
 
-# noinspection PyTypeChecker
 class TestBot(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -56,7 +55,6 @@ class TestBot(TestCase):
 
     @patch("random.randint", new_callable=MagicMock())
     def test_smoke(self, mock_randint: MagicMock):
-        # Set Up
         mock_randint.return_value = 1
         messages = [
             "SUMMON",

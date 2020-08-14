@@ -13,7 +13,7 @@ random.seed()
 
 
 @client.event
-async def on_ready():
+async def on_ready() -> None:
     print(f"{client.user} has connected to Discord!")
     note.on_load()
     channel_ids = persistence.load_channels()
@@ -24,7 +24,7 @@ async def on_ready():
 
 
 @client.event
-async def on_message(message: discord.Message):
+async def on_message(message: discord.Message) -> None:
     msgstring: str = message.content.strip("` ")
     send = message.channel.send
     author: discord.member.Member = message.author
@@ -84,6 +84,6 @@ async def on_message(message: discord.Message):
             return await send(response)
 
 
-def run():
+def run() -> None:
     persistence.init_db()
     client.run(TOKEN)

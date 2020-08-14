@@ -14,7 +14,7 @@ class AttributeCheck(GenericCheck):
         re.VERBOSE | re.IGNORECASE,
     )
 
-    def _get_result(self):
+    def _get_result(self) -> str:
         rolls = self.data["rolls"]
         if rolls.critical_success and rolls.confirmation_roll <= self.data["EAV"][0]:
             return "Kritischer Erfolg!"
