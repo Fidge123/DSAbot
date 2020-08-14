@@ -2,13 +2,15 @@ import os
 import random
 import re
 
+from typing import List
+
 import discord
 
 from bot import persistence, dice_roll, note, check
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
-permittedChannels = []
+permittedChannels: List[discord.TextChannel] = []
 random.seed()
 
 

@@ -102,8 +102,8 @@ class TestSkillCheck(TestCase):
     def test_end2end(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
         sc = SkillCheck("11,9,9@4", MockAuthor("TestUser"))
-        self.assertEqual(sc.data["attributes"].attributes, [11, 9, 9])
-        self.assertEqual(sc.data["EAV"].attributes, [11, 9, 9])
+        self.assertEqual(sc.data["attributes"], [11, 9, 9])
+        self.assertEqual(sc.data["EAV"], [11, 9, 9])
         self.assertEqual(sc.data["SR"], 4)
         self.assertEqual(sc.data["modifier"], 0)
         self.assertEqual(sc.data["comment"], "")
@@ -126,8 +126,8 @@ class TestSkillCheck(TestCase):
         )
 
         sc = SkillCheck("!13 14 15@6-2 Sinnesschärfe", MockAuthor("TU"))
-        self.assertEqual(sc.data["attributes"].attributes, [13, 14, 15])
-        self.assertEqual(sc.data["EAV"].attributes, [11, 12, 13])
+        self.assertEqual(sc.data["attributes"], [13, 14, 15])
+        self.assertEqual(sc.data["EAV"], [11, 12, 13])
         self.assertEqual(sc.data["SR"], 6)
         self.assertEqual(sc.data["modifier"], -2)
         self.assertEqual(sc.data["comment"], "Sinnesschärfe")
@@ -150,8 +150,8 @@ class TestSkillCheck(TestCase):
         )
 
         sc = SkillCheck("!5 3, 4,@16 +1+1 -2- 2 🎉-1", MockAuthor("TestUser"))
-        self.assertEqual(sc.data["attributes"].attributes, [5, 3, 4])
-        self.assertEqual(sc.data["EAV"].attributes, [3, 1, 2])
+        self.assertEqual(sc.data["attributes"], [5, 3, 4])
+        self.assertEqual(sc.data["EAV"], [3, 1, 2])
         self.assertEqual(sc.data["SR"], 16)
         self.assertEqual(sc.data["modifier"], -2)
         self.assertEqual(sc.data["comment"], "🎉-1")
@@ -177,8 +177,8 @@ class TestSkillCheck(TestCase):
     def test_end2end_crit_botch(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
         sc = SkillCheck("2,3,4@4", MockAuthor("TestUser"))
-        self.assertEqual(sc.data["attributes"].attributes, [2, 3, 4])
-        self.assertEqual(sc.data["EAV"].attributes, [2, 3, 4])
+        self.assertEqual(sc.data["attributes"], [2, 3, 4])
+        self.assertEqual(sc.data["EAV"], [2, 3, 4])
         self.assertEqual(sc.data["SR"], 4)
         self.assertEqual(sc.data["modifier"], 0)
         self.assertEqual(sc.data["comment"], "")
@@ -202,8 +202,8 @@ class TestSkillCheck(TestCase):
 
         mock_randint.return_value = 20
         sc = SkillCheck("14 18 18@3 + 2", MockAuthor("TestUser"))
-        self.assertEqual(sc.data["attributes"].attributes, [14, 18, 18])
-        self.assertEqual(sc.data["EAV"].attributes, [16, 20, 20])
+        self.assertEqual(sc.data["attributes"], [14, 18, 18])
+        self.assertEqual(sc.data["EAV"], [16, 20, 20])
         self.assertEqual(sc.data["SR"], 3)
         self.assertEqual(sc.data["modifier"], 2)
         self.assertEqual(sc.data["comment"], "")
@@ -227,8 +227,8 @@ class TestSkillCheck(TestCase):
 
         mock_randint.return_value = 20
         sc = SkillCheck("18,18 18@3 + 2", MockAuthor("TestUser"))
-        self.assertEqual(sc.data["attributes"].attributes, [18, 18, 18])
-        self.assertEqual(sc.data["EAV"].attributes, [20, 20, 20])
+        self.assertEqual(sc.data["attributes"], [18, 18, 18])
+        self.assertEqual(sc.data["EAV"], [20, 20, 20])
         self.assertEqual(sc.data["SR"], 3)
         self.assertEqual(sc.data["modifier"], 2)
         self.assertEqual(sc.data["comment"], "")
@@ -254,8 +254,8 @@ class TestSkillCheck(TestCase):
     def test_end2end_routine_impossible(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
         sc = SkillCheck("14, 14, 14 @ 7 + 1", MockAuthor("TestUser"))
-        self.assertEqual(sc.data["attributes"].attributes, [14, 14, 14])
-        self.assertEqual(sc.data["EAV"].attributes, [15, 15, 15])
+        self.assertEqual(sc.data["attributes"], [14, 14, 14])
+        self.assertEqual(sc.data["EAV"], [15, 15, 15])
         self.assertEqual(sc.data["SR"], 7)
         self.assertEqual(sc.data["modifier"], 1)
         self.assertEqual(sc.data["comment"], "")
@@ -266,8 +266,8 @@ class TestSkillCheck(TestCase):
         )
 
         sc = SkillCheck("2,3,4@4-2", MockAuthor("TestUser"))
-        self.assertEqual(sc.data["attributes"].attributes, [2, 3, 4])
-        self.assertEqual(sc.data["EAV"].attributes, [0, 1, 2])
+        self.assertEqual(sc.data["attributes"], [2, 3, 4])
+        self.assertEqual(sc.data["EAV"], [0, 1, 2])
         self.assertEqual(sc.data["SR"], 4)
         self.assertEqual(sc.data["modifier"], -2)
         self.assertEqual(sc.data["comment"], "")

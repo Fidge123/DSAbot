@@ -1,14 +1,12 @@
 import re
-from typing import Dict, Union, List
+from typing import Dict, List, Optional
 
 import discord
 
 from bot import note
 from bot.checks import SkillCheck, GenericCheck, AttributeCheck
 
-AnyCheck = Union[GenericCheck, SkillCheck, AttributeCheck]
-
-lastCheck: Dict[str, AnyCheck] = {}
+lastCheck: Dict[int, GenericCheck] = {}
 fate_regex = re.compile(
     r"^(schips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.IGNORECASE
 )
@@ -17,7 +15,7 @@ repeat_regex = re.compile(r"repeat", re.IGNORECASE)
 force_regex = re.compile(r"force", re.IGNORECASE)
 
 
-def create_check(msg: str, author: discord.Member) -> AnyCheck:
+def create_check(msg: str, author: discord.Member) -> Optional[GenericCheck]:
     try:
         return SkillCheck(msg, author)
     except ValueError:
@@ -33,6 +31,8 @@ def create_check(msg: str, author: discord.Member) -> AnyCheck:
     except ValueError:
         pass
 
+    return None
+
 
 def schip_split(input: str) -> List[bool]:
     input = re.sub(r"reroll\ ?", "r", input, re.IGNORECASE)
@@ -40,7 +40,7 @@ def schip_split(input: str) -> List[bool]:
     return [letter == "r" for letter in input]
 
 
-def create_response(msg: str, author: discord.Member) -> str:
+def create_response(msg: str, author: discord.Member) -> Optional[str]:
     check = create_check(msg, author)
 
     if check:
@@ -82,5 +82,7 @@ def create_response(msg: str, author: discord.Member) -> str:
         match = force_regex.search(msg)
         if match:
             check = lastCheck[hash(author)]
-            check.force()
-            return str(check)
+            if isinstance(check, SkillCheck):
+                check.force()
+                return str(check)
+    return None

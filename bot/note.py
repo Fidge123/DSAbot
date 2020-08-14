@@ -1,5 +1,5 @@
 import re
-from typing import Dict
+from typing import Dict, Union, Optional
 
 import discord
 
@@ -21,7 +21,7 @@ def notes_to_str() -> str:
     return "\n".join([f"{k:<{lk}}: {v:>{lv}}" for k, v in sorted_notes])
 
 
-def create_note(note_id: str, value: int, user: discord.Member) -> str:
+def create_note(note_id: str, value: Union[int, str], user: discord.Member) -> str:
     if note_id not in number_notes:
         number_notes[note_id] = 0
 
@@ -52,7 +52,7 @@ def delete_note(user: discord.Member, id: str) -> str:
         return "{user} Es gibt keine Notiz {id}.".format(user=user.mention, id=id)
 
 
-def create_response(message: str, user: discord.Member) -> str:
+def create_response(message: str, user: discord.Member) -> Optional[str]:
     create_match = re.search(
         r"^note:(?P<id>\w+)(->(?P<number>[\+\-]?[0-9]+))?$", message, re.IGNORECASE,
     )
@@ -66,3 +66,4 @@ def create_response(message: str, user: discord.Member) -> str:
     remove_match = re.search(r"^delete note (?P<id>\w+)$", message, re.IGNORECASE)
     if remove_match:
         return delete_note(user, remove_match.group("id"))
+    return None

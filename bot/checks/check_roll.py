@@ -3,10 +3,7 @@ import random
 
 class CheckRolls:
     def __init__(self, num: int):
-        self.rolls = []
-        for _ in range(num):
-            self.rolls.append(random.randint(1, 20))
-
+        self.rolls = [random.randint(1, 20) for _ in range(num)]
         if num == 1 and (self.critical_success or self.botch):
             self.confirmation_roll = random.randint(1, 20)
 

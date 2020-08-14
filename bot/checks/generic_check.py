@@ -1,4 +1,5 @@
 import re
+from typing import Dict, Callable, Any, Type
 from discord import Member
 
 from bot.string_math import calc
@@ -16,7 +17,7 @@ class GenericCheck:
         """,
         re.VERBOSE | re.IGNORECASE,
     )
-    transform = {
+    transform: Dict[str, Callable[[str], Any]] = {
         "attributes": lambda x: Attributes(
             [int(attr) for attr in re.split(r"[, ]+", x.strip(", "))]
         ),
@@ -28,7 +29,7 @@ class GenericCheck:
 
     @property
     def impossible(self) -> bool:
-        return any(eav <= 0 for eav in self.data["EAV"])
+        return any(int(eav) <= 0 for eav in self.data["EAV"])
 
     def recalculate(self) -> None:
         self.data["EAV"] = Attributes(
@@ -53,7 +54,7 @@ class GenericCheck:
         return self._response.format(**self.data, result=self._get_result(),)
 
     def _get_result(self) -> str:
-        rolls: CheckRolls = self.data["rolls"]
+        rolls: Type[CheckRolls] = self.data["rolls"]
         if rolls.critical_success:
             return "Kritischer Erfolg!"
         if rolls.botch:

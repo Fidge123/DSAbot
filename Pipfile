@@ -10,6 +10,7 @@ pre-commit = "*"
 [packages]
 discord = "*"
 pyparsing = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.8"
@@ -18,4 +19,5 @@ python_version = "3.8"
 start = "python -m bot"
 test = "coverage run --source . -m unittest discover --verbose test"
 tests = "coverage run --source . -m unittest discover --verbose test"
-cov = "coverage report -m -i --fail-under=70 --skip-covered --skip-empty --debug=dataio"
+cov = "coverage report -m -i --fail-under=80 --skip-covered --skip-empty --debug=dataio"
+lint = "mypy bot --ignore-missing-imports"
