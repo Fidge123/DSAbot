@@ -54,7 +54,7 @@ def delete_note(user: Member, id: str) -> str:
 
 def create_response(message: str, user: Member) -> Optional[str]:
     create_match = re.search(
-        r"^note:(?P<id>\w+)(->(?P<number>[\+\-]?[0-9]+))?$", message, re.IGNORECASE,
+        r"^note:(?P<id>[\w#]+)(->(?P<number>[\+\-]?[0-9]+))?$", message, re.IGNORECASE,
     )
     if create_match:
         return create_note(create_match.group("id"), create_match.group("number"), user)
@@ -63,7 +63,7 @@ def create_response(message: str, user: Member) -> Optional[str]:
     if get_match:
         return get_notes(user)
 
-    remove_match = re.search(r"^delete note (?P<id>\w+)$", message, re.IGNORECASE)
+    remove_match = re.search(r"^delete note (?P<id>[\w#]+)$", message, re.IGNORECASE)
     if remove_match:
         return delete_note(user, remove_match.group("id"))
     return None
