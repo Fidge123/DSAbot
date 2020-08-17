@@ -1,9 +1,13 @@
 import re
 import random
+from typing import Optional
+
+import discord
+
 from bot.string_math import calc
 
 
-def parse(message):
+def parse(message: str) -> Optional[re.Match]:
     return re.search(
         r"""
             ^!?\ ?                                     # Optional exclamation mark
@@ -16,7 +20,7 @@ def parse(message):
     )
 
 
-def create_response(input, author):
+def create_response(input: str, author: discord.Member) -> Optional[str]:
     regex_result = parse(input)
     if regex_result:
         die_amount = int(regex_result.group("amount") or 1)
@@ -39,3 +43,5 @@ def create_response(input, author):
             modifier=modifier_string,
             FP=aggregate + modifier,
         )
+
+    return None

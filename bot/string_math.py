@@ -24,7 +24,7 @@ class EvalSignOp:
     def __init__(self, tokens):
         self.sign, self.value = tokens[0]
 
-    def eval(self):
+    def eval(self) -> float:
         mult = {"+": 1, "-": -1}[self.sign]
         return mult * self.value.eval()
 
@@ -37,7 +37,7 @@ class EvalInfixOp(EvalBase):
         "/": operator.truediv,
     }
 
-    def eval(self):
+    def eval(self) -> float:
         res = self.value[0].eval()
 
         it = iter(self.value[1:])
@@ -56,5 +56,5 @@ grammar = infixNotation(
 )
 
 
-def calc(input):
+def calc(input: str) -> float:
     return grammar.parseString(input)[0].eval()

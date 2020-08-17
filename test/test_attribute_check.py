@@ -45,8 +45,8 @@ class TestAttributeCheck(TestCase):
     def test_end2end_crit_botch(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
         ac = AttributeCheck("!12 -4 🎉", MockAuthor("TestUser"))
-        self.assertEqual(ac.data["attributes"].attributes, [12])
-        self.assertEqual(ac.data["EAV"].attributes, [8])
+        self.assertEqual(ac.data["attributes"], [12])
+        self.assertEqual(ac.data["EAV"], [8])
         self.assertEqual(ac.data["modifier"], -4)
         self.assertEqual(ac.data["comment"], "🎉")
         self.assertEqual(ac.data["author"], "@TestUser")
@@ -67,8 +67,8 @@ class TestAttributeCheck(TestCase):
 
         mock_randint.return_value = 20
         ac = AttributeCheck("!18 💥", MockAuthor("TestUser"))
-        self.assertEqual(ac.data["attributes"].attributes, [18])
-        self.assertEqual(ac.data["EAV"].attributes, [18])
+        self.assertEqual(ac.data["attributes"], [18])
+        self.assertEqual(ac.data["EAV"], [18])
         self.assertEqual(ac.data["modifier"], 0)
         self.assertEqual(ac.data["comment"], "💥")
         self.assertEqual(ac.data["author"], "@TestUser")
@@ -88,8 +88,8 @@ class TestAttributeCheck(TestCase):
         )
 
         ac = AttributeCheck("!18 +3 💥", MockAuthor("TestUser"))
-        self.assertEqual(ac.data["attributes"].attributes, [18])
-        self.assertEqual(ac.data["EAV"].attributes, [21])
+        self.assertEqual(ac.data["attributes"], [18])
+        self.assertEqual(ac.data["EAV"], [21])
         self.assertEqual(ac.data["modifier"], +3)
         self.assertEqual(ac.data["comment"], "💥")
         self.assertEqual(ac.data["author"], "@TestUser")

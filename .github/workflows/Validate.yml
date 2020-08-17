@@ -16,6 +16,9 @@ jobs:
       - name: Setup pipenv
         run: |
           pipenv install --dev
+      - name: Run mypy
+        run: |
+          pipenv run lint
       - name: Run unittests/coverage
         run: |
           pipenv run tests
@@ -31,16 +34,16 @@ jobs:
     name: Commit Hooks
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1.1.1
-      with:
-        python-version: 3.x
-    - name: set PY
-      run: echo "::set-env name=PY::$(python --version --version | sha256sum | cut -d' ' -f1)"
-    - uses: actions/cache@v1
-      with:
-        path: ~/.cache/pre-commit
-        key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
-    - uses: pre-commit/action@v1.0.1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1.1.1
+        with:
+          python-version: 3.x
+      - name: set PY
+        run: echo "::set-env name=PY::$(python --version --version | sha256sum | cut -d' ' -f1)"
+      - uses: actions/cache@v1
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit|${{ env.PY }}|${{ hashFiles('.pre-commit-config.yaml') }}
+      - uses: pre-commit/action@v1.0.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
