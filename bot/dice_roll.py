@@ -20,7 +20,7 @@ def parse(message: str) -> Optional[re.Match]:
     )
 
 
-def create_response(input: str, author: discord.Member) -> str:
+def create_response(input: str, author: discord.Member) -> Optional[str]:
     regex_result = parse(input)
     if regex_result:
         die_amount = int(regex_result.group("amount") or 1)
@@ -43,3 +43,5 @@ def create_response(input: str, author: discord.Member) -> str:
             modifier=modifier_string,
             FP=aggregate + modifier,
         )
+
+    return None
