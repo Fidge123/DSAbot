@@ -19,8 +19,8 @@ class CumulativeCheck(SkillCheck):
     )
     transform = {**SkillCheck.transform, "tries": int, "time": int, "unit": str}
     _response = "EEW{EAV}  Würfel{rolls}  FW{SR}{diffs}={SP}FP  {result}"
-    _routine = "Routineprobe {SP} FP = QS {QL}"
-    _impossible = "Probe nicht möglich  EEW{EAV}"
+    _routine = "Routineprobe `{SP} FP = QS {QL}`"
+    _impossible = "Probe nicht möglich  `EEW{EAV}`"
 
     def __init__(self, message: str, author: Member):
         super().__init__(message, author)
@@ -29,14 +29,14 @@ class CumulativeCheck(SkillCheck):
         self._initial_mod = self.data["modifier"]
 
     def __str__(self) -> str:
-        response = "{author} {comment}\n".format(**self.data)
+        response = "{author} {comment}\n```py".format(**self.data)
         while (
             self.total_ql < 10
-            and self.round <= self.data["tries"]
+            and self.round < self.data["tries"]
             and self.total_ql >= 0  # No Botch
         ):
             self.round += 1
-            response += "\nRunde {}: {}".format(self.round, super().__str__())
+            response += "\nRunde {:>2}: {}".format(self.round, super().__str__())
             self.recalculate()
 
         if self.total_ql < 6:
@@ -46,7 +46,7 @@ class CumulativeCheck(SkillCheck):
         else:
             response += "\n\nProbe erfolgreich"
 
-        return "{} nach {} Runden ({})".format(
+        return "{} nach {} Runden ({})\n```".format(
             response,
             self.round,
             str(self.data["time"] * self.round) + self.data["unit"],

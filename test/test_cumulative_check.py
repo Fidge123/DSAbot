@@ -83,11 +83,13 @@ class TestCumulativeCheck(TestCase):
         self.assertEqual(cc.impossible, False)
         self.assertEqual(
             str(cc),
-            "@TestUser Test\n\n"
-            "Runde 1: EEW  11  11  11  Würfel   1   1   1  FW5            =5FP  Kritischer Erfolg! (QS4)\n"
-            "Runde 2: EEW  11  11  11  Würfel   1   1   1  FW5            =5FP  Kritischer Erfolg! (QS4)\n"
-            "Runde 3: EEW  11  11  11  Würfel   1   1   1  FW5            =5FP  Kritischer Erfolg! (QS4)\n\n"
-            "Probe erfolgreich nach 3 Runden (15KR)",
+            "@TestUser Test\n"
+            "```py\n"
+            "Runde  1: EEW  11  11  11  Würfel   1   1   1  FW5            =5FP  Kritischer Erfolg! (QS4)\n"
+            "Runde  2: EEW  11  11  11  Würfel   1   1   1  FW5            =5FP  Kritischer Erfolg! (QS4)\n"
+            "Runde  3: EEW  11  11  11  Würfel   1   1   1  FW5            =5FP  Kritischer Erfolg! (QS4)\n\n"
+            "Probe erfolgreich nach 3 Runden (15KR)\n"
+            "```",
         )
 
     @patch("random.randint", new_callable=MagicMock())
@@ -106,7 +108,9 @@ class TestCumulativeCheck(TestCase):
         self.assertEqual(cc.impossible, False)
         self.assertEqual(
             str(cc),
-            "@TestUser \n\n"
-            "Runde 1: EEW  17  16  10  Würfel  20  20  20  FW10  -3  -4 -10=-7FP  Patzer!\n\n"
-            "Probe fehlgeschlagen nach 1 Runden (4h)",
+            "@TestUser \n"
+            "```py\n"
+            "Runde  1: EEW  17  16  10  Würfel  20  20  20  FW10  -3  -4 -10=-7FP  Patzer!\n\n"
+            "Probe fehlgeschlagen nach 1 Runden (4h)\n"
+            "```",
         )
