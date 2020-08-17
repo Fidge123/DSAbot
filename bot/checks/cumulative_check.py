@@ -25,8 +25,8 @@ class CumulativeCheck(SkillCheck):
         "unit": str,
     }
     _response = "EEW{EAV}  Würfel{rolls}  FW{SR}{diffs}={SP}FP  {result}"
-    _routine = "Routineprobe `{SP} FP = QS {QL}`"
-    _impossible = "Probe nicht möglich  `EEW{EAV}`"
+    _routine = "Routineprobe {SP} FP = QS {QL}"
+    _impossible = "Probe nicht möglich  EEW{EAV}"
 
     def __init__(self, message: str, author: Member):
         super().__init__(message, author)
