@@ -1,7 +1,7 @@
 import sqlite3
 from typing import List, Tuple
 
-import discord
+from discord import TextChannel
 
 db_path = "bot/persistence.db"
 schema_path = "bot/schema.sql"
@@ -18,7 +18,7 @@ def init_db() -> bool:
     return True
 
 
-def persist_channel(channel: discord.TextChannel) -> bool:
+def persist_channel(channel: TextChannel) -> bool:
     with sqlite3.connect(db_path) as connection:
         connection.execute(
             "INSERT OR REPLACE INTO channels VALUES (?)", (str(channel.id),)
@@ -28,7 +28,7 @@ def persist_channel(channel: discord.TextChannel) -> bool:
     return True
 
 
-def remove_channel(channel: discord.TextChannel) -> bool:
+def remove_channel(channel: TextChannel) -> bool:
     with sqlite3.connect(db_path) as connection:
         connection.execute("DELETE FROM channels WHERE id=?", (str(channel.id),))
         connection.commit()

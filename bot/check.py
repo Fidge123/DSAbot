@@ -1,10 +1,10 @@
 import re
 from typing import Dict, List, Optional
 
-import discord
+from discord import Member
 
 from bot import note
-from bot.checks import SkillCheck, GenericCheck, AttributeCheck
+from bot.checks import SkillCheck, GenericCheck, AttributeCheck, CumulativeCheck
 
 lastCheck: Dict[int, GenericCheck] = {}
 fate_regex = re.compile(
@@ -15,7 +15,12 @@ repeat_regex = re.compile(r"repeat", re.IGNORECASE)
 force_regex = re.compile(r"force", re.IGNORECASE)
 
 
-def create_check(msg: str, author: discord.Member) -> Optional[GenericCheck]:
+def create_check(msg: str, author: Member) -> Optional[GenericCheck]:
+    try:
+        return CumulativeCheck(msg, author)
+    except ValueError:
+        pass
+
     try:
         return SkillCheck(msg, author)
     except ValueError:
@@ -40,7 +45,7 @@ def schip_split(input: str) -> List[bool]:
     return [letter == "r" for letter in input]
 
 
-def create_response(msg: str, author: discord.Member) -> Optional[str]:
+def create_response(msg: str, author: Member) -> Optional[str]:
     check = create_check(msg, author)
 
     if check:
