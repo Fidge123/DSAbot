@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Callable, Any, Type
+from typing import Dict, Any, Type
 from discord import Member
 
 from bot.string_math import calc
@@ -17,7 +17,7 @@ class GenericCheck:
         """,
         re.VERBOSE | re.IGNORECASE,
     )
-    transform: Dict[str, Callable[[str], Any]] = {
+    transform: Dict[str, Any] = {
         "attributes": lambda x: Attributes(
             [int(attr) for attr in re.split(r"[, ]+", x.strip(", "))]
         ),

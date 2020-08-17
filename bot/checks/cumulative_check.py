@@ -1,4 +1,5 @@
 import re
+from typing import Dict, Any
 from discord import Member
 from bot.checks.skill_check import SkillCheck
 
@@ -17,7 +18,12 @@ class CumulativeCheck(SkillCheck):
         """,
         re.VERBOSE | re.IGNORECASE,
     )
-    transform = {**SkillCheck.transform, "tries": int, "time": int, "unit": str}
+    transform: Dict[str, Any] = {
+        **SkillCheck.transform,
+        "tries": int,
+        "time": int,
+        "unit": str,
+    }
     _response = "EEW{EAV}  Würfel{rolls}  FW{SR}{diffs}={SP}FP  {result}"
     _routine = "Routineprobe `{SP} FP = QS {QL}`"
     _impossible = "Probe nicht möglich  `EEW{EAV}`"
