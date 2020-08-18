@@ -2,7 +2,7 @@ import re
 import random
 from typing import Optional
 
-import discord
+from discord import Member
 
 from bot.string_math import calc
 
@@ -20,7 +20,7 @@ def parse(message: str) -> Optional[re.Match]:
     )
 
 
-def create_response(input: str, author: discord.Member) -> Optional[str]:
+def create_response(input: str, author: Member) -> Optional[str]:
     regex_result = parse(input)
     if regex_result:
         die_amount = int(regex_result.group("amount") or 1)

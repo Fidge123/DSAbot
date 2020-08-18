@@ -1,10 +1,10 @@
 import re
 from typing import Dict, List, Optional
 
-import discord
+from discord import Member
 
 from bot import note
-from bot.checks import SkillCheck, GenericCheck, AttributeCheck
+from bot.checks import SkillCheck, GenericCheck, AttributeCheck, CumulativeCheck
 
 lastCheck: Dict[int, GenericCheck] = {}
 fate_regex = re.compile(
@@ -15,7 +15,12 @@ repeat_regex = re.compile(r"repeat", re.IGNORECASE)
 force_regex = re.compile(r"force", re.IGNORECASE)
 
 
-def create_check(msg: str, author: discord.Member) -> Optional[GenericCheck]:
+def create_check(msg: str, author: Member) -> Optional[GenericCheck]:
+    try:
+        return CumulativeCheck(msg, author)
+    except ValueError:
+        pass
+
     try:
         return SkillCheck(msg, author)
     except ValueError:
@@ -40,7 +45,7 @@ def schip_split(input: str) -> List[bool]:
     return [letter == "r" for letter in input]
 
 
-def create_response(msg: str, author: discord.Member) -> Optional[str]:
+def create_response(msg: str, author: Member) -> Optional[str]:
     check = create_check(msg, author)
 
     if check:
@@ -55,6 +60,10 @@ def create_response(msg: str, author: discord.Member) -> Optional[str]:
 
             if check.data["rolls"].botch:
                 return "{} Einsatz von Schips nicht erlaubt".format(author.mention)
+            if isinstance(check, CumulativeCheck):
+                return "{} Einsatz von Schips bei Sammelproben (bisher) nicht unterstützt".format(
+                    author.mention
+                )
             if note_id not in note.number_notes:
                 note.create_note(note_id, 3, author)
             if note.number_notes[note_id] <= 0:
@@ -69,7 +78,10 @@ def create_response(msg: str, author: discord.Member) -> Optional[str]:
         match = retry_regex.search(msg)
         if match:
             check = lastCheck[hash(author)]
-            check.data["modifier"] -= 1
+            if isinstance(check, CumulativeCheck):
+                check._initial_mod -= 1
+            else:
+                check.data["modifier"] -= 1
             check.recalculate()
             return str(check)
 

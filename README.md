@@ -2,9 +2,9 @@
 
 A bot that makes it easy to roll skill checks for 5th edition Das Schwarze Auge (The dark eye).
 
-## Usage Examples
+# Usage Examples
 
-### Normal Rolls
+## Normal Rolls
 
 The bot allows normal dice rolls with comments and modifiers
 
@@ -18,7 +18,7 @@ Input | Example Output | Comment
 `!d20-1-2` | @User <br>4 (-3) = 1 | Multiple modifiers are summed up.
 `3d6+3 Axt` | @User Axt<br>5 + 3 + 4 (+3) = 15 | You can add a comment at the end
 
-### Skill Checks
+## Skill Checks
 
 These are specific rolls for Das Schwarze Auge. A skill check consists of three twenty-sided dice, a skill rating and an optional modifier.
 
@@ -155,10 +155,12 @@ FW 10           -3 = 7 FP
 Bestanden mit QS 3
 ```
 
-**TODO**
-- [ ] Reference number notes as attributes
+## Cumulative Checks
 
-### Generic Checks
+At the moment the bot only supports cumulative checks for one person that uses the same skill with the same base modifier throughout. Usage of schips
+
+
+## Generic Checks
 
 These follow almost the same guidelines as skill checks but allow any number of attributes and don't support adding skill rating. It shows the minimum needed skill rating to succeed after the arrow.
 
@@ -263,19 +265,19 @@ Würfel:  5
 Bestanden
 ```
 
-### Attribute Check
+## Attribute Check
 
 No specific rolls are implemented yet. You can use the generic roll as a workaround.
 
-### Close Combat
+## Close Combat
 
 No specific rolls are implemented yet. You can use the generic roll as a workaround.
 
-### Ranged Combat
+## Ranged Combat
 
 No specific rolls are implemented yet. You can use the generic roll as a workaround.
 
-### Numeric Notes
+## Numeric Notes
 
 You can save a keyword-number combination
 
