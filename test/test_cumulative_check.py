@@ -71,11 +71,11 @@ class TestCumulativeCheck(TestCase):
             str(cc),
             "@TestUser \n"
             "```py\n"
-            "Runde  1: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n"
-            "Runde  2: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n"
-            "Runde  3: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n"
-            "Runde  4: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n"
-            "Runde  5: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n\n"
+            "Runde  1: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n"
+            "Runde  2: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n"
+            "Runde  3: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n"
+            "Runde  4: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n"
+            "Runde  5: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n\n"
             "Probe fehlgeschlagen nach 5 Runden (10Tage)\n"
             "```",
         )
@@ -88,12 +88,12 @@ class TestCumulativeCheck(TestCase):
             str(cc),
             "@TestUser \n"
             "```py\n"
-            "Runde  1: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n"
-            "Runde  2: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n"
-            "Runde  3: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n"
-            "Runde  4: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n"
-            "Runde  5: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n"
-            "Runde  6: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3=1FP  QS1\n\n"
+            "Runde  1: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n"
+            "Runde  2: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n"
+            "Runde  3: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n"
+            "Runde  4: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n"
+            "Runde  5: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n"
+            "Runde  6: EEW  12  14  10  Würfel  13  13  13  FW5  -1      -3= 1FP  QS1\n\n"
             "Teilerfolg nach 6 Runden (12Tage)\n"
             "```",
         )
@@ -106,11 +106,11 @@ class TestCumulativeCheck(TestCase):
             str(cc),
             "@TestUser \n"
             "```py\n"
-            "Runde  1: EEW  12  14  10  Würfel  13  13  13  FW10  -1      -3=6FP  QS2\n"
-            "Runde  2: EEW  12  14  10  Würfel  13  13  13  FW10  -1      -3=6FP  QS2\n"
-            "Runde  3: EEW  12  14  10  Würfel  13  13  13  FW10  -1      -3=6FP  QS2\n"
-            "Runde  4: EEW  12  14  10  Würfel  13  13  13  FW10  -1      -3=6FP  QS2\n"
-            "Runde  5: EEW  12  14  10  Würfel  13  13  13  FW10  -1      -3=6FP  QS2\n\n"
+            "Runde  1: EEW  12  14  10  Würfel  13  13  13  FW10  -1      -3= 6FP  QS2\n"
+            "Runde  2: EEW  12  14  10  Würfel  13  13  13  FW10  -1      -3= 6FP  QS2\n"
+            "Runde  3: EEW  12  14  10  Würfel  13  13  13  FW10  -1      -3= 6FP  QS2\n"
+            "Runde  4: EEW  12  14  10  Würfel  13  13  13  FW10  -1      -3= 6FP  QS2\n"
+            "Runde  5: EEW  12  14  10  Würfel  13  13  13  FW10  -1      -3= 6FP  QS2\n\n"
             "Probe erfolgreich nach 5 Runden (10Tage)\n"
             "```",
         )
@@ -123,10 +123,10 @@ class TestCumulativeCheck(TestCase):
             str(cc),
             "@TestUser \n"
             "```py\n"
-            "Runde  1: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3=7FP  QS3\n"
-            "Runde  2: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3=7FP  QS3\n"
-            "Runde  3: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3=7FP  QS3\n"
-            "Runde  4: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3=7FP  QS3\n\n"
+            "Runde  1: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3= 7FP  QS3\n"
+            "Runde  2: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3= 7FP  QS3\n"
+            "Runde  3: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3= 7FP  QS3\n"
+            "Runde  4: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3= 7FP  QS3\n\n"
             "Probe erfolgreich nach 4 Runden (8Tage)\n"
             "```",
         )
@@ -149,9 +149,9 @@ class TestCumulativeCheck(TestCase):
             str(cc),
             "@TestUser Test\n"
             "```py\n"
-            "Runde  1: EEW  11  11  11  Würfel   1   1   1  FW5            =5FP  Kritischer Erfolg! (QS4)\n"
-            "Runde  2: EEW  11  11  11  Würfel   1   1   1  FW5            =5FP  Kritischer Erfolg! (QS4)\n"
-            "Runde  3: EEW  11  11  11  Würfel   1   1   1  FW5            =5FP  Kritischer Erfolg! (QS4)\n\n"
+            "Runde  1: EEW  11  11  11  Würfel   1   1   1  FW5            = 5FP  Kritischer Erfolg! (QS4)\n"
+            "Runde  2: EEW  11  11  11  Würfel   1   1   1  FW5            = 5FP  Kritischer Erfolg! (QS4)\n"
+            "Runde  3: EEW  11  11  11  Würfel   1   1   1  FW5            = 5FP  Kritischer Erfolg! (QS4)\n\n"
             "Probe erfolgreich nach 3 Runden (15KR)\n"
             "```",
         )

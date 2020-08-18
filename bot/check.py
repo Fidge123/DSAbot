@@ -60,6 +60,10 @@ def create_response(msg: str, author: Member) -> Optional[str]:
 
             if check.data["rolls"].botch:
                 return "{} Einsatz von Schips nicht erlaubt".format(author.mention)
+            if isinstance(check, CumulativeCheck):
+                return "{} Einsatz von Schips bei Sammelproben (bisher) nicht unterstützt".format(
+                    author.mention
+                )
             if note_id not in note.number_notes:
                 note.create_note(note_id, 3, author)
             if note.number_notes[note_id] <= 0:
@@ -74,7 +78,10 @@ def create_response(msg: str, author: Member) -> Optional[str]:
         match = retry_regex.search(msg)
         if match:
             check = lastCheck[hash(author)]
-            check.data["modifier"] -= 1
+            if hasattr(check, "_initial_mod"):
+                check._initial_mod -= 1
+            else:
+                check.data["modifier"] -= 1
             check.recalculate()
             return str(check)
 

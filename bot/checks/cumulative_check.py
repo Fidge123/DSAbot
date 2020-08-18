@@ -24,14 +24,23 @@ class CumulativeCheck(SkillCheck):
         "time": int,
         "unit": str,
     }
-    _response = "EEW{EAV}  Würfel{rolls}  FW{SR}{diffs}={SP}FP  {result}"
+    _response = "EEW{EAV}  Würfel{rolls}  FW{SR}{diffs}={SP:>2}FP  {result}"
     _routine = "Routineprobe {SP} FP = QS {QL}"
     _impossible = "Probe nicht möglich  EEW{EAV}"
 
-    def __init__(self, message: str, author: Member):
-        super().__init__(message, author)
+    @property
+    def routine(self) -> bool:
+        return False
+
+    def recalculate(self) -> None:
         self.round = 0
         self.total_ql = 0
+        if hasattr(self, "_initial_mod"):
+            self.data["modifier"] = self._initial_mod
+        super().recalculate()
+
+    def __init__(self, message: str, author: Member):
+        super().__init__(message, author)
         self._initial_mod = self.data["modifier"]
 
     def __str__(self) -> str:
@@ -43,7 +52,7 @@ class CumulativeCheck(SkillCheck):
         ):
             self.round += 1
             response += "\nRunde {:>2}: {}".format(self.round, super().__str__())
-            self.recalculate()
+            super().recalculate()
 
         if self.total_ql < 6:
             response += "\n\nProbe fehlgeschlagen"
