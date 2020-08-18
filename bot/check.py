@@ -78,7 +78,7 @@ def create_response(msg: str, author: Member) -> Optional[str]:
         match = retry_regex.search(msg)
         if match:
             check = lastCheck[hash(author)]
-            if hasattr(check, "_initial_mod"):
+            if isinstance(check, CumulativeCheck):
                 check._initial_mod -= 1
             else:
                 check.data["modifier"] -= 1
