@@ -1,4 +1,6 @@
 import json
+import os
+from hashlib import sha256
 
 from bs4 import BeautifulSoup
 import requests
@@ -31,7 +33,7 @@ def hash_and_clean(soup):
     for form in soup.find_all("form"):
         form.decompose()
 
-    soup_hash = hash(soup.prettify())
+    soup_hash = sha256(soup.prettify(encoding="utf-8")).hexdigest()
 
     for bc in soup.find_all("div", class_="breadcrumb_boxed"):
         bc.decompose()
@@ -45,6 +47,7 @@ def find_page(url, sitemap):
     for site in sitemap:
         if site["url"] == url:
             return site
+    return {}
 
 
 def parse(url, sitemap, level=0):
@@ -54,20 +57,15 @@ def parse(url, sitemap, level=0):
         soup_hash = hash_and_clean(soup)
 
         site = find_page(url, sitemap)
-        if site:
-            if site["hash"] == soup_hash:
-                return site
-            else:
-                sitemap = site["subpages"]
-        else:
-            sitemap = []
+        if getattr(site, "hash", None) == soup_hash:
+            return site
 
         title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
 
         print("  " * level + title)
 
         subpages = [
-            parse(link, sitemap, level + 1)
+            parse(link, getattr(site, "subpages", []), level + 1)
             for link in [
                 base + link["href"]
                 for link in soup.find_all("a")
@@ -76,29 +74,28 @@ def parse(url, sitemap, level=0):
         ]
 
         return {"title": title, "url": url, "hash": soup_hash, "subpages": subpages}
-    except (KeyboardInterrupt, SystemExit):
-        raise
     except:
         print("Skipped: ", url)
         skipped.append(url)
         return {"url": url}
 
 
+res = requests.get(base)
+soup = BeautifulSoup(res.text, "lxml")
+categories = [
+    base + link["href"] for link in soup.header.nav.find_all("a") if validate(link)
+]
+
 with open("regelwiki.json") as sitemap_file:
     sitemap = json.loads(sitemap_file.read())
-    res = requests.get(base)
-    soup = BeautifulSoup(res.text, "lxml")
-    categories = [
-        base + link["href"] for link in soup.header.nav.find_all("a") if validate(link)
-    ]
+    for url in categories:
+        regelwiki.append(parse(url, sitemap))
+        with open("temp.json", "w") as temp:
+            temp.write(json.dumps(regelwiki, indent=2) + "\n")
 
-    try:
-        for url in categories:
-            regelwiki.append(parse(url, sitemap))
-    except:
-        pass
+with open("skipped.json", "w") as file:
+    file.write(json.dumps(skipped) + "\n")
 
-    with open("regelwiki.json", "w") as file:
-        file.write(json.dumps(regelwiki, indent=2) + "\n")
-    with open("skipped.json", "w") as file:
-        file.write(json.dumps(skipped) + "\n")
+with open("regelwiki.json", "w") as regelwiki:
+    regelwiki.write(json.dumps(regelwiki, indent=2) + "\n")
+    os.remove("temp.json")
