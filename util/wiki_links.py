@@ -25,37 +25,42 @@ def validate(link):
         return False
 
 
-def remove_other(soup):
+def hash_and_clean(soup):
     soup.header.decompose()
     soup.footer.decompose()
+    for form in soup.find_all("form"):
+        form.decompose()
+
+    soup_hash = hash(soup.prettify())
+
     for bc in soup.find_all("div", class_="breadcrumb_boxed"):
         bc.decompose()
     for content in soup.find_all("div", id="main"):
         content.decompose()
 
+    return soup_hash
+
 
 def find_page(url, sitemap):
     for site in sitemap:
-        if site.url == url:
+        if site["url"] == url:
             return site
 
 
 def parse(url, sitemap, level=0):
     try:
         res = requests.get(url)
-        page_hash = hash(res.text)
+        soup = BeautifulSoup(res.text, "lxml")
+        soup_hash = hash_and_clean(soup)
 
         site = find_page(url, sitemap)
         if site:
-            if site.hash == page_hash:
+            if site["hash"] == soup_hash:
                 return site
             else:
-                sitemap = site.subpages
+                sitemap = site["subpages"]
         else:
             sitemap = []
-
-        soup = BeautifulSoup(res.text, "lxml")
-        remove_other(soup)
 
         title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
 
@@ -70,7 +75,7 @@ def parse(url, sitemap, level=0):
             ]
         ]
 
-        return {"title": title, "url": url, "hash": page_hash, "subpages": subpages}
+        return {"title": title, "url": url, "hash": soup_hash, "subpages": subpages}
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
@@ -81,13 +86,10 @@ def parse(url, sitemap, level=0):
 
 with open("regelwiki.json") as sitemap_file:
     sitemap = json.loads(sitemap_file.read())
-    print(sitemap)
     res = requests.get(base)
     soup = BeautifulSoup(res.text, "lxml")
     categories = [
-        base + link["href"]
-        for link in soup.header.nav.find_all("a", limit=4)
-        if validate(link)
+        base + link["href"] for link in soup.header.nav.find_all("a") if validate(link)
     ]
 
     try:
