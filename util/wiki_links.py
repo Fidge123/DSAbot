@@ -94,12 +94,11 @@ with open("regelwiki.json") as sitemap_file:
 
     try:
         for url in categories:
-            print("Category: ", url)
             regelwiki.append(parse(url, sitemap))
     except:
         pass
 
     with open("regelwiki.json", "w") as file:
-        file.write(json.dumps(regelwiki, indent=2))
+        file.write(json.dumps(regelwiki, indent=2) + "\n")
     with open("skipped.json", "w") as file:
-        file.write(json.dumps(skipped))
+        file.write(json.dumps(skipped) + "\n")
