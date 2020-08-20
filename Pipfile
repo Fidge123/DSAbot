@@ -6,11 +6,18 @@ verify_ssl = true
 [dev-packages]
 coverage = "*"
 pre-commit = "*"
+mypy = "*"
+flake8 = "*"
+black = "*"
+rope = "*"
 
 [packages]
 discord = "*"
 pyparsing = "*"
-mypy = "*"
+requests = "*"
+beautifulsoup4 = "*"
+lxml = "*"
+fuzzywuzzy = {extras = ["speedup"], version = "*"}
 
 [requires]
 python_version = "3.8"
@@ -21,3 +28,6 @@ test = "coverage run --source . -m unittest discover --verbose test"
 tests = "coverage run --source . -m unittest discover --verbose test"
 cov = "coverage report -m -i --fail-under=80 --skip-covered --skip-empty --debug=dataio"
 lint = "mypy bot --ignore-missing-imports"
+
+[pipenv]
+allow_prereleases = true
