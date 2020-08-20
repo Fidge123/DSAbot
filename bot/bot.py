@@ -71,18 +71,16 @@ async def on_message(message: discord.Message) -> None:
             r"^debug:(?P<debugCommand>[a-z]*)$", msgstring, re.IGNORECASE
         )
         if debug_code:
-            response = "no debug"
-
             if debug_code.group("debugCommand") == "cache":
-                response = "cache"
+                return await send("cache")
 
             if debug_code.group("debugCommand") == "fullCache":
-                response = "fullCache"
+                return await send("fullCache")
 
             if debug_code.group("debugCommand") == "numberNotes":
-                response = str(note.number_notes)
+                return await send(str(note.number_notes))
 
-            return await send(response)
+            return await send("no debug")
 
 
 def run() -> None:
