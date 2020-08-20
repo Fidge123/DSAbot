@@ -6,7 +6,7 @@ from typing import List
 
 import discord
 
-from bot import persistence, dice_roll, note, check
+from bot import persistence, dice_roll, note, check, wiki
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
@@ -39,9 +39,9 @@ async def on_message(message: discord.Message) -> None:
         if channel not in permittedChannels:
             permittedChannels.append(channel)
             persistence.persist_channel(channel)
-            await send("I am listening for rolls here")
+            return await send("I am listening for rolls here")
         else:
-            await send("I am already listening")
+            return await send("I am already listening")
 
     if channel in permittedChannels:
 
@@ -56,17 +56,16 @@ async def on_message(message: discord.Message) -> None:
             await client.close()
             return
 
-        response = dice_roll.create_response(msgstring, author)
-        if response:
-            return await send(response)
-
-        response = check.create_response(msgstring, author)
-        if response:
-            return await send(response)
-
-        response = note.create_response(msgstring, author)
-        if response:
-            return await send(response)
+        for create_response in [
+            dice_roll.create_response,
+            check.create_response,
+            note.create_response,
+            wiki.create_response,
+        ]:
+            response = create_response(msgstring, author)
+            if response:
+                msg, embed = response
+                return await send(msg, embed=embed)
 
         debug_code = re.search(
             r"^debug:(?P<debugCommand>[a-z]*)$", msgstring, re.IGNORECASE

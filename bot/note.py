@@ -1,7 +1,7 @@
 import re
-from typing import Dict, Union, Optional
+from typing import Dict, Union, Optional, Tuple
 
-from discord import Member
+from discord import Member, Embed
 
 from bot import persistence
 
@@ -52,18 +52,21 @@ def delete_note(user: Member, id: str) -> str:
         return "{user} Es gibt keine Notiz {id}.".format(user=user.mention, id=id)
 
 
-def create_response(message: str, user: Member) -> Optional[str]:
+def create_response(message: str, user: Member) -> Optional[Tuple[str, Embed]]:
     create_match = re.search(
         r"^note:(?P<id>[\w#]+)(->(?P<number>[\+\-]?[0-9]+))?$", message, re.IGNORECASE,
     )
     if create_match:
-        return create_note(create_match.group("id"), create_match.group("number"), user)
+        return (
+            create_note(create_match.group("id"), create_match.group("number"), user),
+            None,
+        )
 
     get_match = re.search(r"^notes$", message, re.IGNORECASE)
     if get_match:
-        return get_notes(user)
+        return get_notes(user), None
 
     remove_match = re.search(r"^delete note (?P<id>[\w#]+)$", message, re.IGNORECASE)
     if remove_match:
-        return delete_note(user, remove_match.group("id"))
+        return delete_note(user, remove_match.group("id")), None
     return None
