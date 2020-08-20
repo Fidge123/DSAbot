@@ -28,7 +28,7 @@ class TestSkillCheck(TestCase):
         note.create_note("schips_{}".format(str(user)), 3, user)
 
         mock_randint.return_value = 12
-        first = check.create_response("11,9,9@4", user)
+        first, _ = check.create_response("11,9,9@4", user)
         self.assertEqual(
             first,
             "@TestUser \n"
@@ -42,7 +42,7 @@ class TestSkillCheck(TestCase):
         check.create_response("11,9,9@6", MockAuthor("NotTestUser"))
 
         mock_randint.return_value = 2
-        second = check.create_response("schips rrr", user)
+        second, _ = check.create_response("schips rrr", user)
         self.assertEqual(
             second,
             "@TestUser \n"
@@ -54,7 +54,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
         mock_randint.return_value = 10
-        third = check.create_response("schips rkk", user)
+        third, _ = check.create_response("schips rkk", user)
         self.assertEqual(
             third,
             "@TestUser \n"
@@ -66,7 +66,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
         mock_randint.return_value = 10
-        fourth = check.create_response("schips rkk", user)
+        fourth, _ = check.create_response("schips rkk", user)
         self.assertEqual(
             fourth,
             "@TestUser \n"
@@ -78,7 +78,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
         mock_randint.return_value = 10
-        fifth = check.create_response("schips rkk", user)
+        fifth, _ = check.create_response("schips rkk", user)
         self.assertEqual(fifth, "@TestUser Keine Schips übrig!")
 
         note.delete_note(user, "schips_{}".format(str(user)))
@@ -87,11 +87,11 @@ class TestSkillCheck(TestCase):
     def test_force(self, mock_randint: MagicMock):
         user = MockAuthor("TestUser")
         mock_randint.return_value = 12
-        first = check.create_response("14,14,14@12", user)
+        first, _ = check.create_response("14,14,14@12", user)
         self.assertEqual(
             first, "@TestUser \n```py\nRoutineprobe: 6 FP = QS 2\n```",
         )
-        second = check.create_response("force", user)
+        second, _ = check.create_response("force", user)
         self.assertEqual(
             second,
             "@TestUser \n"
@@ -107,7 +107,7 @@ class TestSkillCheck(TestCase):
     def test_retry_repeat(self, mock_randint: MagicMock):
         user = MockAuthor("TestUser")
         mock_randint.return_value = 12
-        first = check.create_response("11,9,9@4", user)
+        first, _ = check.create_response("11,9,9@4", user)
         self.assertEqual(
             first,
             "@TestUser \n"
@@ -119,7 +119,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
         mock_randint.return_value = 10
-        second = check.create_response("repeat", user)
+        second, _ = check.create_response("repeat", user)
         self.assertEqual(
             second,
             "@TestUser \n"
@@ -131,7 +131,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
         mock_randint.return_value = 9
-        third = check.create_response("retry", user)
+        third, _ = check.create_response("retry", user)
         self.assertEqual(
             third,
             "@TestUser \n"

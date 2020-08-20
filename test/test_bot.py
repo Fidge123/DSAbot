@@ -72,11 +72,13 @@ class TestBot(TestCase):
                 self.loop.run_until_complete(on_message(m))
                 if i == 1:
                     mock_randint.assert_called_with(1, 10)
-                    m.channel.send.assert_called_with("<@1337> \n1 + 1 + 1 + 1 + 1 = 5")
+                    m.channel.send.assert_called_with(
+                        "<@1337> \n1 + 1 + 1 + 1 + 1 = 5", embed=None
+                    )
                 if i == 2:
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with(
-                        "<@1337> \n1 + 1 + 1 + 1 + 1 (+5) = 10"
+                        "<@1337> \n1 + 1 + 1 + 1 + 1 (+5) = 10", embed=None
                     )
                 if i == 3:
                     mock_randint.assert_called_with(1, 20)
@@ -88,6 +90,7 @@ class TestBot(TestCase):
                         "FW 10               = 10 FP\n"
                         "Kritischer Erfolg! (QS 4)\n"
                         "```",
+                        embed=None,
                     )
                 if i == 4:
                     mock_randint.assert_called_with(1, 20)
@@ -98,6 +101,7 @@ class TestBot(TestCase):
                         "Würfel:   1   1\n"
                         "Bestanden\n"
                         "```",
+                        embed=None,
                     )
                 if i == 5:
                     mock_randint.assert_called_with(1, 20)
@@ -108,6 +112,7 @@ class TestBot(TestCase):
                         "Würfel:   1 --> 1\n"
                         "Kritischer Erfolg!\n"
                         "```",
+                        embed=None,
                     )
 
     def test_debug(self):
@@ -140,24 +145,30 @@ class TestBot(TestCase):
                 m = self.message(m)
                 self.loop.run_until_complete(on_message(m))
                 if i == 1:
-                    m.channel.send.assert_called_with("<@1337> test_blub ist jetzt 7.")
+                    m.channel.send.assert_called_with(
+                        "<@1337> test_blub ist jetzt 7.", embed=None
+                    )
                 if i == 2:
-                    m.channel.send.assert_called_with("<@1337> test_klik ist jetzt 8.")
+                    m.channel.send.assert_called_with(
+                        "<@1337> test_klik ist jetzt 8.", embed=None
+                    )
                 if i == 3:
-                    m.channel.send.assert_called_with("<@1337> test_klik ist jetzt 17.")
+                    m.channel.send.assert_called_with(
+                        "<@1337> test_klik ist jetzt 17.", embed=None
+                    )
                 if i == 4:
                     m.channel.send.assert_called_with(
-                        "<@1337>\n```test_blub :  7\ntest_klik : 17```"
+                        "<@1337>\n```test_blub :  7\ntest_klik : 17```", embed=None
                     )
                 if i == 5:
                     m.channel.send.assert_called_with(
-                        "<@1337> test_blub war 7 und wurde nun gelöscht."
+                        "<@1337> test_blub war 7 und wurde nun gelöscht.", embed=None
                     )
                 if i == 6:
                     m.channel.send.assert_called_with(
-                        "<@1337> test_klik war 17 und wurde nun gelöscht."
+                        "<@1337> test_klik war 17 und wurde nun gelöscht.", embed=None
                     )
                 if i == 7:
                     m.channel.send.assert_called_with(
-                        "<@1337> Es gibt keine Notiz test_klik."
+                        "<@1337> Es gibt keine Notiz test_klik.", embed=None
                     )
