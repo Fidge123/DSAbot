@@ -277,6 +277,76 @@ No specific rolls are implemented yet. You can use the generic roll as a workaro
 
 No specific rolls are implemented yet. You can use the generic roll as a workaround.
 
+## Regelwiki Integration
+
+You can get links (and content) from ulisses-regelwiki.de by typing
+
+> wiki [TITLE]
+
+This will find the articles with similar titles (using fuzzysearch) and if it is a perfect match, load the content from the linked article to display it directly inline.
+
+> wiki Wuchtschlag
+
+```
+@User
+Wuchtschlag I-III (100.0): http://ulisses-regelwiki.de/index.php/KSF_Wuchtschlag.html
+------------------------------------------------
+Wuchtschlag I-III
+Auszug vom Ulisses Regelwiki
+
+Regel
+Die Attacke wird um 2 pro Stufe der Sonderfertigkeit erschwert. Bei Erfolg werden die Trefferpunkte um 2 pro Stufe der Sonderfertigkeit erhöht.
+
+Erschwernis
+–2/–4/–6
+
+Kampftechniken
+Hiebwaffen, Kettenwaffen, Raufen, Schwerter, Stangenwaffen, Zweihandhiebwaffen, Zweihandschwerter
+
+Publikationen
+Regelwerk, Seite 250
+Der Rote Schlächter, Seite 60
+```
+
+> wiki Ignifaxius
+
+```
+@User
+Ignifaxius (100.0): http://ulisses-regelwiki.de/index.php/ZS_Ignifaxius.html
+Frigifaxius (90.5): http://ulisses-regelwiki.de/index.php/frigifaxius.html
+------------------------------------------------
+Ignifaxius
+Auszug vom Ulisses Regelwiki
+
+Probe
+MU/KL/CH
+
+Wirkung
+Aus den Fingern des Zaubernden schießt einen Flammenstrahl, der in gerader Linie sein Ziel trifft. Der Magier muss keine zusätzliche Aktion aufwenden,um nach dem Wirken des Zaubers zu treffen. Das Treffen ist in der Zauberdauer inbegriffen. [...]
+
+Zauberdauer
+2 Aktionen
+
+AsP-Kosten
+8 AsP (Kosten sind nicht modifizierbar)
+
+Reichweite
+16 Schritt
+
+Wirkungsdauer
+sofort
+
+[...]
+```
+
+> wiki igni
+
+```
+@User
+Ignifaxius (78.5): http://ulisses-regelwiki.de/index.php/ZS_Ignifaxius.html
+Ignisphaero (76.5): http://ulisses-regelwiki.de/index.php/ZS_Ignisphaero.html
+```
+
 ## Numeric Notes
 
 You can save a keyword-number combination
