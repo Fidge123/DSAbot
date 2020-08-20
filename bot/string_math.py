@@ -56,5 +56,5 @@ grammar = infixNotation(
 )
 
 
-def calc(input: str) -> float:
-    return grammar.parseString(input)[0].eval()
+def calc(math_string: str) -> float:
+    return grammar.parseString(math_string)[0].eval()

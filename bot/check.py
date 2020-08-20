@@ -39,10 +39,10 @@ def create_check(msg: str, author: Member) -> Optional[GenericCheck]:
     return None
 
 
-def schip_split(input: str) -> List[bool]:
-    input = re.sub(r"reroll\ ?", "r", input, re.IGNORECASE)
-    input = re.sub(r"keep\ ?", "k", input, re.IGNORECASE)
-    return [letter == "r" for letter in input]
+def schip_split(input_string: str) -> List[bool]:
+    input_string = re.sub(r"reroll\ ?", "r", input_string, re.IGNORECASE)
+    input_string = re.sub(r"keep\ ?", "k", input_string, re.IGNORECASE)
+    return [letter == "r" for letter in input_string]
 
 
 def create_response(msg: str, author: Member) -> Optional[str]:

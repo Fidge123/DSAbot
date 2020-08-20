@@ -96,6 +96,6 @@ with open("regelwiki.json") as sitemap_file:
 with open("skipped.json", "w") as file:
     file.write(json.dumps(skipped) + "\n")
 
-with open("regelwiki.json", "w") as regelwiki:
-    regelwiki.write(json.dumps(regelwiki, indent=2) + "\n")
+with open("regelwiki.json", "w") as rw_file:
+    rw_file.write(json.dumps(regelwiki, indent=2) + "\n")
     os.remove("temp.json")

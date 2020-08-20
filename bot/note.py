@@ -34,7 +34,7 @@ def create_note(note_id: str, value: Union[int, str], user: Member) -> str:
 
 
 def get_notes(user: Member) -> str:
-    if len(number_notes.items()):
+    if len(number_notes.items()) > 0:
         return "{user}\n```{notes}```".format(user=user.mention, notes=notes_to_str())
     else:
         return "{} Es gibt keine Notizen.".format(user.mention)

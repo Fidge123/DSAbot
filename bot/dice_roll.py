@@ -20,8 +20,8 @@ def parse(message: str) -> Optional[re.Match]:
     )
 
 
-def create_response(input: str, author: Member) -> Optional[str]:
-    regex_result = parse(input)
+def create_response(input_string: str, author: Member) -> Optional[str]:
+    regex_result = parse(input_string)
     if regex_result:
         die_amount = int(regex_result.group("amount") or 1)
         die_sides = int(regex_result.group("sides"))
