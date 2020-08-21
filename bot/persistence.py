@@ -4,6 +4,7 @@ from typing import List, Tuple
 from discord import TextChannel
 
 DB_PATH = os.getenv("DATABASE_URL")
+print(DB_PATH)
 connection = None
 
 if DB_PATH:
