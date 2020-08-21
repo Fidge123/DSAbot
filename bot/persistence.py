@@ -30,7 +30,8 @@ def persist_channel(channel: TextChannel) -> bool:
     with conn() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
-                "INSERT OR REPLACE INTO channels VALUES (?)", (str(channel.id),)
+                "INSERT INTO channels VALUES (?) ON CONFLICT DO NOTHING",
+                (str(channel.id),),
             )
             connection.commit()
     return True
@@ -55,7 +56,8 @@ def persist_note(note_id: str, value: int) -> bool:
     with conn() as connection:
         with connection.cursor() as cursor:
             cursor.execute(
-                "INSERT OR REPLACE INTO numberNotes VALUES (?, ?)", (note_id, value)
+                "INSERT INTO numberNotes(id, content) VALUES (?, ?)  ON CONFLICT(id) DO UPDATE SET content=excluded.content",
+                (note_id, value),
             )
             connection.commit()
     return True
