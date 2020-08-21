@@ -18,6 +18,7 @@ requests = "*"
 beautifulsoup4 = "*"
 lxml = "*"
 fuzzywuzzy = {extras = ["speedup"], version = "*"}
+psycopg2-binary = "*"
 
 [requires]
 python_version = "3.8"
