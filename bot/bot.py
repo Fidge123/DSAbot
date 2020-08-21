@@ -21,7 +21,7 @@ async def on_ready() -> None:
     channel_ids = persistence.load_channels()
 
     for channel_id in channel_ids:
-        new = client.get_channel(channel_id[0])
+        new = client.get_channel(int(channel_id[0]))
         permittedChannels.append(new)
 
 
