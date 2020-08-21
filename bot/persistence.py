@@ -47,7 +47,8 @@ def remove_channel(channel: TextChannel) -> bool:
 def load_channels() -> List[Tuple[int]]:
     with conn() as connection:
         with connection.cursor() as cursor:
-            return cursor.execute("SELECT * FROM channels").fetchall()
+            cursor.execute("SELECT * FROM channels")
+            return cursor.fetchall()
 
 
 def persist_note(note_id: str, value: int) -> bool:
@@ -71,4 +72,5 @@ def remove_note(note_id: str) -> bool:
 def load_notes() -> List[Tuple[str, int]]:
     with conn() as connection:
         with connection.cursor() as cursor:
-            return cursor.execute("SELECT * FROM numberNotes").fetchall()
+            cursor.execute("SELECT * FROM numberNotes")
+            return cursor.fetchall()
