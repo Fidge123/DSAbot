@@ -33,7 +33,7 @@ def persist_channel(channel: TextChannel) -> bool:
 
     with conn() as connection:
         with connection.cursor() as cursor:
-            cursor.execute(sqlite if is_sqlite else psql, (str(channel.id)))
+            cursor.execute(sqlite if is_sqlite else psql, (str(channel.id),))
             connection.commit()
     return True
 
@@ -61,7 +61,7 @@ def persist_note(note_id: str, value: int) -> bool:
     psql = "INSERT INTO numberNotes(id, content) VALUES (%s, %s) ON CONFLICT(id) DO UPDATE SET content=excluded.content"
     with conn() as connection:
         with connection.cursor() as cursor:
-            cursor.execute(sqlite if is_sqlite else psql, (note_id, value))
+            cursor.execute(sqlite if is_sqlite else psql, (note_id, value,))
             connection.commit()
     return True
 
