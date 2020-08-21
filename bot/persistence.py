@@ -6,6 +6,7 @@ import psycopg2
 from discord import TextChannel
 
 DB_PATH = os.getenv("DATABASE_URL")
+is_sqlite = False if DB_PATH else True
 
 
 def conn():
@@ -27,20 +28,23 @@ def init_db() -> bool:
 
 
 def persist_channel(channel: TextChannel) -> bool:
+    sqlite = "INSERT OR REPLACE INTO channels VALUES (?)"
+    psql = "INSERT INTO channels VALUES (%s) ON CONFLICT DO NOTHING"
+
     with conn() as connection:
         with connection.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO channels VALUES (?) ON CONFLICT DO NOTHING",
-                (str(channel.id),),
-            )
+            cursor.execute(sqlite if is_sqlite else psql, (str(channel.id)))
             connection.commit()
     return True
 
 
 def remove_channel(channel: TextChannel) -> bool:
+    sqlite = "DELETE FROM channels WHERE id=?"
+    psql = "DELETE FROM channels WHERE id=%s"
+
     with conn() as connection:
         with connection.cursor() as cursor:
-            cursor.execute("DELETE FROM channels WHERE id=?", (str(channel.id),))
+            cursor.execute(sqlite if is_sqlite else psql, (str(channel.id),))
             connection.commit()
     return True
 
@@ -53,20 +57,21 @@ def load_channels() -> List[Tuple[int]]:
 
 
 def persist_note(note_id: str, value: int) -> bool:
+    sqlite = "INSERT OR REPLACE numberNotes VALUES (?, ?)"
+    psql = "INSERT INTO numberNotes(id, content) VALUES (%s, %s) ON CONFLICT(id) DO UPDATE SET content=excluded.content"
     with conn() as connection:
         with connection.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO numberNotes(id, content) VALUES (?, ?)  ON CONFLICT(id) DO UPDATE SET content=excluded.content",
-                (note_id, value),
-            )
+            cursor.execute(sqlite if is_sqlite else psql, (note_id, value))
             connection.commit()
     return True
 
 
 def remove_note(note_id: str) -> bool:
+    sqlite = "DELETE FROM numberNotes WHERE id=?"
+    psql = "DELETE FROM numberNotes WHERE id=%s"
     with conn() as connection:
         with connection.cursor() as cursor:
-            cursor.execute("DELETE FROM numberNotes WHERE id=?", (note_id,))
+            cursor.execute(sqlite if is_sqlite else psql, (note_id,))
             connection.commit()
     return True
 
