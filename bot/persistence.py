@@ -63,11 +63,11 @@ def load_channels() -> List[Tuple[int]]:
 
 
 def persist_note(note_id: str, value: int) -> bool:
-    sqlite = "INSERT OR REPLACE numberNotes VALUES (?, ?)"
+    sqlite = "INSERT OR REPLACE INTO numberNotes VALUES (?, ?)"
     psql = "INSERT INTO numberNotes(id, content) VALUES (%s, %s) ON CONFLICT(id) DO UPDATE SET content=excluded.content"
     with conn() as connection:
         cursor = connection.cursor()
-        cursor.execute(sqlite if is_sqlite else psql, (note_id, value,))
+        cursor.execute(sqlite if is_sqlite else psql, (note_id, value))
         connection.commit()
         cursor.close()
     return True
