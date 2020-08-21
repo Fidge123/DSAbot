@@ -9,10 +9,12 @@ connection = None
 if DB_PATH:
     import psycopg2
 
+    print("Connecting to PostgreSQL!")
     connection = psycopg2.connect(DB_PATH, sslmode="require")
 else:
     import sqlite3
 
+    print("Connecting to SQLite!")
     connection = sqlite3.connect("bot/persistence.db")
 
 SCHEMA_PATH = "bot/schema.sql"
