@@ -10,8 +10,8 @@ from bot.persistence import db
 
 class Note(db.Entity):
     key = orm.Required(str)
-    value = orm.Required(int)
-    server = orm.Required(int)
+    value = orm.Required(int, size=64)
+    server = orm.Required(str)
     changed_at = orm.Required(datetime)
     changed_by = orm.Required(str)
     orm.PrimaryKey(key, server)
@@ -19,7 +19,7 @@ class Note(db.Entity):
 
 @orm.db_session
 def get_note(note_id, server) -> Note:
-    return Note.get(key=note_id, server=server)
+    return Note.get(key=note_id, server=str(server))
 
 
 @orm.db_session
@@ -28,26 +28,8 @@ def get_all() -> List[Note]:
 
 
 @orm.db_session
-def persist_note(note_id: str, value: int) -> Note:
-    note = Note.get(key=note_id)
-    if note:
-        note.value = value
-        note.changed_at = datetime.utcnow()
-        note.changed_by = "me"
-    else:
-        note = Note(
-            key=note_id,
-            value=value,
-            server="",
-            changed_at=datetime.utcnow(),
-            changed_by="me",
-        )
-    return note
-
-
-@orm.db_session
 def notes_to_str(guild) -> str:
-    sorted_notes = Note.select(lambda n: n.server == guild).order_by(Note.key)
+    sorted_notes = Note.select(lambda n: n.server == str(guild)).order_by(Note.key)
     if len(sorted_notes) == 0:
         raise RuntimeError
     lk = max(map(len, [n.key for n in sorted_notes])) + 1
@@ -59,7 +41,7 @@ def notes_to_str(guild) -> str:
 
 @orm.db_session
 def create_note(note_id: str, value: Union[int, str], user: Member) -> str:
-    note = Note.get(key=note_id, server=user.guild)
+    note = Note.get(key=note_id, server=str(user.guild))
     if note:
         note.value += int(value)
         note.changed_at = datetime.utcnow()
@@ -68,7 +50,7 @@ def create_note(note_id: str, value: Union[int, str], user: Member) -> str:
         note = Note(
             key=note_id,
             value=value,
-            server=user.guild,
+            server=str(user.guild),
             changed_at=datetime.utcnow(),
             changed_by=str(user),
         )
@@ -90,7 +72,7 @@ def get_notes(user: Member) -> str:
 
 @orm.db_session
 def delete_note(user: Member, note_id: str) -> str:
-    note = Note.get(key=note_id, server=user.guild)
+    note = Note.get(key=note_id, server=str(user.guild))
     if note:
         note.delete()
         return "{user} {id} war {value} und wurde nun gelöscht.".format(

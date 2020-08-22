@@ -8,19 +8,19 @@ from bot.persistence import db
 
 
 class Channel(db.Entity):
-    id = orm.PrimaryKey(int)
-    server = orm.Required(int)
+    id = orm.PrimaryKey(str)
+    server = orm.Required(str)
     added_at = orm.Required(datetime)
     added_by = orm.Required(str)
 
 
 @orm.db_session
 def is_permitted(content: str, message: Message) -> bool:
-    permitted = Channel.exists(id=message.channel.id)
+    permitted = Channel.exists(id=str(message.channel.id))
     if not permitted and "SUMMON" in content:
         Channel(
-            id=message.channel.id,
-            server=message.channel.guild,
+            id=str(message.channel.id),
+            server=str(message.channel.guild),
             added_at=datetime.utcnow(),
             added_by=str(message.author),
         )
@@ -33,7 +33,7 @@ def create_response(content: str, message: Message) -> Optional[Tuple[str, Embed
         return "I am already listening", None
 
     if "BEGONE" in content:
-        Channel.get(id=message.channel.id).delete()
+        Channel.get(id=str(message.channel.id)).delete()
         return "I have left", None
 
     return None
