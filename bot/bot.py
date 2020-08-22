@@ -55,7 +55,7 @@ async def on_message(message: discord.Message) -> None:
                 return await send("fullCache")
 
             if debug_code.group("debugCommand") == "numberNotes":
-                return await send(str(note.number_notes))
+                return await send(str(note.get_all()))
 
             return await send("no debug")
     else:

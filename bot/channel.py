@@ -33,5 +33,7 @@ def create_response(content: str, message: Message) -> Optional[Tuple[str, Embed
         return "I am already listening", None
 
     if "BEGONE" in content:
-        Channel[message.channel.id].delete()
+        Channel.get(id=message.channel.id).delete()
         return "I have left", None
+
+    return None

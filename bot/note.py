@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import Union, Optional, Tuple
+from typing import List, Union, Optional, Tuple
 
 from pony import orm
 from discord import Message, Member, Embed
@@ -20,6 +20,11 @@ class Note(db.Entity):
 @orm.db_session
 def get_note(note_id, server) -> Note:
     return Note.get(key=note_id, server=server)
+
+
+@orm.db_session
+def get_all() -> List[Note]:
+    return Note.get()[:]
 
 
 @orm.db_session
