@@ -20,7 +20,7 @@ def is_permitted(content: str, message: Message) -> bool:
     if not permitted and "SUMMON" in content:
         Channel(
             id=str(message.channel.id),
-            server=str(message.channel.guild),
+            server=str(message.channel.guild.id),
             added_at=datetime.utcnow(),
             added_by=str(message.author),
         )

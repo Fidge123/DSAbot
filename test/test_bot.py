@@ -5,45 +5,7 @@ from unittest.mock import MagicMock, patch
 
 from bot.bot import on_message
 from bot import persistence
-
-
-class AsyncMock(MagicMock):
-    async def __call__(self, *args, **kwargs):
-        return super().__call__(*args, **kwargs)
-
-
-class MockChannel:
-    def __init__(self, channel_id, send: AsyncMock):
-        self.id = channel_id
-        self.send = send
-        self.guild = 123456789
-
-
-class MockAuthor:
-    def __init__(self, channel_id, send: AsyncMock):
-        self.name = channel_id
-        self.mention = send
-        self.guild = 123456789
-
-    def __hash__(self):
-        return 123456789
-
-    def __eq__(self, other):
-        return str(self) == other
-
-    def __str__(self):
-        return self.name
-
-
-class MockMessage:
-    def __init__(
-        self, content, author, channel: MockChannel, add_reaction,
-    ):
-        self.content = content
-        self.author = author
-        self.channel = channel
-        self.guild = 123456789
-        self.add_reaction = add_reaction
+from test.mocks import MockAuthor, MockChannel, MockMessage, AsyncMock
 
 
 class TestBot(TestCase):
@@ -51,11 +13,16 @@ class TestBot(TestCase):
     def setUpClass(cls) -> None:
         cls.loop = asyncio.get_event_loop()
         cls.testchannel = MockChannel(1, AsyncMock())
-        cls.testauthor = MockAuthor("Author", "<@1337>")
+        cls.testauthor = MockAuthor("Author")
         persistence.on_ready()
 
     def message(self, msg):
-        return MockMessage(msg, self.testauthor, self.testchannel, AsyncMock())
+        return MockMessage(
+            author=self.testauthor,
+            content=msg,
+            channel=self.testchannel,
+            add_reaction=AsyncMock(),
+        )
 
     @patch("random.randint", new_callable=MagicMock())
     def test_smoke(self, mock_randint: MagicMock):
@@ -77,17 +44,17 @@ class TestBot(TestCase):
                 if i == 1:
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with(
-                        "<@1337> \n1 + 1 + 1 + 1 + 1 = 5", embed=None
+                        "@Author \n1 + 1 + 1 + 1 + 1 = 5", embed=None
                     )
                 if i == 2:
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with(
-                        "<@1337> \n1 + 1 + 1 + 1 + 1 (+5) = 10", embed=None
+                        "@Author \n1 + 1 + 1 + 1 + 1 (+5) = 10", embed=None
                     )
                 if i == 3:
                     mock_randint.assert_called_with(1, 20)
                     m.channel.send.assert_called_with(
-                        "<@1337> Verbergen\n"
+                        "@Author Verbergen\n"
                         "```py\n"
                         "EEW:      9   9   9\n"
                         "Würfel:   1   1   1\n"
@@ -99,7 +66,7 @@ class TestBot(TestCase):
                 if i == 4:
                     mock_randint.assert_called_with(1, 20)
                     m.channel.send.assert_called_with(
-                        "<@1337> Schwimmen\n"
+                        "@Author Schwimmen\n"
                         "```py\n"
                         "EEW:     14  14\n"
                         "Würfel:   1   1\n"
@@ -110,7 +77,7 @@ class TestBot(TestCase):
                 if i == 5:
                     mock_randint.assert_called_with(1, 20)
                     m.channel.send.assert_called_with(
-                        "<@1337> Breitschwert\n"
+                        "@Author Breitschwert\n"
                         "```py\n"
                         "EEW:     14\n"
                         "Würfel:   1 --> 1\n"
@@ -152,30 +119,30 @@ class TestBot(TestCase):
                 self.loop.run_until_complete(on_message(m))
                 if i == 1:
                     m.channel.send.assert_called_with(
-                        "<@1337> test_blub ist jetzt 7.", embed=None
+                        "@Author test_blub ist jetzt 7.", embed=None
                     )
                 if i == 2:
                     m.channel.send.assert_called_with(
-                        "<@1337> test_klik ist jetzt 8.", embed=None
+                        "@Author test_klik ist jetzt 8.", embed=None
                     )
                 if i == 3:
                     m.channel.send.assert_called_with(
-                        "<@1337> test_klik ist jetzt 17.", embed=None
+                        "@Author test_klik ist jetzt 17.", embed=None
                     )
                 if i == 4:
                     m.channel.send.assert_called_with(
-                        "<@1337>\n```test_blub :  7 (2020-01-01 00:00:00)\ntest_klik : 17 (2020-01-01 00:00:00)```",
+                        "@Author\n```test_blub :  7 (2020-01-01 00:00:00)\ntest_klik : 17 (2020-01-01 00:00:00)```",
                         embed=None,
                     )
                 if i == 5:
                     m.channel.send.assert_called_with(
-                        "<@1337> test_blub war 7 und wurde nun gelöscht.", embed=None
+                        "@Author test_blub war 7 und wurde nun gelöscht.", embed=None
                     )
                 if i == 6:
                     m.channel.send.assert_called_with(
-                        "<@1337> test_klik war 17 und wurde nun gelöscht.", embed=None
+                        "@Author test_klik war 17 und wurde nun gelöscht.", embed=None
                     )
                 if i == 7:
                     m.channel.send.assert_called_with(
-                        "<@1337> Es gibt keine Notiz test_klik.", embed=None
+                        "@Author Es gibt keine Notiz test_klik.", embed=None
                     )

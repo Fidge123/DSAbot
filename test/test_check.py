@@ -3,22 +3,7 @@ from unittest.mock import MagicMock, patch
 
 from bot.checks import SkillCheck, GenericCheck, AttributeCheck
 from bot import check, note
-
-
-class MockAuthor:
-    def __init__(self, name):
-        self.mention = "@{}".format(name)
-        self.guild = 123456789
-
-    def __str__(self):
-        return "TestUser#123456789"
-
-
-class MockMessage:
-    def __init__(self, author):
-        self.content = "foobar"
-        self.author = author
-        self.guild = 123456789
+from test.mocks import MockAuthor, MockMessage
 
 
 class TestSkillCheck(TestCase):
@@ -48,7 +33,9 @@ class TestSkillCheck(TestCase):
             "Nicht bestanden\n"
             "```",
         )
-        check.create_response("11,9,9@6", MockMessage(MockAuthor("NotTestUser")))
+        other_message = MockMessage(MockAuthor("NotTestUser"))
+        check.create_response("14,14,10@6", other_message)
+        self.assertNotEqual(message.author, other_message.author)
 
         mock_randint.return_value = 2
         second, _ = check.create_response("schips rrr", message)

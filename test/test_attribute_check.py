@@ -2,11 +2,7 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from bot.checks import AttributeCheck
-
-
-class MockAuthor:
-    def __init__(self, name):
-        self.mention = "@{}".format(name)
+from test.mocks import MockAuthor
 
 
 class TestAttributeCheck(TestCase):

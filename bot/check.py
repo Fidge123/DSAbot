@@ -57,7 +57,7 @@ def create_response(content: str, message: Message) -> Optional[Tuple[str, Embed
         match = fate_regex.search(content)
         if match:
             note_id = "schips_{}".format(str(author))
-            n = note.get_note(note_id, author.guild)
+            n = note.get_note(note_id, author.guild.id)
             check = lastCheck[hash(author)]
 
             if check.data["rolls"].botch:

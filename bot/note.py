@@ -41,7 +41,7 @@ def notes_to_str(guild) -> str:
 
 @orm.db_session
 def create_note(note_id: str, value: Union[int, str], user: Member) -> str:
-    note = Note.get(key=note_id, server=str(user.guild))
+    note = Note.get(key=note_id, server=str(user.guild.id))
     if note:
         note.value += int(value)
         note.changed_at = datetime.utcnow()
@@ -50,7 +50,7 @@ def create_note(note_id: str, value: Union[int, str], user: Member) -> str:
         note = Note(
             key=note_id,
             value=value,
-            server=str(user.guild),
+            server=str(user.guild.id),
             changed_at=datetime.utcnow(),
             changed_by=str(user),
         )
@@ -64,7 +64,7 @@ def create_note(note_id: str, value: Union[int, str], user: Member) -> str:
 def get_notes(user: Member) -> str:
     try:
         return "{user}\n```{notes}```".format(
-            user=user.mention, notes=notes_to_str(user.guild)
+            user=user.mention, notes=notes_to_str(user.guild.id)
         )
     except RuntimeError:
         return "{} Es gibt keine Notizen.".format(user.mention)
@@ -72,7 +72,7 @@ def get_notes(user: Member) -> str:
 
 @orm.db_session
 def delete_note(user: Member, note_id: str) -> str:
-    note = Note.get(key=note_id, server=str(user.guild))
+    note = Note.get(key=note_id, server=str(user.guild.id))
     if note:
         note.delete()
         return "{user} {id} war {value} und wurde nun gelöscht.".format(
