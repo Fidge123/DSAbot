@@ -5,7 +5,7 @@ from pony import orm
 db = orm.Database()
 
 if os.getenv("DATABASE_URL"):
-    db.bind(provide="postgresql", dsn=os.getenv("DATABASE_URL"))
+    db.bind(provider="postgres", dsn=os.getenv("DATABASE_URL"))
 else:
     db.bind(provider="sqlite", filename="persistence.db", create_db=True)
 
