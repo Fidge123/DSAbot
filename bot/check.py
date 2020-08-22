@@ -1,7 +1,7 @@
 import re
 from typing import Dict, List, Optional, Tuple
 
-from discord import Member, Embed
+from discord import Message, Member, Embed
 
 from bot import note
 from bot.checks import SkillCheck, GenericCheck, AttributeCheck, CumulativeCheck
@@ -45,17 +45,19 @@ def schip_split(input_string: str) -> List[bool]:
     return [letter == "r" for letter in input_string]
 
 
-def create_response(msg: str, author: Member) -> Optional[Tuple[str, Embed]]:
-    check = create_check(msg, author)
+def create_response(content: str, message: Message) -> Optional[Tuple[str, Embed]]:
+    author = message.author
+    check = create_check(content, author)
 
     if check:
         lastCheck[hash(author)] = check
         return str(check), None
 
     if hash(author) in lastCheck:
-        match = fate_regex.search(msg)
+        match = fate_regex.search(content)
         if match:
             note_id = "schips_{}".format(str(author))
+            n = note.get_note(note_id, author.guild)
             check = lastCheck[hash(author)]
 
             if check.data["rolls"].botch:
@@ -66,9 +68,9 @@ def create_response(msg: str, author: Member) -> Optional[Tuple[str, Embed]]:
                     + " Einsatz von Schips bei Sammelproben (bisher) nicht unterstützt",
                     None,
                 )
-            if note_id not in note.number_notes:
+            if not n:
                 note.create_note(note_id, 3, author)
-            if note.number_notes[note_id] <= 0:
+            if n.value == 0:
                 return "{} Keine Schips übrig!".format(author.mention), None
             note.create_note(note_id, -1, author)
 
@@ -77,7 +79,7 @@ def create_response(msg: str, author: Member) -> Optional[Tuple[str, Embed]]:
                     check.data["rolls"].reroll(i)
             return str(check), None
 
-        match = retry_regex.search(msg)
+        match = retry_regex.search(content)
         if match:
             check = lastCheck[hash(author)]
             if isinstance(check, CumulativeCheck):
@@ -87,13 +89,13 @@ def create_response(msg: str, author: Member) -> Optional[Tuple[str, Embed]]:
             check.recalculate()
             return str(check), None
 
-        match = repeat_regex.search(msg)
+        match = repeat_regex.search(content)
         if match:
             check = lastCheck[hash(author)]
             check.recalculate()
             return str(check), None
 
-        match = force_regex.search(msg)
+        match = force_regex.search(content)
         if match:
             check = lastCheck[hash(author)]
             if isinstance(check, SkillCheck):

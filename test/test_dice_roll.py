@@ -7,10 +7,18 @@ from bot import dice_roll
 class MockAuthor:
     def __init__(self, name):
         self.mention = "@{}".format(name)
+        self.guild = 123456789
+
+
+class MockMessage:
+    def __init__(self, author):
+        self.content = "foobar"
+        self.author = author
+        self.guild = 123456789
 
 
 def create_response(input):
-    return dice_roll.create_response(input, MockAuthor("TestUser"))[0]
+    return dice_roll.create_response(input, MockMessage(MockAuthor("TestUser")))[0]
 
 
 class TestDiceRoll(TestCase):

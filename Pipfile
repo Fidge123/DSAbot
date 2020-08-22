@@ -19,6 +19,7 @@ beautifulsoup4 = "*"
 lxml = "*"
 fuzzywuzzy = {extras = ["speedup"], version = "*"}
 psycopg2-binary = "*"
+pony = "*"
 
 [requires]
 python_version = "3.8"

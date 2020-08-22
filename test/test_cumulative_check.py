@@ -7,6 +7,7 @@ from bot.checks import CumulativeCheck
 class MockAuthor:
     def __init__(self, name):
         self.mention = "@{}".format(name)
+        self.guild = 123456789
 
 
 class TestCumulativeCheck(TestCase):
