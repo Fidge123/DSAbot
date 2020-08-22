@@ -7,6 +7,7 @@ from bot.checks import SkillCheck
 class MockAuthor:
     def __init__(self, name):
         self.mention = "@{}".format(name)
+        self.guild = 123456789
 
 
 class TestSkillCheck(TestCase):

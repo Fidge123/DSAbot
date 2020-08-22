@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
@@ -15,12 +16,14 @@ class MockChannel:
     def __init__(self, channel_id, send: AsyncMock):
         self.id = channel_id
         self.send = send
+        self.guild = 123456789
 
 
 class MockAuthor:
     def __init__(self, channel_id, send: AsyncMock):
         self.name = channel_id
         self.mention = send
+        self.guild = 123456789
 
     def __hash__(self):
         return 123456789
@@ -39,6 +42,7 @@ class MockMessage:
         self.content = content
         self.author = author
         self.channel = channel
+        self.guild = 123456789
         self.add_reaction = add_reaction
 
 
@@ -48,7 +52,7 @@ class TestBot(TestCase):
         cls.loop = asyncio.get_event_loop()
         cls.testchannel = MockChannel(1, AsyncMock())
         cls.testauthor = MockAuthor("Author", "<@1337>")
-        persistence.init_db()
+        persistence.on_ready()
 
     def message(self, msg):
         return MockMessage(msg, self.testauthor, self.testchannel, AsyncMock())
@@ -127,7 +131,9 @@ class TestBot(TestCase):
                 elif "cache" in m.content.lower():
                     m.channel.send.assert_called_with("cache")
 
-    def test_notes(self):
+    @patch("bot.note.datetime")
+    def test_notes(self, mock_dt: MagicMock):
+        mock_dt.utcnow = MagicMock(return_value=datetime(2020, 1, 1))
         messages = [
             "SUMMON",
             "note:test_blub->7",
@@ -158,7 +164,8 @@ class TestBot(TestCase):
                     )
                 if i == 4:
                     m.channel.send.assert_called_with(
-                        "<@1337>\n```test_blub :  7\ntest_klik : 17```", embed=None
+                        "<@1337>\n```test_blub :  7 (2020-01-01 00:00:00)\ntest_klik : 17 (2020-01-01 00:00:00)```",
+                        embed=None,
                     )
                 if i == 5:
                     m.channel.send.assert_called_with(
