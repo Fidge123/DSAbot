@@ -100,7 +100,7 @@ class TestBot(TestCase):
 
     @patch("bot.note.datetime")
     def test_notes(self, mock_dt: MagicMock):
-        mock_dt.utcnow = MagicMock(return_value=datetime(2020, 1, 1))
+        mock_dt.utcnow = MagicMock(return_value=datetime(2019, 1, 1))
         messages = [
             "SUMMON",
             "note:test_blub->7",
@@ -131,7 +131,7 @@ class TestBot(TestCase):
                     )
                 if i == 4:
                     m.channel.send.assert_called_with(
-                        "@Author\n```test_blub :  7 (2020-01-01 00:00:00)\ntest_klik : 17 (2020-01-01 00:00:00)```",
+                        "@Author\n```test_blub :  7 (01.01.19)\ntest_klik : 17 (01.01.19)```",
                         embed=None,
                     )
                 if i == 5:

@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Union, Optional, Tuple
 
 from pony import orm
@@ -27,6 +27,15 @@ def get_all() -> List[Note]:
     return Note.get()[:]
 
 
+def date_to_str(utc: datetime) -> str:
+    input_as_local = utc.replace(tzinfo=timezone.utc).astimezone()
+    if datetime.now().date() == input_as_local.date():
+        return input_as_local.strftime("%H:%M")
+    if datetime.now().year == input_as_local.year:
+        return input_as_local.strftime("%d.%m. %H:%M")
+    return input_as_local.strftime("%d.%m.%y")
+
+
 @orm.db_session
 def notes_to_str(guild) -> str:
     sorted_notes = Note.select(lambda n: n.server == str(guild)).order_by(Note.key)
@@ -35,7 +44,10 @@ def notes_to_str(guild) -> str:
     lk = max(map(len, [n.key for n in sorted_notes])) + 1
     lv = max(map(lambda x: len(str(x)), [n.value for n in sorted_notes]))
     return "\n".join(
-        [f"{n.key:<{lk}}: {n.value:>{lv}} ({str(n.changed_at)})" for n in sorted_notes]
+        [
+            f"{n.key:<{lk}}: {n.value:>{lv}} ({date_to_str(n.changed_at)})"
+            for n in sorted_notes
+        ]
     )
 
 
