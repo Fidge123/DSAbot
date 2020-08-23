@@ -2,7 +2,7 @@ import json
 import re
 from typing import Optional, List, Tuple, Any
 
-from discord import Member, Embed
+from discord import Member, Embed, Message
 from fuzzywuzzy import fuzz
 from bs4 import BeautifulSoup
 import requests
@@ -43,8 +43,8 @@ def find(search_string: str) -> List[Any]:
     return [hit for hit in hits if hit["score"] >= 75][:5] or hits[:3]
 
 
-def create_response(message: str, user: Member) -> Optional[Tuple[str, Embed]]:
-    match = re.search(r"^wiki\ (?P<search>.*)$", message, re.IGNORECASE)
+def create_response(content: str, message: Message) -> Optional[Tuple[str, Embed]]:
+    match = re.search(r"^wiki\ (?P<search>.*)$", content, re.IGNORECASE)
     if match:
         hits = find(match.group("search"))
         embed = None
@@ -63,5 +63,5 @@ def create_response(message: str, user: Member) -> Optional[Tuple[str, Embed]]:
             except:
                 pass
 
-        return "\n".join(next(user, hits)), embed
+        return "\n".join(next(message.author, hits)), embed
     return None
