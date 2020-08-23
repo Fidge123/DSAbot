@@ -9,7 +9,7 @@ class AttributeCheck(GenericCheck):
             ^!?\ ?                              # Optional exclamation mark
             (?P<attributes>[0-9]+)\ ?           # A non-zero amount of numbers divided by comma or space
             (?P<modifier>(\ *[\+\-]\ *[0-9]+)*) # A modifier
-            (\ (?P<comment>.*?))?$              # Anything else is lazy-matched as a comment
+            (\ (?P<comment>[^0-9].*?))?$        # Anything else is lazy-matched as a comment
         """,
         re.VERBOSE | re.IGNORECASE,
     )
