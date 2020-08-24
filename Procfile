@@ -1,1 +1,1 @@
-worker: python -m bot
+regelwiki: python wiki_links.py

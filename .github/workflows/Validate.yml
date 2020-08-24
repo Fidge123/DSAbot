@@ -19,16 +19,6 @@ jobs:
       - name: Run mypy
         run: |
           pipenv run lint
-      - name: Run unittests/coverage
-        run: |
-          pipenv run tests
-          pipenv run cov | tee report.txt
-          exit $?
-      - name: Upload Coverage Report
-        uses: actions/upload-artifact@v1
-        with:
-          name: coverage_report
-          path: report.txt
 
   Lint:
     name: Commit Hooks
