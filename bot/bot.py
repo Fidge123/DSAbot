@@ -59,7 +59,7 @@ async def on_message(message: discord.Message) -> None:
 
             return await send("no debug")
     else:
-        return await send("I am listening for rolls here")
+        return  # await send("I am listening for rolls here")
 
 
 def run() -> None:
