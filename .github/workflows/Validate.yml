@@ -16,9 +16,6 @@ jobs:
       - name: Setup pipenv
         run: |
           pipenv install --dev
-      - name: Run mypy
-        run: |
-          pipenv run lint
 
   Lint:
     name: Commit Hooks
