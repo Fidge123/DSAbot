@@ -67,10 +67,7 @@ def create_note(note_id: str, value: Union[int, str], user: Member) -> str:
             changed_by=str(user),
         )
 
-    response = "{user} {note_id} ist jetzt {value}.".format(
-        user=user.mention, note_id=note.key, value=note.value,
-    )
-    return response
+    return note
 
 
 def get_notes(user: Member) -> str:
@@ -99,9 +96,12 @@ def create_response(content: str, message: Message) -> Optional[Tuple[str, Embed
         r"^note:(?P<id>[\w#]+)(->(?P<number>[\+\-]?[0-9]+))?$", content, re.IGNORECASE,
     )
     if create_match:
+        note = create_note(
+            create_match.group("id"), create_match.group("number"), message.author
+        )
         return (
-            create_note(
-                create_match.group("id"), create_match.group("number"), message.author
+            "{user} {note_id} ist jetzt {value}.".format(
+                user=message.author.mention, note_id=note.key, value=note.value,
             ),
             None,
         )

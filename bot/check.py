@@ -69,7 +69,7 @@ def create_response(content: str, message: Message) -> Optional[Tuple[str, Embed
                     None,
                 )
             if not n:
-                note.create_note(note_id, 3, author)
+                n = note.create_note(note_id, 3, author)
             if n.value == 0:
                 return "{} Keine Schips übrig!".format(author.mention), None
             note.create_note(note_id, -1, author)

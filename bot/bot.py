@@ -26,11 +26,10 @@ async def on_message(message: discord.Message) -> None:
         return
 
     if channel.is_permitted(msgstring, message):
-        if "DIE" in msgstring:
+        if "DIE" in msgstring and str(message.author) == "fidge123#3686":
             await message.add_reaction("\U0001f480")
             await send("I shall die.")
-            await client.close()
-            return
+            return await client.close()
 
         for create_response in [
             channel.create_response,
@@ -58,8 +57,6 @@ async def on_message(message: discord.Message) -> None:
                 return await send(str(note.get_all()))
 
             return await send("no debug")
-    else:
-        return  # await send("I am listening for rolls here")
 
 
 def run() -> None:
