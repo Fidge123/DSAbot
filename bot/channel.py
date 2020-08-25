@@ -24,6 +24,7 @@ def is_permitted(content: str, message: Message) -> bool:
             added_at=datetime.utcnow(),
             added_by=str(message.author),
         )
+        message.channel.send("I'm listening for rolls here!")
     return permitted
 
 
