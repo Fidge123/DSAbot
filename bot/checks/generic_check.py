@@ -23,10 +23,8 @@ class GenericCheck:
         "modifier": lambda x: int(calc(x or "0")),
         "comment": lambda x: (x or "").strip(),
     }
-    _response = (
-        "{mention} {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\n{result}\n```"
-    )
-    _impossible = "{mention} {comment}\n```py\nEEW:{EAV}\nProbe nicht möglich\n```"
+    _response = " {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\n{result}\n```"
+    _impossible = " {comment}\n```py\nEEW:{EAV}\nProbe nicht möglich\n```"
 
     @property
     def impossible(self) -> bool:
@@ -38,10 +36,10 @@ class GenericCheck:
         )
         self.data["rolls"] = CheckRolls(len(self.data["attributes"]))
 
-    def __init__(self, message: str, mention: str):
+    def __init__(self, message: str):
         parsed = self.matcher.search(message)
         if parsed:
-            self.data = {"mention": mention}
+            self.data = {}
             for name, value in parsed.groupdict().items():
                 self.data[name] = self.transform[name](value)
             self.recalculate()

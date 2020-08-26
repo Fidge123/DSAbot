@@ -6,97 +6,97 @@ from bot.checks import SkillCheck
 
 class TestSkillCheck(TestCase):
     def test_parse(self):
-        self.assertIsNotNone(SkillCheck("13 14 15@2", "@TestUser"))
-        self.assertIsNotNone(SkillCheck("1,12,18@18", "@TestUser"))
-        self.assertIsNotNone(SkillCheck("8 19 1400@0 + 14", "@TestUser"))
-        self.assertIsNotNone(SkillCheck("2 2,2, @1400-2-2-2", "@TU"))
-        self.assertIsNotNone(SkillCheck("!13 1 12@2 +1+1 Test", "@TestUser"))
-        self.assertIsNotNone(SkillCheck("! 1,12,18@18 Krit", "@TestUser"))
+        self.assertIsNotNone(SkillCheck("13 14 15@2"))
+        self.assertIsNotNone(SkillCheck("1,12,18@18"))
+        self.assertIsNotNone(SkillCheck("8 19 1400@0 + 14"))
+        self.assertIsNotNone(SkillCheck("2 2,2, @1400-2-2-2"))
+        self.assertIsNotNone(SkillCheck("!13 1 12@2 +1+1 Test"))
+        self.assertIsNotNone(SkillCheck("! 1,12,18@18 Krit"))
 
         with self.assertRaises(ValueError):
-            SkillCheck("!!13 1@2", "@TestUser")
+            SkillCheck("!!13 1@2")
         with self.assertRaises(ValueError):
-            SkillCheck("!  1 13@0", "@TestUser")
+            SkillCheck("!  1 13@0")
         with self.assertRaises(ValueError):
-            SkillCheck("!?4", "@TestUser")
+            SkillCheck("!?4")
         with self.assertRaises(ValueError):
-            SkillCheck("#2,2,2@2", "@TestUser")
+            SkillCheck("#2,2,2@2")
 
     def test_parse_with_other_commands(self):
         with self.assertRaises(ValueError):
-            SkillCheck("d3", "@TestUser")
+            SkillCheck("d3")
         with self.assertRaises(ValueError):
-            SkillCheck("note:foobar", "@TestUser")
+            SkillCheck("note:foobar")
         with self.assertRaises(ValueError):
-            SkillCheck("SUMMON", "@TestUser")
+            SkillCheck("SUMMON")
         with self.assertRaises(ValueError):
-            SkillCheck("BEGONE", "@TestUser")
+            SkillCheck("BEGONE")
         with self.assertRaises(ValueError):
-            SkillCheck("DIE", "@TestUser")
+            SkillCheck("DIE")
         with self.assertRaises(ValueError):
-            SkillCheck("13,13,13+1", "@TestUser")
+            SkillCheck("13,13,13+1")
         with self.assertRaises(ValueError):
-            SkillCheck("13", "@TestUser")
+            SkillCheck("13")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_quality_level(self, mock_randint: MagicMock):
         mock_randint.return_value = 2
-        sc = SkillCheck("11,9,9@0", "@TestUser")
+        sc = SkillCheck("11,9,9@0")
         self.assertEqual(sc.skill_points, 0)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck("11,9,9@1", "@TestUser")
+        sc = SkillCheck("11,9,9@1")
         self.assertEqual(sc.skill_points, 1)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck("11,9,9@2", "@TestUser")
+        sc = SkillCheck("11,9,9@2")
         self.assertEqual(sc.skill_points, 2)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck("11,9,9@3", "@TestUser")
+        sc = SkillCheck("11,9,9@3")
         self.assertEqual(sc.skill_points, 3)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck("11,9,9@4", "@TestUser")
+        sc = SkillCheck("11,9,9@4")
         self.assertEqual(sc.skill_points, 4)
         self.assertEqual(sc.ql(sc.skill_points), 2)
 
-        sc = SkillCheck("11,9,9@5", "@TestUser")
+        sc = SkillCheck("11,9,9@5")
         self.assertEqual(sc.skill_points, 5)
         self.assertEqual(sc.ql(sc.skill_points), 2)
 
-        sc = SkillCheck("11,9,9@6", "@TestUser")
+        sc = SkillCheck("11,9,9@6")
         self.assertEqual(sc.skill_points, 6)
         self.assertEqual(sc.ql(sc.skill_points), 2)
 
-        sc = SkillCheck("11,9,9@7", "@TestUser")
+        sc = SkillCheck("11,9,9@7")
         self.assertEqual(sc.skill_points, 7)
         self.assertEqual(sc.ql(sc.skill_points), 3)
 
-        sc = SkillCheck("11,9,9@8", "@TestUser")
+        sc = SkillCheck("11,9,9@8")
         self.assertEqual(sc.skill_points, 8)
         self.assertEqual(sc.ql(sc.skill_points), 3)
 
-        sc = SkillCheck("11,9,9@9", "@TestUser")
+        sc = SkillCheck("11,9,9@9")
         self.assertEqual(sc.skill_points, 9)
         self.assertEqual(sc.ql(sc.skill_points), 3)
 
-        sc = SkillCheck("11,9,9@10", "@TestUser")
+        sc = SkillCheck("11,9,9@10")
         self.assertEqual(sc.skill_points, 10)
         self.assertEqual(sc.ql(sc.skill_points), 4)
 
-        sc = SkillCheck("11,9,9@16", "@TestUser")
+        sc = SkillCheck("11,9,9@16")
         self.assertEqual(sc.skill_points, 16)
         self.assertEqual(sc.ql(sc.skill_points), 6)
 
-        sc = SkillCheck("11,9,9@26", "@TestUser")
+        sc = SkillCheck("11,9,9@26")
         self.assertEqual(sc.skill_points, 26)
         self.assertEqual(sc.ql(sc.skill_points), 6)
 
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
-        sc = SkillCheck("11,9,9@4", "@TestUser")
+        sc = SkillCheck("11,9,9@4")
         self.assertEqual(sc.data["attributes"], [11, 9, 9])
         self.assertEqual(sc.data["EAV"], [11, 9, 9])
         self.assertEqual(sc.data["SR"], 4)
@@ -111,7 +111,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.skill_points, 4)
         self.assertEqual(
             str(sc),
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     11   9   9\n"
             "Würfel:   9   9   9\n"
@@ -120,7 +120,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
 
-        sc = SkillCheck("!13 14 15@6-2 Sinnesschärfe", "@TU")
+        sc = SkillCheck("!13 14 15@6-2 Sinnesschärfe")
         self.assertEqual(sc.data["attributes"], [13, 14, 15])
         self.assertEqual(sc.data["EAV"], [11, 12, 13])
         self.assertEqual(sc.data["SR"], 6)
@@ -135,7 +135,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.skill_points, 6)
         self.assertEqual(
             str(sc),
-            "@TU Sinnesschärfe\n"
+            " Sinnesschärfe\n"
             "```py\n"
             "EEW:     11  12  13\n"
             "Würfel:   9   9   9\n"
@@ -144,7 +144,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
 
-        sc = SkillCheck("!5 3, 4,@16 +1+1 -2- 2 🎉-1", "@TestUser")
+        sc = SkillCheck("!5 3, 4,@16 +1+1 -2- 2 🎉-1")
         self.assertEqual(sc.data["attributes"], [5, 3, 4])
         self.assertEqual(sc.data["EAV"], [3, 1, 2])
         self.assertEqual(sc.data["SR"], 16)
@@ -159,7 +159,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.skill_points, -5)
         self.assertEqual(
             str(sc),
-            "@TestUser 🎉-1\n"
+            " 🎉-1\n"
             "```py\n"
             "EEW:      3   1   2\n"
             "Würfel:   9   9   9\n"
@@ -171,7 +171,7 @@ class TestSkillCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_crit_botch(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        sc = SkillCheck("2,3,4@4", "@TestUser")
+        sc = SkillCheck("2,3,4@4")
         self.assertEqual(sc.data["attributes"], [2, 3, 4])
         self.assertEqual(sc.data["EAV"], [2, 3, 4])
         self.assertEqual(sc.data["SR"], 4)
@@ -186,7 +186,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.skill_points, 4)
         self.assertEqual(
             str(sc),
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:      2   3   4\n"
             "Würfel:   1   1   1\n"
@@ -196,7 +196,7 @@ class TestSkillCheck(TestCase):
         )
 
         mock_randint.return_value = 20
-        sc = SkillCheck("14 18 18@3 + 2", "@TestUser")
+        sc = SkillCheck("14 18 18@3 + 2")
         self.assertEqual(sc.data["attributes"], [14, 18, 18])
         self.assertEqual(sc.data["EAV"], [16, 20, 20])
         self.assertEqual(sc.data["SR"], 3)
@@ -211,7 +211,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.skill_points, -1)
         self.assertEqual(
             str(sc),
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     16  20  20\n"
             "Würfel:  20  20  20\n"
@@ -221,7 +221,7 @@ class TestSkillCheck(TestCase):
         )
 
         mock_randint.return_value = 20
-        sc = SkillCheck("18,18 18@3 + 2", "@TestUser")
+        sc = SkillCheck("18,18 18@3 + 2")
         self.assertEqual(sc.data["attributes"], [18, 18, 18])
         self.assertEqual(sc.data["EAV"], [20, 20, 20])
         self.assertEqual(sc.data["SR"], 3)
@@ -236,7 +236,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.skill_points, 3)
         self.assertEqual(
             str(sc),
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     20  20  20\n"
             "Würfel:  20  20  20\n"
@@ -248,7 +248,7 @@ class TestSkillCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_routine_impossible(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
-        sc = SkillCheck("14, 14, 14 @ 7 + 1", "@TestUser")
+        sc = SkillCheck("14, 14, 14 @ 7 + 1")
         self.assertEqual(sc.data["attributes"], [14, 14, 14])
         self.assertEqual(sc.data["EAV"], [15, 15, 15])
         self.assertEqual(sc.data["SR"], 7)
@@ -257,10 +257,10 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.routine, True)
         self.assertEqual(sc.impossible, False)
         self.assertEqual(
-            str(sc), "@TestUser \n```py\n" "Routineprobe: 4 FP = QS 2\n```",
+            str(sc), " \n```py\n" "Routineprobe: 4 FP = QS 2\n```",
         )
 
-        sc = SkillCheck("2,3,4@4-2", "@TestUser")
+        sc = SkillCheck("2,3,4@4-2")
         self.assertEqual(sc.data["attributes"], [2, 3, 4])
         self.assertEqual(sc.data["EAV"], [0, 1, 2])
         self.assertEqual(sc.data["SR"], 4)
@@ -269,5 +269,5 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.routine, False)
         self.assertEqual(sc.impossible, True)
         self.assertEqual(
-            str(sc), "@TestUser \n```py\nEEW:   0   1   2\nProbe nicht möglich\n```",
+            str(sc), " \n```py\nEEW:   0   1   2\nProbe nicht möglich\n```",
         )

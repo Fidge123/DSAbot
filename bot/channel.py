@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import Tuple, Optional
+from typing import Optional
 
 from pony import orm
-from discord import Message, Embed
+from discord import Message
 
 from bot.persistence import db
 
@@ -29,12 +29,12 @@ def is_permitted(message: Message) -> bool:
 
 
 @orm.db_session
-def create_response(message: Message) -> Optional[Tuple[str, Embed]]:
+def create_response(message: Message) -> Optional[str]:
     if "SUMMON" == message.content:
-        return "I am already listening", None
+        return "I am already listening"
 
     if "BEGONE" == message.content:
         Channel.get(id=str(message.channel.id)).delete()
-        return "I have left", None
+        return "I have left"
 
     return None

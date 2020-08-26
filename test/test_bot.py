@@ -43,13 +43,11 @@ class TestBot(TestCase):
                 self.loop.run_until_complete(on_message(m))
                 if i == 1:
                     mock_randint.assert_called_with(1, 10)
-                    m.channel.send.assert_called_with(
-                        "@Author \n1 + 1 + 1 + 1 + 1 = 5", embed=None
-                    )
+                    m.channel.send.assert_called_with("@Author \n1 + 1 + 1 + 1 + 1 = 5")
                 if i == 2:
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with(
-                        "@Author \n1 + 1 + 1 + 1 + 1 (+5) = 10", embed=None
+                        "@Author \n1 + 1 + 1 + 1 + 1 (+5) = 10"
                     )
                 if i == 3:
                     mock_randint.assert_called_with(1, 20)
@@ -60,8 +58,7 @@ class TestBot(TestCase):
                         "Würfel:   1   1   1\n"
                         "FW 10               = 10 FP\n"
                         "Kritischer Erfolg! (QS 4)\n"
-                        "```",
-                        embed=None,
+                        "```"
                     )
                 if i == 4:
                     mock_randint.assert_called_with(1, 20)
@@ -71,8 +68,7 @@ class TestBot(TestCase):
                         "EEW:     14  14\n"
                         "Würfel:   1   1\n"
                         "Bestanden\n"
-                        "```",
-                        embed=None,
+                        "```"
                     )
                 if i == 5:
                     mock_randint.assert_called_with(1, 20)
@@ -82,8 +78,7 @@ class TestBot(TestCase):
                         "EEW:     14\n"
                         "Würfel:   1 --> 1\n"
                         "Kritischer Erfolg!\n"
-                        "```",
-                        embed=None,
+                        "```"
                     )
 
     @patch("bot.note.datetime")
@@ -106,31 +101,24 @@ class TestBot(TestCase):
                 m = self.message(m)
                 self.loop.run_until_complete(on_message(m))
                 if i == 1:
-                    m.channel.send.assert_called_with(
-                        "@Author test_blub ist jetzt 7.", embed=None
-                    )
+                    m.channel.send.assert_called_with("@Author test_blub ist jetzt 7.")
                 if i == 2:
-                    m.channel.send.assert_called_with(
-                        "@Author test_klik ist jetzt 8.", embed=None
-                    )
+                    m.channel.send.assert_called_with("@Author test_klik ist jetzt 8.")
                 if i == 3:
-                    m.channel.send.assert_called_with(
-                        "@Author test_klik ist jetzt 17.", embed=None
-                    )
+                    m.channel.send.assert_called_with("@Author test_klik ist jetzt 17.")
                 if i == 4:
                     m.channel.send.assert_called_with(
-                        "@Author\n```test_blub :  7 (01.01.19)\ntest_klik : 17 (01.01.19)```",
-                        embed=None,
+                        "@Author\n```test_blub :  7 (01.01.19)\ntest_klik : 17 (01.01.19)```"
                     )
                 if i == 5:
                     m.channel.send.assert_called_with(
-                        "@Author test_blub war 7 und wurde nun gelöscht.", embed=None
+                        "@Author test_blub war 7 und wurde nun gelöscht."
                     )
                 if i == 6:
                     m.channel.send.assert_called_with(
-                        "@Author test_klik war 17 und wurde nun gelöscht.", embed=None
+                        "@Author test_klik war 17 und wurde nun gelöscht."
                     )
                 if i == 7:
                     m.channel.send.assert_called_with(
-                        "@Author Es gibt keine Notiz test_klik.", embed=None
+                        "@Author Es gibt keine Notiz test_klik."
                     )

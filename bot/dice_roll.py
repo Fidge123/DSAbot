@@ -1,8 +1,8 @@
 import re
 import random
-from typing import Optional, Tuple
+from typing import Optional
 
-from discord import Message, Embed
+from discord import Message
 
 from bot.string_math import calc
 
@@ -20,7 +20,7 @@ def parse(message: str) -> Optional[re.Match]:
     )
 
 
-def create_response(message: Message) -> Optional[Tuple[str, Embed]]:
+def create_response(message: Message) -> Optional[str]:
     regex_result = parse(message.content)
     if regex_result:
         die_amount = int(regex_result.group("amount") or 1)
@@ -36,15 +36,11 @@ def create_response(message: Message) -> Optional[Tuple[str, Embed]]:
             result_array.append(str(roll))
             aggregate += roll
 
-        return (
-            "{author} {comment}\n{results}{modifier} = {FP}".format(
-                author=message.author.mention,
-                comment=regex_result.group("comment").strip(),
-                results=(" + ").join(result_array),
-                modifier=modifier_string,
-                FP=aggregate + modifier,
-            ),
-            None,
+        return " {comment}\n{results}{modifier} = {FP}".format(
+            comment=regex_result.group("comment").strip(),
+            results=(" + ").join(result_array),
+            modifier=modifier_string,
+            FP=aggregate + modifier,
         )
 
     return None

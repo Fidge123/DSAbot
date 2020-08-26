@@ -36,8 +36,7 @@ async def on_message(message: discord.Message) -> None:
         ]:
             response = create_response(message)
             if response:
-                msg, embed = response
-                return await message.channel.send(msg, embed=embed)
+                return await message.channel.send(message.author.mention + response)
 
 
 def run() -> None:

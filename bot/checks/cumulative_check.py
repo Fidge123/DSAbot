@@ -38,12 +38,12 @@ class CumulativeCheck(SkillCheck):
             self.data["modifier"] = self._initial_mod
         super().recalculate()
 
-    def __init__(self, message: str, mention: str):
-        super().__init__(message, mention)
+    def __init__(self, message: str):
+        super().__init__(message)
         self._initial_mod = self.data["modifier"]
 
     def __str__(self) -> str:
-        response = "{mention} {comment}\n```py".format(**self.data)
+        response = " {comment}\n```py".format(**self.data)
         while (
             self.total_ql < 10
             and self.round < self.data["tries"]
