@@ -40,7 +40,7 @@ def find(search_string: str, in_body=False) -> List[Any]:
                 title,
                 url,
                 body,
-                (length(body) - length(replace(body, %s, ''))) / length(%s) AS o,
+                (length(body) - length(regexp_replace(body, %s, '', 'gi'))) / length(%s) AS o,
                 parents
             FROM regelwiki
             ORDER BY 4 DESC
@@ -56,7 +56,6 @@ def find(search_string: str, in_body=False) -> List[Any]:
                 cur.execute(body_stmt, (search_string, search_string))
             else:
                 cur.execute(title_stmt, (search_string,))
-            print(cur.query)
             return [
                 {
                     "title": result[0],
@@ -79,7 +78,7 @@ def create_response(message: Message) -> Optional[Response]:
         title_match = filter_hits(find(search_term))
 
         if title_match[0]["score"] < 0.6:
-            body_match = filter_hits(find(search_term, True))
+            body_match = find(search_term, True)
             return Response(
                 message.channel.send,
                 "\n".join(next(message.author, body_match, search_term)),
