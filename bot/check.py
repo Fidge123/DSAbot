@@ -16,25 +16,11 @@ force_regex = re.compile(r"force", re.IGNORECASE)
 
 
 def create_check(content: str) -> Optional[GenericCheck]:
-    try:
-        return CumulativeCheck(content)
-    except ValueError:
-        pass
-
-    try:
-        return SkillCheck(content)
-    except ValueError:
-        pass
-
-    try:
-        return AttributeCheck(content)
-    except ValueError:
-        pass
-
-    try:
-        return GenericCheck(content)
-    except ValueError:
-        pass
+    for Check in [CumulativeCheck, SkillCheck, AttributeCheck, GenericCheck]:
+        try:
+            return Check(content)
+        except ValueError:
+            pass
 
     return None
 
