@@ -1,6 +1,5 @@
-import asyncio
 from datetime import datetime
-from unittest import TestCase
+from unittest import IsolatedAsyncioTestCase
 from unittest.mock import MagicMock, patch
 
 from bot.bot import on_message
@@ -8,11 +7,10 @@ from bot import persistence
 from test.mocks import MockAuthor, MockChannel, MockMessage, AsyncMock
 
 
-class TestBot(TestCase):
+class TestBot(IsolatedAsyncioTestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.loop = asyncio.get_event_loop()
-        cls.testchannel = MockChannel(1, AsyncMock())
+        cls.testchannel = MockChannel()
         cls.testauthor = MockAuthor("Author")
         persistence.on_ready()
 
@@ -25,7 +23,7 @@ class TestBot(TestCase):
         )
 
     @patch("random.randint", new_callable=MagicMock())
-    def test_smoke(self, mock_randint: MagicMock):
+    async def test_smoke(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
         messages = [
             "SUMMON",
@@ -40,7 +38,7 @@ class TestBot(TestCase):
         for i, m in enumerate(messages):
             with self.subTest(msg=m):
                 m = self.message(m)
-                self.loop.run_until_complete(on_message(m))
+                await on_message(m)
                 if i == 1:
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with("@Author \n1 + 1 + 1 + 1 + 1 = 5")
@@ -82,7 +80,7 @@ class TestBot(TestCase):
                     )
 
     @patch("bot.note.datetime")
-    def test_notes(self, mock_dt: MagicMock):
+    async def test_notes(self, mock_dt: MagicMock):
         mock_dt.utcnow = MagicMock(return_value=datetime(2019, 1, 1))
         messages = [
             "SUMMON",
@@ -99,7 +97,7 @@ class TestBot(TestCase):
         for i, m in enumerate(messages):
             with self.subTest(msg=m):
                 m = self.message(m)
-                self.loop.run_until_complete(on_message(m))
+                await on_message(m)
                 if i == 1:
                     m.channel.send.assert_called_with("@Author test_blub ist jetzt 7.")
                 if i == 2:

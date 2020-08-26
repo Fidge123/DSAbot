@@ -36,7 +36,7 @@ class MockGuild:
 
 class MockMessage:
     def __init__(
-        self, author, content="foobar", channel=MockChannel, add_reaction=AsyncMock(),
+        self, author, content="foobar", channel=MockChannel(), add_reaction=AsyncMock(),
     ):
         self.content = content
         self.author = author

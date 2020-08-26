@@ -6,7 +6,8 @@ from test.mocks import MockAuthor, MockMessage
 
 
 def create_response(content):
-    return dice_roll.create_response(MockMessage(MockAuthor("TestUser"), content))
+    res = dice_roll.create_response(MockMessage(MockAuthor("TestUser"), content))
+    return res.messages[0]["args"][0]
 
 
 class TestDiceRoll(TestCase):
@@ -73,12 +74,14 @@ class TestDiceRoll(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_response(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        self.assertEqual(create_response("3d6"), " \n1 + 1 + 1 = 3")
+        self.assertEqual(create_response("3d6"), "@TestUser \n1 + 1 + 1 = 3")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_response_with_modifier(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        self.assertEqual(create_response("3d6 + 3"), " \n1 + 1 + 1 (+3) = 6")
-        self.assertEqual(create_response("d6 - 4"), " \n1 (-4) = -3")
-        self.assertEqual(create_response("d6 - 4 + 6 - 5"), " \n1 (-3) = -2")
-        self.assertEqual(create_response("5d6 + 3-2"), " \n1 + 1 + 1 + 1 + 1 (+1) = 6")
+        self.assertEqual(create_response("3d6 + 3"), "@TestUser \n1 + 1 + 1 (+3) = 6")
+        self.assertEqual(create_response("d6 - 4"), "@TestUser \n1 (-4) = -3")
+        self.assertEqual(create_response("d6 - 4 + 6 - 5"), "@TestUser \n1 (-3) = -2")
+        self.assertEqual(
+            create_response("5d6 + 3-2"), "@TestUser \n1 + 1 + 1 + 1 + 1 (+1) = 6"
+        )

@@ -21,7 +21,7 @@ async def on_message(message: discord.Message) -> None:
     if message.author == client.user:
         return
 
-    if channel.is_permitted(message):
+    if channel.is_permitted(message.channel.id):
         if "DIE" == message.content and str(message.author) == "fidge123#3686":
             await message.add_reaction("\U0001f480")
             await message.channel.send("I shall die.")
@@ -36,7 +36,9 @@ async def on_message(message: discord.Message) -> None:
         ]:
             response = create_response(message)
             if response:
-                return await message.channel.send(message.author.mention + response)
+                return await response.send()
+    else:
+        return await channel.add_channel(message)
 
 
 def run() -> None:

@@ -4,6 +4,7 @@ from typing import Optional
 
 from discord import Message
 
+from bot.response import Response
 from bot.string_math import calc
 
 
@@ -20,7 +21,7 @@ def parse(message: str) -> Optional[re.Match]:
     )
 
 
-def create_response(message: Message) -> Optional[str]:
+def create_response(message: Message) -> Optional[Response]:
     regex_result = parse(message.content)
     if regex_result:
         die_amount = int(regex_result.group("amount") or 1)
@@ -36,11 +37,12 @@ def create_response(message: Message) -> Optional[str]:
             result_array.append(str(roll))
             aggregate += roll
 
-        return " {comment}\n{results}{modifier} = {FP}".format(
+        response = " {comment}\n{results}{modifier} = {FP}".format(
             comment=regex_result.group("comment").strip(),
             results=(" + ").join(result_array),
             modifier=modifier_string,
             FP=aggregate + modifier,
         )
+        return Response(message.channel.send, message.author.mention + response)
 
     return None

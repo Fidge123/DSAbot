@@ -5,6 +5,8 @@ from typing import Optional, List, Any
 from discord import Member, Message
 import psycopg2
 
+from bot.response import Response
+
 DB_URL = os.getenv("HEROKU_POSTGRESQL_COBALT_URL")
 
 
@@ -33,16 +35,19 @@ def find(search_string: str) -> List[Any]:
             ]
 
 
-def create_response(message: Message) -> Optional[str]:
-    match = re.search(r"^wiki\ (?P<search>.*)$", message.content, re.IGNORECASE)
+def create_response(message: Message) -> Optional[Response]:
+    match = re.search(r"^wiki\ (?P<search>.*)$", message.content, re.I)
     if match:
         hits = find(match.group("search"))
-        return "\n".join(next(message.author, hits))
+        response = Response(message.channel.send, "\n".join(next(message.author, hits)))
 
-        # if hits[0]["score"] == 1 and hits[0]["body"]:
-        #     body = hits[0]["body"]
-        #     for section in body.split("\n\n"):
-        #         if len(section) < 1024:
-        #             return message.author.send(section), None
-        #         else:
-        #             return message.author.send(section[:1020] + "..."), None
+        if hits[0]["score"] == 1 and hits[0]["body"]:
+            body = hits[0]["body"]
+            for section in body.split("\n\n"):
+                if len(section) < 1024:
+                    response.append(message.author.send, section)
+                else:
+                    response.append(message.author.send, section[:1020] + "...")
+        return response
+
+    return None

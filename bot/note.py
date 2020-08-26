@@ -6,6 +6,7 @@ from pony import orm
 from discord import Message, Member
 
 from bot.persistence import db
+from bot.response import Response
 
 
 class Note(db.Entity):
@@ -87,21 +88,22 @@ def delete_note(user: Member, note_id: str) -> str:
         return f" Es gibt keine Notiz {note_id}."
 
 
-def create_response(message: Message) -> Optional[str]:
-    content = message.content
+def create_response(m: Message) -> Optional[Response]:
+    send = m.channel.send
+    mention = m.author.mention
     c_match = re.search(
-        r"^note:(?P<id>[\w#]+)(->(?P<number>[\+\-]?[0-9]+))?$", content, re.IGNORECASE,
+        r"^note:(?P<id>[\w#]+)(->(?P<number>[\+\-]?[0-9]+))?$", m.content, re.I
     )
     if c_match:
-        note = create_note(c_match.group("id"), c_match.group("number"), message.author)
-        return f" {note.key} ist jetzt {note.value}."
+        note = create_note(c_match.group("id"), c_match.group("number"), m.author)
+        return Response(send, f"{mention} {note.key} ist jetzt {note.value}.")
 
-    get_match = re.search(r"^notes$", content, re.IGNORECASE)
+    get_match = re.search(r"^notes$", m.content, re.I)
     if get_match:
-        return get_notes(message.author)
+        return Response(send, mention + get_notes(m.author))
 
-    remove_match = re.search(r"^delete note (?P<id>[\w#]+)$", content, re.IGNORECASE)
+    remove_match = re.search(r"^delete note (?P<id>[\w#]+)$", m.content, re.I)
     if remove_match:
-        return delete_note(message.author, remove_match.group("id"))
+        return Response(send, mention + delete_note(m.author, remove_match.group("id")))
 
     return None
