@@ -56,7 +56,7 @@ def find(search_string: str, in_body=False) -> List[Any]:
                 cur.execute(body_stmt, (search_string, search_string))
             else:
                 cur.execute(title_stmt, (search_string,))
-
+            print(cur.query)
             return [
                 {
                     "title": result[0],
