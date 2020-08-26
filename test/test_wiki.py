@@ -21,9 +21,9 @@ class TestWiki(TestCase):
         results = wiki.find("ignifaxius")
 
         self.assertEqual(results[0]["title"], "Ignifaxius")
-        self.assertEqual(results[0]["score"], 100)
+        self.assertEqual(results[0]["score"], 1.0)
 
         results = wiki.find("Wuchtschlag")
 
         self.assertEqual(results[0]["title"], "Wuchtschlag I-III")
-        self.assertEqual(results[0]["score"], 100)
+        self.assertEqual(results[0]["score"], 1.0)
