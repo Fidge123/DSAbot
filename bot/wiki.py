@@ -78,8 +78,10 @@ def create_response(message: Message) -> Optional[Response]:
         search_term = match.group("search")
         title_match = filter_hits(find(search_term))
 
+        print(title_match[0])
         if title_match[0]["score"] < 0.6:
             body_match = filter_hits(find(search_term, True))
+            print(body_match[0])
             return Response(
                 message.channel.send,
                 "\n".join(next(message.author, body_match, search_term)),
@@ -92,7 +94,7 @@ def create_response(message: Message) -> Optional[Response]:
 
         if title_match[0]["score"] == 1 and title_match[0]["body"]:
             body = title_match[0]["body"]
-            next_message = ""
+            next_message = "**{}**\n\n".format(title_match[0]["title"])
             for section in body.split("\n\n"):
                 if len(next_message) + len(section) <= 2000:
                     next_message = "\n\n".join([next_message, section])
