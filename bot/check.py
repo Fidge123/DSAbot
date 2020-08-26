@@ -8,11 +8,11 @@ from bot.checks import SkillCheck, GenericCheck, AttributeCheck, CumulativeCheck
 
 lastCheck: Dict[int, GenericCheck] = {}
 fate_regex = re.compile(
-    r"^(schips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.IGNORECASE
+    r"^(schips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.I
 )
-retry_regex = re.compile(r"retry", re.IGNORECASE)
-repeat_regex = re.compile(r"repeat", re.IGNORECASE)
-force_regex = re.compile(r"force", re.IGNORECASE)
+retry_regex = re.compile(r"retry", re.I)
+repeat_regex = re.compile(r"repeat", re.I)
+force_regex = re.compile(r"force", re.I)
 
 
 def create_check(content: str) -> Optional[GenericCheck]:

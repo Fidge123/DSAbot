@@ -13,7 +13,7 @@ class SkillCheck(GenericCheck):
             (?P<modifier>(\ *[\+\-]\ *[0-9]+)*)   # A modifier
             (\ (?P<comment>.*?))?$                # Anything else is lazy-matched as a comment
         """,
-        re.VERBOSE | re.IGNORECASE,
+        re.VERBOSE | re.I,
     )
     transform = {**GenericCheck.transform, "SR": int}
     _response = " {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\nFW {SR:<4}{diffs} = {SP} FP\n{result}\n```"

@@ -16,7 +16,7 @@ def parse(message: str) -> Optional[re.Match]:
             (?P<comment>.*?)$                          # Anything else is lazy-matched as a comment
         """,
         message,
-        re.VERBOSE | re.IGNORECASE,
+        re.VERBOSE | re.I,
     )
 
 

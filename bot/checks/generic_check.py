@@ -14,7 +14,7 @@ class GenericCheck:
             (?P<modifier>(\ *[\+\-]\ *[0-9]+)*) # A modifier
             (\ (?P<comment>.*?))?$              # Anything else is lazy-matched as a comment
         """,
-        re.VERBOSE | re.IGNORECASE,
+        re.VERBOSE | re.I,
     )
     transform: Dict[str, Any] = {
         "attributes": lambda x: Attributes(

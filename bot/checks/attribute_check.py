@@ -11,7 +11,7 @@ class AttributeCheck(GenericCheck):
             (?P<modifier>(\ *[\+\-]\ *[0-9]+)*) # A modifier
             (\ (?P<comment>[^0-9].*?))?$        # Anything else is lazy-matched as a comment
         """,
-        re.VERBOSE | re.IGNORECASE,
+        re.VERBOSE | re.I,
     )
 
     def _get_result(self) -> str:
