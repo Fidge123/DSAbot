@@ -1,6 +1,5 @@
 import re
 from typing import Dict, Any
-from discord import Member
 from bot.checks.skill_check import SkillCheck
 
 
@@ -39,12 +38,12 @@ class CumulativeCheck(SkillCheck):
             self.data["modifier"] = self._initial_mod
         super().recalculate()
 
-    def __init__(self, message: str, author: Member):
-        super().__init__(message, author)
+    def __init__(self, message: str, mention: str):
+        super().__init__(message, mention)
         self._initial_mod = self.data["modifier"]
 
     def __str__(self) -> str:
-        response = "{author} {comment}\n```py".format(**self.data)
+        response = "{mention} {comment}\n```py".format(**self.data)
         while (
             self.total_ql < 10
             and self.round < self.data["tries"]

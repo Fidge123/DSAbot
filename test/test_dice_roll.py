@@ -5,8 +5,8 @@ from bot import dice_roll
 from test.mocks import MockAuthor, MockMessage
 
 
-def create_response(input):
-    return dice_roll.create_response(input, MockMessage(MockAuthor("TestUser")))[0]
+def create_response(content):
+    return dice_roll.create_response(MockMessage(MockAuthor("TestUser"), content))[0]
 
 
 class TestDiceRoll(TestCase):

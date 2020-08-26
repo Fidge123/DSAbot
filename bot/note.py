@@ -91,7 +91,8 @@ def delete_note(user: Member, note_id: str) -> str:
         return "{user} Es gibt keine Notiz {id}.".format(user=user.mention, id=note_id)
 
 
-def create_response(content: str, message: Message) -> Optional[Tuple[str, Embed]]:
+def create_response(message: Message) -> Optional[Tuple[str, Embed]]:
+    content = message.content
     create_match = re.search(
         r"^note:(?P<id>[\w#]+)(->(?P<number>[\+\-]?[0-9]+))?$", content, re.IGNORECASE,
     )

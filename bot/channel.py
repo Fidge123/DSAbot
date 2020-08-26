@@ -15,9 +15,9 @@ class Channel(db.Entity):
 
 
 @orm.db_session
-def is_permitted(content: str, message: Message) -> bool:
+def is_permitted(message: Message) -> bool:
     permitted = Channel.exists(id=str(message.channel.id))
-    if not permitted and "SUMMON" in content:
+    if not permitted and "SUMMON" == message.content:
         Channel(
             id=str(message.channel.id),
             server=str(message.channel.guild.id),
@@ -29,11 +29,11 @@ def is_permitted(content: str, message: Message) -> bool:
 
 
 @orm.db_session
-def create_response(content: str, message: Message) -> Optional[Tuple[str, Embed]]:
-    if "SUMMON" in content:
+def create_response(message: Message) -> Optional[Tuple[str, Embed]]:
+    if "SUMMON" == message.content:
         return "I am already listening", None
 
-    if "BEGONE" in content:
+    if "BEGONE" == message.content:
         Channel.get(id=str(message.channel.id)).delete()
         return "I have left", None
 

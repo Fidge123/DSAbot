@@ -2,102 +2,101 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from bot.checks import SkillCheck
-from test.mocks import MockAuthor
 
 
 class TestSkillCheck(TestCase):
     def test_parse(self):
-        self.assertIsNotNone(SkillCheck("13 14 15@2", MockAuthor("TestUser")))
-        self.assertIsNotNone(SkillCheck("1,12,18@18", MockAuthor("TestUser")))
-        self.assertIsNotNone(SkillCheck("8 19 1400@0 + 14", MockAuthor("TestUser")))
-        self.assertIsNotNone(SkillCheck("2 2,2, @1400-2-2-2", MockAuthor("TU")))
-        self.assertIsNotNone(SkillCheck("!13 1 12@2 +1+1 Test", MockAuthor("TestUser")))
-        self.assertIsNotNone(SkillCheck("! 1,12,18@18 Krit", MockAuthor("TestUser")))
+        self.assertIsNotNone(SkillCheck("13 14 15@2", "@TestUser"))
+        self.assertIsNotNone(SkillCheck("1,12,18@18", "@TestUser"))
+        self.assertIsNotNone(SkillCheck("8 19 1400@0 + 14", "@TestUser"))
+        self.assertIsNotNone(SkillCheck("2 2,2, @1400-2-2-2", "@TU"))
+        self.assertIsNotNone(SkillCheck("!13 1 12@2 +1+1 Test", "@TestUser"))
+        self.assertIsNotNone(SkillCheck("! 1,12,18@18 Krit", "@TestUser"))
 
         with self.assertRaises(ValueError):
-            SkillCheck("!!13 1@2", MockAuthor("TestUser"))
+            SkillCheck("!!13 1@2", "@TestUser")
         with self.assertRaises(ValueError):
-            SkillCheck("!  1 13@0", MockAuthor("TestUser"))
+            SkillCheck("!  1 13@0", "@TestUser")
         with self.assertRaises(ValueError):
-            SkillCheck("!?4", MockAuthor("TestUser"))
+            SkillCheck("!?4", "@TestUser")
         with self.assertRaises(ValueError):
-            SkillCheck("#2,2,2@2", MockAuthor("TestUser"))
+            SkillCheck("#2,2,2@2", "@TestUser")
 
     def test_parse_with_other_commands(self):
         with self.assertRaises(ValueError):
-            SkillCheck("d3", MockAuthor("TestUser"))
+            SkillCheck("d3", "@TestUser")
         with self.assertRaises(ValueError):
-            SkillCheck("note:foobar", MockAuthor("TestUser"))
+            SkillCheck("note:foobar", "@TestUser")
         with self.assertRaises(ValueError):
-            SkillCheck("SUMMON", MockAuthor("TestUser"))
+            SkillCheck("SUMMON", "@TestUser")
         with self.assertRaises(ValueError):
-            SkillCheck("BEGONE", MockAuthor("TestUser"))
+            SkillCheck("BEGONE", "@TestUser")
         with self.assertRaises(ValueError):
-            SkillCheck("DIE", MockAuthor("TestUser"))
+            SkillCheck("DIE", "@TestUser")
         with self.assertRaises(ValueError):
-            SkillCheck("13,13,13+1", MockAuthor("TestUser"))
+            SkillCheck("13,13,13+1", "@TestUser")
         with self.assertRaises(ValueError):
-            SkillCheck("13", MockAuthor("TestUser"))
+            SkillCheck("13", "@TestUser")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_quality_level(self, mock_randint: MagicMock):
         mock_randint.return_value = 2
-        sc = SkillCheck("11,9,9@0", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@0", "@TestUser")
         self.assertEqual(sc.skill_points, 0)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck("11,9,9@1", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@1", "@TestUser")
         self.assertEqual(sc.skill_points, 1)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck("11,9,9@2", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@2", "@TestUser")
         self.assertEqual(sc.skill_points, 2)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck("11,9,9@3", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@3", "@TestUser")
         self.assertEqual(sc.skill_points, 3)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck("11,9,9@4", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@4", "@TestUser")
         self.assertEqual(sc.skill_points, 4)
         self.assertEqual(sc.ql(sc.skill_points), 2)
 
-        sc = SkillCheck("11,9,9@5", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@5", "@TestUser")
         self.assertEqual(sc.skill_points, 5)
         self.assertEqual(sc.ql(sc.skill_points), 2)
 
-        sc = SkillCheck("11,9,9@6", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@6", "@TestUser")
         self.assertEqual(sc.skill_points, 6)
         self.assertEqual(sc.ql(sc.skill_points), 2)
 
-        sc = SkillCheck("11,9,9@7", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@7", "@TestUser")
         self.assertEqual(sc.skill_points, 7)
         self.assertEqual(sc.ql(sc.skill_points), 3)
 
-        sc = SkillCheck("11,9,9@8", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@8", "@TestUser")
         self.assertEqual(sc.skill_points, 8)
         self.assertEqual(sc.ql(sc.skill_points), 3)
 
-        sc = SkillCheck("11,9,9@9", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@9", "@TestUser")
         self.assertEqual(sc.skill_points, 9)
         self.assertEqual(sc.ql(sc.skill_points), 3)
 
-        sc = SkillCheck("11,9,9@10", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@10", "@TestUser")
         self.assertEqual(sc.skill_points, 10)
         self.assertEqual(sc.ql(sc.skill_points), 4)
 
-        sc = SkillCheck("11,9,9@16", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@16", "@TestUser")
         self.assertEqual(sc.skill_points, 16)
         self.assertEqual(sc.ql(sc.skill_points), 6)
 
-        sc = SkillCheck("11,9,9@26", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@26", "@TestUser")
         self.assertEqual(sc.skill_points, 26)
         self.assertEqual(sc.ql(sc.skill_points), 6)
 
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
-        sc = SkillCheck("11,9,9@4", MockAuthor("TestUser"))
+        sc = SkillCheck("11,9,9@4", "@TestUser")
         self.assertEqual(sc.data["attributes"], [11, 9, 9])
         self.assertEqual(sc.data["EAV"], [11, 9, 9])
         self.assertEqual(sc.data["SR"], 4)
@@ -121,7 +120,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
 
-        sc = SkillCheck("!13 14 15@6-2 Sinnesschärfe", MockAuthor("TU"))
+        sc = SkillCheck("!13 14 15@6-2 Sinnesschärfe", "@TU")
         self.assertEqual(sc.data["attributes"], [13, 14, 15])
         self.assertEqual(sc.data["EAV"], [11, 12, 13])
         self.assertEqual(sc.data["SR"], 6)
@@ -145,7 +144,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
 
-        sc = SkillCheck("!5 3, 4,@16 +1+1 -2- 2 🎉-1", MockAuthor("TestUser"))
+        sc = SkillCheck("!5 3, 4,@16 +1+1 -2- 2 🎉-1", "@TestUser")
         self.assertEqual(sc.data["attributes"], [5, 3, 4])
         self.assertEqual(sc.data["EAV"], [3, 1, 2])
         self.assertEqual(sc.data["SR"], 16)
@@ -172,7 +171,7 @@ class TestSkillCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_crit_botch(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        sc = SkillCheck("2,3,4@4", MockAuthor("TestUser"))
+        sc = SkillCheck("2,3,4@4", "@TestUser")
         self.assertEqual(sc.data["attributes"], [2, 3, 4])
         self.assertEqual(sc.data["EAV"], [2, 3, 4])
         self.assertEqual(sc.data["SR"], 4)
@@ -197,7 +196,7 @@ class TestSkillCheck(TestCase):
         )
 
         mock_randint.return_value = 20
-        sc = SkillCheck("14 18 18@3 + 2", MockAuthor("TestUser"))
+        sc = SkillCheck("14 18 18@3 + 2", "@TestUser")
         self.assertEqual(sc.data["attributes"], [14, 18, 18])
         self.assertEqual(sc.data["EAV"], [16, 20, 20])
         self.assertEqual(sc.data["SR"], 3)
@@ -222,7 +221,7 @@ class TestSkillCheck(TestCase):
         )
 
         mock_randint.return_value = 20
-        sc = SkillCheck("18,18 18@3 + 2", MockAuthor("TestUser"))
+        sc = SkillCheck("18,18 18@3 + 2", "@TestUser")
         self.assertEqual(sc.data["attributes"], [18, 18, 18])
         self.assertEqual(sc.data["EAV"], [20, 20, 20])
         self.assertEqual(sc.data["SR"], 3)
@@ -249,7 +248,7 @@ class TestSkillCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_routine_impossible(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
-        sc = SkillCheck("14, 14, 14 @ 7 + 1", MockAuthor("TestUser"))
+        sc = SkillCheck("14, 14, 14 @ 7 + 1", "@TestUser")
         self.assertEqual(sc.data["attributes"], [14, 14, 14])
         self.assertEqual(sc.data["EAV"], [15, 15, 15])
         self.assertEqual(sc.data["SR"], 7)
@@ -261,7 +260,7 @@ class TestSkillCheck(TestCase):
             str(sc), "@TestUser \n```py\n" "Routineprobe: 4 FP = QS 2\n```",
         )
 
-        sc = SkillCheck("2,3,4@4-2", MockAuthor("TestUser"))
+        sc = SkillCheck("2,3,4@4-2", "@TestUser")
         self.assertEqual(sc.data["attributes"], [2, 3, 4])
         self.assertEqual(sc.data["EAV"], [0, 1, 2])
         self.assertEqual(sc.data["SR"], 4)

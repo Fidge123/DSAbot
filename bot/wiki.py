@@ -19,7 +19,7 @@ def find(search_string: str) -> List[Any]:
     with psycopg2.connect(DB_URL) as conn:
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT title, url, body, similarity(title, %s) FROM regelwiki ORDER BY 4 DESC LIMIT 5",
+                "SELECT title, url, body, word_similarity(%s, title) FROM regelwiki ORDER BY 4 DESC LIMIT 5",
                 (search_string,),
             )
             return [
@@ -33,18 +33,16 @@ def find(search_string: str) -> List[Any]:
             ]
 
 
-async def create_response(
-    content: str, message: Message
-) -> Optional[Tuple[str, Embed]]:
-    match = re.search(r"^wiki\ (?P<search>.*)$", content, re.IGNORECASE)
+def create_response(message: Message) -> Optional[Tuple[str, Embed]]:
+    match = re.search(r"^wiki\ (?P<search>.*)$", message.content, re.IGNORECASE)
     if match:
         hits = find(match.group("search"))
-        await message.author.send("\n".join(next(message.author, hits)))
+        return message.author.send("\n".join(next(message.author, hits))), None
 
         if hits[0]["score"] == 1 and hits[0]["body"]:
             body = hits[0]["body"]
             for section in body.split("\n\n"):
                 if len(section) < 1024:
-                    await message.author.send(section)
+                    return message.author.send(section), None
                 else:
-                    await message.author.send(section[:1020] + "...")
+                    return message.author.send(section[:1020] + "..."), None

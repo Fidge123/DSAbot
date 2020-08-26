@@ -16,8 +16,8 @@ class SkillCheck(GenericCheck):
         re.VERBOSE | re.IGNORECASE,
     )
     transform = {**GenericCheck.transform, "SR": int}
-    _response = "{author} {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\nFW {SR:<4}{diffs} = {SP} FP\n{result}\n```"
-    _routine = "{author} {comment}\n```py\nRoutineprobe: {SP} FP = QS {QL}\n```"
+    _response = "{mention} {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\nFW {SR:<4}{diffs} = {SP} FP\n{result}\n```"
+    _routine = "{mention} {comment}\n```py\nRoutineprobe: {SP} FP = QS {QL}\n```"
 
     @property
     def diffs(self) -> List[int]:

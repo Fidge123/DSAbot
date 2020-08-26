@@ -86,18 +86,6 @@ class TestBot(TestCase):
                         embed=None,
                     )
 
-    def test_debug(self):
-        messages = ["SUMMON", "debug:cache", "debug:fullCache", "BEGONE"]
-
-        for m in messages:
-            with self.subTest(msg=m):
-                m = self.message(m)
-                self.loop.run_until_complete(on_message(m))
-                if "full" in m.content.lower():
-                    m.channel.send.assert_called_with("fullCache")
-                elif "cache" in m.content.lower():
-                    m.channel.send.assert_called_with("cache")
-
     @patch("bot.note.datetime")
     def test_notes(self, mock_dt: MagicMock):
         mock_dt.utcnow = MagicMock(return_value=datetime(2019, 1, 1))
