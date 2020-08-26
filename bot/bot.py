@@ -1,6 +1,5 @@
 import os
 import random
-import re
 
 import discord
 
@@ -19,16 +18,13 @@ async def on_ready() -> None:
 
 @client.event
 async def on_message(message: discord.Message) -> None:
-    msgstring: str = message.content.strip("` ")
-    send = message.channel.send
-
     if message.author == client.user:
         return
 
-    if channel.is_permitted(msgstring, message):
-        if "DIE" in msgstring and str(message.author) == "fidge123#3686":
+    if channel.is_permitted(message.channel.id):
+        if "DIE" == message.content and str(message.author) == "fidge123#3686":
             await message.add_reaction("\U0001f480")
-            await send("I shall die.")
+            await message.channel.send("I shall die.")
             return await client.close()
 
         for create_response in [
@@ -38,25 +34,11 @@ async def on_message(message: discord.Message) -> None:
             note.create_response,
             wiki.create_response,
         ]:
-            response = create_response(msgstring, message)
+            response = create_response(message)
             if response:
-                msg, embed = response
-                return await send(msg, embed=embed)
-
-        debug_code = re.search(
-            r"^debug:(?P<debugCommand>[a-z]*)$", msgstring, re.IGNORECASE
-        )
-        if debug_code:
-            if debug_code.group("debugCommand") == "cache":
-                return await send("cache")
-
-            if debug_code.group("debugCommand") == "fullCache":
-                return await send("fullCache")
-
-            if debug_code.group("debugCommand") == "numberNotes":
-                return await send(str(note.get_all()))
-
-            return await send("no debug")
+                return await response.send()
+    else:
+        return await channel.add_channel(message)
 
 
 def run() -> None:

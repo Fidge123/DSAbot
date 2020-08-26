@@ -6,26 +6,29 @@ from bot import check, note
 from test.mocks import MockAuthor, MockMessage
 
 
-class TestSkillCheck(TestCase):
+class TestCheck(TestCase):
     def test_parse(self):
-        user = MockAuthor("TestUser")
-        self.assertIsInstance(check.create_check("13 14 15@2", user), SkillCheck)
-        self.assertIsInstance(check.create_check("13", user), AttributeCheck)
-        self.assertIsInstance(check.create_check("13 @2", user), AttributeCheck)
-        self.assertIsInstance(check.create_check("13 14 -2", user), GenericCheck)
-        self.assertIsInstance(check.create_check("13 14 @2", user), GenericCheck)
+        self.assertIsInstance(check.create_check("13 14 15@2"), SkillCheck)
+        self.assertIsInstance(check.create_check("13"), AttributeCheck)
+        self.assertIsInstance(check.create_check("13 @2"), AttributeCheck)
+        self.assertIsInstance(check.create_check("13 14 -2"), GenericCheck)
+        self.assertIsInstance(check.create_check("13 14 @2"), GenericCheck)
+
+    def checkPayload(self, response_object, expected):
+        self.assertEqual(response_object.messages[0]["args"][0], "@TestUser" + expected)
 
     @patch("random.randint", new_callable=MagicMock())
     def test_fate(self, mock_randint: MagicMock):
         user = MockAuthor("TestUser")
-        message = MockMessage(user)
-        note.create_note("schips_{}".format(str(user)), 3, user)
+        note_id = f"schips_{str(user)}"
+        note.delete_note(user, note_id)
+        note.create_note(note_id, 3, user)
 
         mock_randint.return_value = 12
-        first, _ = check.create_response("11,9,9@4", message)
-        self.assertEqual(
+        first = check.create_response(MockMessage(user, "11,9,9@4"))
+        self.checkPayload(
             first,
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     11   9   9\n"
             "Würfel:  12  12  12\n"
@@ -33,15 +36,15 @@ class TestSkillCheck(TestCase):
             "Nicht bestanden\n"
             "```",
         )
-        other_message = MockMessage(MockAuthor("NotTestUser"))
-        check.create_response("14,14,10@6", other_message)
-        self.assertNotEqual(message.author, other_message.author)
+        other_message = MockMessage(MockAuthor("NotTestUser"), "14,14,10@6")
+        check.create_response(other_message)
+        self.assertNotEqual(user, other_message.author)
 
         mock_randint.return_value = 2
-        second, _ = check.create_response("schips rrr", message)
-        self.assertEqual(
+        second = check.create_response(MockMessage(user, "schips rrr"))
+        self.checkPayload(
             second,
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     11   9   9\n"
             "Würfel:   2   2   2\n"
@@ -50,10 +53,10 @@ class TestSkillCheck(TestCase):
             "```",
         )
         mock_randint.return_value = 10
-        third, _ = check.create_response("schips rkk", message)
-        self.assertEqual(
+        third = check.create_response(MockMessage(user, "schips rkk"))
+        self.checkPayload(
             third,
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     11   9   9\n"
             "Würfel:  10   2   2\n"
@@ -62,10 +65,10 @@ class TestSkillCheck(TestCase):
             "```",
         )
         mock_randint.return_value = 10
-        fourth, _ = check.create_response("schips rkk", message)
-        self.assertEqual(
+        fourth = check.create_response(MockMessage(user, "schips rkk"))
+        self.checkPayload(
             fourth,
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     11   9   9\n"
             "Würfel:  10   2   2\n"
@@ -74,24 +77,23 @@ class TestSkillCheck(TestCase):
             "```",
         )
         mock_randint.return_value = 10
-        fifth, _ = check.create_response("schips rkk", message)
-        self.assertEqual(fifth, "@TestUser Keine Schips übrig!")
+        fifth = check.create_response(MockMessage(user, "schips rkk"))
+        self.checkPayload(fifth, " Keine Schips übrig!")
 
-        note.delete_note(user, "schips_{}".format(str(user)))
+        note.delete_note(user, note_id)
 
     @patch("random.randint", new_callable=MagicMock())
     def test_force(self, mock_randint: MagicMock):
         user = MockAuthor("TestUser")
-        message = MockMessage(user)
         mock_randint.return_value = 12
-        first, _ = check.create_response("14,14,14@12", message)
-        self.assertEqual(
-            first, "@TestUser \n```py\nRoutineprobe: 6 FP = QS 2\n```",
+        first = check.create_response(MockMessage(user, "14,14,14@12"))
+        self.checkPayload(
+            first, " \n```py\nRoutineprobe: 6 FP = QS 2\n```",
         )
-        second, _ = check.create_response("force", message)
-        self.assertEqual(
+        second = check.create_response(MockMessage(user, "force"))
+        self.checkPayload(
             second,
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     14  14  14\n"
             "Würfel:  12  12  12\n"
@@ -103,12 +105,11 @@ class TestSkillCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_retry_repeat(self, mock_randint: MagicMock):
         user = MockAuthor("TestUser")
-        message = MockMessage(user)
         mock_randint.return_value = 12
-        first, _ = check.create_response("11,9,9@4", message)
-        self.assertEqual(
+        first = check.create_response(MockMessage(user, "11,9,9@4"))
+        self.checkPayload(
             first,
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     11   9   9\n"
             "Würfel:  12  12  12\n"
@@ -117,10 +118,10 @@ class TestSkillCheck(TestCase):
             "```",
         )
         mock_randint.return_value = 10
-        second, _ = check.create_response("repeat", message)
-        self.assertEqual(
+        second = check.create_response(MockMessage(user, "repeat"))
+        self.checkPayload(
             second,
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     11   9   9\n"
             "Würfel:  10  10  10\n"
@@ -129,10 +130,10 @@ class TestSkillCheck(TestCase):
             "```",
         )
         mock_randint.return_value = 9
-        third, _ = check.create_response("retry", message)
-        self.assertEqual(
+        third = check.create_response(MockMessage(user, "retry"))
+        self.checkPayload(
             third,
-            "@TestUser \n"
+            " \n"
             "```py\n"
             "EEW:     10   8   8\n"
             "Würfel:   9   9   9\n"

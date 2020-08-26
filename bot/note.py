@@ -1,11 +1,12 @@
 import re
 from datetime import datetime, timezone
-from typing import List, Union, Optional, Tuple
+from typing import List, Union, Optional
 
 from pony import orm
-from discord import Message, Member, Embed
+from discord import Message, Member
 
 from bot.persistence import db
+from bot.response import Response
 
 
 class Note(db.Entity):
@@ -18,7 +19,7 @@ class Note(db.Entity):
 
 
 @orm.db_session
-def get_note(note_id, server) -> Note:
+def get_note(note_id: str, server: str) -> Note:
     return Note.get(key=note_id, server=str(server))
 
 
@@ -37,8 +38,8 @@ def date_to_str(utc: datetime) -> str:
 
 
 @orm.db_session
-def notes_to_str(guild) -> str:
-    sorted_notes = Note.select(lambda n: n.server == str(guild)).order_by(Note.key)
+def notes_to_str(server: str) -> str:
+    sorted_notes = Note.select(lambda n: n.server == str(server)).order_by(Note.key)
     if len(sorted_notes) == 0:
         raise RuntimeError
     lk = max(map(len, [n.key for n in sorted_notes])) + 1
@@ -72,11 +73,9 @@ def create_note(note_id: str, value: Union[int, str], user: Member) -> str:
 
 def get_notes(user: Member) -> str:
     try:
-        return "{user}\n```{notes}```".format(
-            user=user.mention, notes=notes_to_str(user.guild.id)
-        )
+        return f"\n```{notes_to_str(str(user.guild.id))}```"
     except RuntimeError:
-        return "{} Es gibt keine Notizen.".format(user.mention)
+        return " Es gibt keine Notizen."
 
 
 @orm.db_session
@@ -84,33 +83,27 @@ def delete_note(user: Member, note_id: str) -> str:
     note = Note.get(key=note_id, server=str(user.guild.id))
     if note:
         note.delete()
-        return "{user} {id} war {value} und wurde nun gelöscht.".format(
-            user=user.mention, id=note.key, value=note.value
-        )
+        return f" {note.key} war {note.value} und wurde nun gelöscht."
     else:
-        return "{user} Es gibt keine Notiz {id}.".format(user=user.mention, id=note_id)
+        return f" Es gibt keine Notiz {note_id}."
 
 
-def create_response(content: str, message: Message) -> Optional[Tuple[str, Embed]]:
-    create_match = re.search(
-        r"^note:(?P<id>[\w#]+)(->(?P<number>[\+\-]?[0-9]+))?$", content, re.IGNORECASE,
+def create_response(m: Message) -> Optional[Response]:
+    send = m.channel.send
+    mention = m.author.mention
+    c_match = re.search(
+        r"^note:(?P<id>[\w#]+)(->(?P<number>[\+\-]?[0-9]+))?$", m.content, re.I
     )
-    if create_match:
-        note = create_note(
-            create_match.group("id"), create_match.group("number"), message.author
-        )
-        return (
-            "{user} {note_id} ist jetzt {value}.".format(
-                user=message.author.mention, note_id=note.key, value=note.value,
-            ),
-            None,
-        )
+    if c_match:
+        note = create_note(c_match.group("id"), c_match.group("number"), m.author)
+        return Response(send, f"{mention} {note.key} ist jetzt {note.value}.")
 
-    get_match = re.search(r"^notes$", content, re.IGNORECASE)
+    get_match = re.search(r"^notes$", m.content, re.I)
     if get_match:
-        return get_notes(message.author), None
+        return Response(send, mention + get_notes(m.author))
 
-    remove_match = re.search(r"^delete note (?P<id>[\w#]+)$", content, re.IGNORECASE)
+    remove_match = re.search(r"^delete note (?P<id>[\w#]+)$", m.content, re.I)
     if remove_match:
-        return delete_note(message.author, remove_match.group("id")), None
+        return Response(send, mention + delete_note(m.author, remove_match.group("id")))
+
     return None

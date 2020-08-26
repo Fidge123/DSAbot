@@ -1,6 +1,5 @@
 import re
 from typing import Dict, Any, Type
-from discord import Member
 
 from bot.string_math import calc
 from bot.checks.check_roll import CheckRolls
@@ -15,7 +14,7 @@ class GenericCheck:
             (?P<modifier>(\ *[\+\-]\ *[0-9]+)*) # A modifier
             (\ (?P<comment>.*?))?$              # Anything else is lazy-matched as a comment
         """,
-        re.VERBOSE | re.IGNORECASE,
+        re.VERBOSE | re.I,
     )
     transform: Dict[str, Any] = {
         "attributes": lambda x: Attributes(
@@ -24,8 +23,8 @@ class GenericCheck:
         "modifier": lambda x: int(calc(x or "0")),
         "comment": lambda x: (x or "").strip(),
     }
-    _response = "{author} {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\n{result}\n```"
-    _impossible = "{author} {comment}\n```py\nEEW:{EAV}\nProbe nicht möglich\n```"
+    _response = " {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\n{result}\n```"
+    _impossible = " {comment}\n```py\nEEW:{EAV}\nProbe nicht möglich\n```"
 
     @property
     def impossible(self) -> bool:
@@ -37,13 +36,12 @@ class GenericCheck:
         )
         self.data["rolls"] = CheckRolls(len(self.data["attributes"]))
 
-    def __init__(self, message: str, author: Member):
+    def __init__(self, message: str):
         parsed = self.matcher.search(message)
         if parsed:
             self.data = {}
             for name, value in parsed.groupdict().items():
                 self.data[name] = self.transform[name](value)
-            self.data["author"] = author.mention
             self.recalculate()
         else:
             raise ValueError
