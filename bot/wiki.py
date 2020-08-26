@@ -86,7 +86,8 @@ def create_response(message: Message) -> Optional[Response]:
             )
 
         response = Response(
-            message.channel.send, "\n".join(next(message.author, title_match))
+            message.channel.send,
+            "\n".join(next(message.author, title_match, search_term)),
         )
 
         if title_match[0]["score"] == 1 and title_match[0]["body"]:
