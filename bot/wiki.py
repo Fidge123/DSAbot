@@ -21,11 +21,12 @@ def next(user: Member, hits: List[Any], search_term: str):
 
 
 def _normalize(num: float, body: str, search_term: str) -> str:
-    if isinstance(num, int):
+    body = body.lower()
+    search_term = search_term.lower()
+    if body.count(search_term) == num:
         sections = body.split("\n\n")
         num_contained = len([s for s in sections if search_term in s])
         return f"{int((num_contained / len(sections)) * 100)}%"
-
     else:
         return f"{int(num * 100)}%"
 
