@@ -39,12 +39,10 @@ def add(spell):
         kv = section.split(":")
         if len(kv) == 1:
             if "Seite" in kv[0]:
-                print("Publikation", kv[0].strip())
                 sections["Publikation"] = kv[0].strip()
         else:
             key, *value = kv
             value = ":".join(value)
-            print(key, value)
             if key.startswith("#"):
                 sections["spell_improvements"].append(f"{key}: {value.strip()}")
             else:
@@ -52,8 +50,6 @@ def add(spell):
                     key = "Publikation"
                 sections[key] = value.strip()
 
-    print("spell_improvements", sections["spell_improvements"])
-    print()
     return Spells(
         url=spell.url,
         title=spell.title,

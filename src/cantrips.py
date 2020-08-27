@@ -27,14 +27,15 @@ class Cantrips(db.Entity):
 @orm.db_session
 def add(cantrip):
     sections = {}
+    print(cantrip.title)
     if Cantrips.exists(url=cantrip.url):
         return
     for section in cantrip.body.split("\n\n"):
         kv = section.split(":")
         if len(kv) == 1:
-            if "Seite" in kv[0]:
+            if "Seite" in kv[0] and len(kv[0]) < 150:
                 sections["Publikation"] = kv[0].strip()
-            if kv[0].strip() != "":
+            elif kv[0].strip() != "":
                 sections["effect"] = kv[0].strip()
         else:
             key, value = kv
