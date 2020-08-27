@@ -13,25 +13,22 @@ DB_URL = os.getenv("HEROKU_POSTGRESQL_COBALT_URL")
 def next(user: Member, hits: List[Any], search_term: str):
     yield user.mention
     yield from [
-        "{} ({}): <{}>".format(
-            hit["title"], _normalize(hit["score"], hit["body"], search_term), hit["url"]
-        )
-        for hit in hits
+        "{} ({}%): <{}>".format(hit["title"], hit["score"], hit["url"]) for hit in hits
     ]
 
 
-def _normalize(num: float, body: str, search_term: str) -> str:
-    body = body.lower()
-    search_term = search_term.lower()
-    if body.count(search_term) == num:
+def _normalize(score: float, body: str, search_term: str, in_body: bool) -> int:
+    if in_body:
+        body = body.lower()
+        search_term = search_term.lower()
         sections = body.split("\n\n")
         num_contained = len([s for s in sections if search_term in s])
-        return f"{int((num_contained / len(sections)) * 100)}%"
+        return int((num_contained / len(sections)) * 100)
     else:
-        return f"{int(num * 100)}%"
+        return int(score * 100)
 
 
-def find(search_string: str, in_body=False) -> List[Any]:
+def find(search_term: str, in_body=False) -> List[Any]:
     title_stmt = "SELECT title, url, body, word_similarity(%s, title) FROM regelwiki ORDER BY 4 DESC LIMIT 5"
 
     body_stmt = """
@@ -54,22 +51,22 @@ def find(search_string: str, in_body=False) -> List[Any]:
     with psycopg2.connect(DB_URL) as conn:
         with conn.cursor() as cur:
             if in_body:
-                cur.execute(body_stmt, (search_string, search_string))
+                cur.execute(body_stmt, (search_term, search_term))
             else:
-                cur.execute(title_stmt, (search_string,))
+                cur.execute(title_stmt, (search_term,))
             return [
                 {
                     "title": result[0],
                     "url": result[1],
                     "body": result[2],
-                    "score": result[3],
+                    "score": _normalize(result[3], result[2], search_term, in_body),
                 }
                 for result in cur.fetchall()
             ]
 
 
 def filter_hits(hits: List[Any]) -> List[Any]:
-    return [hit for hit in hits if hit["score"] + 0.2 > hits[0]["score"]]
+    return [hit for hit in hits if hit["score"] + 20 > hits[0]["score"]]
 
 
 def create_response(message: Message) -> Optional[Response]:
@@ -78,7 +75,7 @@ def create_response(message: Message) -> Optional[Response]:
         search_term = match.group("search")
         title_match = filter_hits(find(search_term))
 
-        if title_match[0]["score"] < 0.6:
+        if title_match[0]["score"] < 60:
             body_match = find(search_term, True)
             return Response(
                 message.channel.send,
@@ -90,9 +87,10 @@ def create_response(message: Message) -> Optional[Response]:
             "\n".join(next(message.author, title_match, search_term)),
         )
 
-        if title_match[0]["score"] == 1 and title_match[0]["body"]:
-            body = title_match[0]["body"]
-            next_message = "**{}**".format(title_match[0]["title"])
+        perfect_hits = [t for t in title_match if t["score"] == 100 and t["body"]]
+        if len(perfect_hits) == 1:
+            body = perfect_hits[0]["body"]
+            next_message = "**{}**".format(perfect_hits[0]["title"])
             for section in body.split("\n\n"):
                 if len(next_message) + len(section) <= 2000:
                     next_message = "\n\n".join([next_message, section])

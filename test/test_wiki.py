@@ -22,19 +22,19 @@
 #         results = wiki.find("ignifaxius")
 
 #         self.assertEqual(results[0]["title"], "Ignifaxius")
-#         self.assertEqual(results[0]["score"], 1.0)
+#         self.assertEqual(results[0]["score"], 100)
 
 #         results = wiki.find("Wuchtschlag")
 
 #         self.assertEqual(results[0]["title"], "Wuchtschlag I-III")
-#         self.assertEqual(results[0]["score"], 1.0)
+#         self.assertEqual(results[0]["score"], 100)
 
 #         results = wiki.find("Passierschlag", True)
 
 #         self.assertEqual(
 #             results[0]["title"], "Kritische Erfolge bei Verteidigung im Nahkampf"
 #         )
-#         self.assertEqual(results[0]["score"], 37)
+#         self.assertEqual(results[0]["score"], 46)
 
 #     def test_res(self):
 #         result = wiki.create_response(
