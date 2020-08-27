@@ -78,8 +78,9 @@ def parse(url, parents=[]):
     )
 
 
-if os.getenv("DATABASE_URL"):
-    db.bind(provider="postgres", dsn=os.getenv("DATABASE_URL"))
+DB_URL = os.getenv("HEROKU_POSTGRESQL_COBALT_URL") or os.getenv("DATABASE_URL")
+if DB_URL:
+    db.bind(provider="postgres", dsn=DB_URL)
     db.generate_mapping(create_tables=True)
 else:
     raise NotImplementedError(

@@ -1,1 +1,1 @@
-regelwiki: python wiki_links.py
+regelwiki: python src/wiki_links.py
