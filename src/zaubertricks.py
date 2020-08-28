@@ -12,23 +12,23 @@ class Regelwiki(db.Entity):
     parents = orm.Optional(orm.StrArray)
 
 
-class Cantrips(db.Entity):
+class Zaubertricks(db.Entity):
     url = orm.PrimaryKey(str)
-    title = orm.Required(str)
-    effect = orm.Required(str)
-    range = orm.Required(str)
-    duration = orm.Required(str)
-    target_category = orm.Required(str)
-    property = orm.Required(str)
-    comment = orm.Optional(str)
-    publication = orm.Required(str)
+    Titel = orm.Required(str)
+    Wirkung = orm.Required(str)
+    Reichweite = orm.Required(str)
+    Wirkungsdauer = orm.Required(str)
+    Zielkategorie = orm.Required(str)
+    Merkmal = orm.Required(str)
+    Anmerkung = orm.Optional(str)
+    Publikation = orm.Required(str)
 
 
 @orm.db_session
 def add(cantrip):
     sections = {}
     print(cantrip.title)
-    if Cantrips.exists(url=cantrip.url):
+    if Zaubertricks.exists(url=cantrip.url):
         return
     for section in cantrip.body.split("\n\n"):
         kv = section.split(":")
@@ -36,23 +36,26 @@ def add(cantrip):
             if "Seite" in kv[0] and len(kv[0]) < 150:
                 sections["Publikation"] = kv[0].strip()
             elif kv[0].strip() != "":
-                sections["effect"] = kv[0].strip()
+                sections["Wirkung"] = kv[0].strip()
         else:
-            key, value = kv
-            if key == "Publikation(en)":
-                key = "Publikation"
-            sections[key] = value.strip()
+            key, *value = kv
+            key = key.replace("-", "_")
+            value = ":".join(value).strip()
+            if value:
+                if key.startswith("Publikation"):
+                    key = "Publikation"
+                sections[key] = value
 
-    return Cantrips(
+    return Zaubertricks(
         url=cantrip.url,
-        title=cantrip.title,
-        effect=sections["effect"],
-        range=sections["Reichweite"],
-        duration=sections["Wirkungsdauer"],
-        target_category=sections["Zielkategorie"],
-        property=sections["Merkmal"],
-        comment=sections.get("Anmerkung", ""),
-        publication=sections["Publikation"],
+        Titel=cantrip.title,
+        Wirkung=sections["Wirkung"],
+        Reichweite=sections["Reichweite"],
+        Wirkungsdauer=sections["Wirkungsdauer"],
+        Zielkategorie=sections["Zielkategorie"],
+        Merkmal=sections["Merkmal"],
+        Anmerkung=sections.get("Anmerkung", ""),
+        Publikation=sections["Publikation"],
     )
 
 
