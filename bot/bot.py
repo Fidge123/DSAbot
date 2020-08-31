@@ -22,7 +22,11 @@ async def on_message(message: discord.Message) -> None:
         return
 
     if channel.is_permitted(message.channel.id):
-        if "DIE" == message.content and str(message.author) == "fidge123#3686":
+
+        if (
+            "DIE" == message.content
+            and message.author == (await client.application_info()).owner
+        ):
             await message.add_reaction("\U0001f480")
             await message.channel.send("I shall die.")
             return await client.close()
