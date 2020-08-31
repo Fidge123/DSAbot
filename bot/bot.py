@@ -4,6 +4,7 @@ import random
 import discord
 
 from bot import persistence, dice_roll, note, check, wiki, channel
+from . import character
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
@@ -26,6 +27,9 @@ async def on_message(message: discord.Message) -> None:
             await message.add_reaction("\U0001f480")
             await message.channel.send("I shall die.")
             return await client.close()
+
+        testchar = character.Character("Test")
+        message.content = testchar.modifyMessage(message.content)
 
         for create_response in [
             channel.create_response,
