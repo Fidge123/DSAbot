@@ -21,14 +21,18 @@ def is_permitted(channel_id) -> bool:
 
 
 @orm.db_session
+def _add_channel(message: Message):
+    Channel(
+        id=str(message.channel.id),
+        server=str(message.channel.guild.id),
+        added_at=datetime.utcnow(),
+        added_by=str(message.author),
+    )
+
+
 async def add_channel(message: Message):
     if not is_permitted(message.channel.id) and "SUMMON" == message.content:
-        Channel(
-            id=str(message.channel.id),
-            server=str(message.channel.guild.id),
-            added_at=datetime.utcnow(),
-            added_by=str(message.author),
-        )
+        _add_channel(message)
         await message.channel.send("I'm listening for rolls here!")
 
 
