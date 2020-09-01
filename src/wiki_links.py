@@ -52,9 +52,23 @@ def parse(url, parents=[]):
     res = requests.get(url)
     soup = BeautifulSoup(res.text, "lxml")
     main = soup.find("div", id="main")
+
     body = []
     for br in main.find_all("br"):
         br.replace_with("\n")
+    for strong in main.find_all("strong"):
+        strong.replace_with(f"**{strong.text.strip()}**")
+    for em in main.find_all("em"):
+        em.replace_with(f"_{em.text.strip()}_")
+    table = soup.find("table")
+    if table:
+        headers = [header.text for header in table.find_all("th")]
+        results = [
+            f"{headers[i]}: {cell.text.strip()}"
+            for i, cell in enumerate(table.find("tbody").find("tr").find_all("td"))
+            if headers[i].encode("ascii", "ignore")
+        ]
+        body.append("\n".join(results))
     for p in main.find_all("p"):
         body.append(p.text.strip())
     clean(soup)
