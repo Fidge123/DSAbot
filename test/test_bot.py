@@ -106,7 +106,7 @@ class TestBot(IsolatedAsyncioTestCase):
                     m.channel.send.assert_called_with("@Author test_klik ist jetzt 17.")
                 if i == 4:
                     m.channel.send.assert_called_with(
-                        "@Author\n```test_blub :  7 (01.01.19)\ntest_klik : 17 (01.01.19)```"
+                        "@Author\n```test_blub   7      -- a few moments ago\ntest_klik  17      -- a few moments ago```"
                     )
                 if i == 5:
                     m.channel.send.assert_called_with(

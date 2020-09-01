@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, timezone
+from datetime import datetime, timedelta
 from typing import List, Union, Optional
 
 from pony import orm
@@ -29,24 +29,32 @@ def get_all() -> List[Note]:
 
 
 def date_to_str(utc: datetime) -> str:
-    input_as_local = utc.replace(tzinfo=timezone.utc).astimezone()
-    if datetime.now().date() == input_as_local.date():
-        return input_as_local.strftime("%H:%M")
-    if datetime.now().year == input_as_local.year:
-        return input_as_local.strftime("%d.%m. %H:%M")
-    return input_as_local.strftime("%d.%m.%y")
+    delta = datetime.utcnow() - utc
+    if delta < timedelta(minutes=2):
+        return "a few moments ago"
+    if delta < timedelta(hours=1):
+        return f"{delta.seconds // 60} minutes ago"
+    if delta < timedelta(days=2):
+        return f"{delta.seconds // 3600} hours ago"
+    if delta < timedelta(days=14):
+        return f"{delta.days} days ago"
+    if delta < timedelta(days=70):
+        return f"{delta.days // 7} weeks ago"
+    return "a long time ago"
 
 
 @orm.db_session
 def notes_to_str(server: str) -> str:
-    sorted_notes = Note.select(lambda n: n.server == str(server)).order_by(Note.key)
+    sorted_notes = Note.select(lambda n: n.server == str(server)).order_by(
+        Note.changed_at, Note.key
+    )
     if len(sorted_notes) == 0:
         raise RuntimeError
     lk = max(map(len, [n.key for n in sorted_notes])) + 1
     lv = max(map(lambda x: len(str(x)), [n.value for n in sorted_notes]))
     return "\n".join(
         [
-            f"{n.key:<{lk}}: {n.value:>{lv}} ({date_to_str(n.changed_at)})"
+            f"{n.key:<{lk}} {n.value:>{lv}}      -- {date_to_str(n.changed_at)}"
             for n in sorted_notes
         ]
     )
