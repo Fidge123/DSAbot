@@ -66,7 +66,7 @@ def parse(url, parents=[]):
         br.replace_with("\n")
     for strong in main.find_all("strong"):
         if strong.text.strip():
-            replacement = f"_{strong.text.strip()}_"
+            replacement = f"**{strong.text.strip()}**"
             if strong.text.lstrip() != strong.text:
                 replacement = f" {replacement}"
             if strong.text.rstrip() != strong.text:
@@ -91,7 +91,7 @@ def parse(url, parents=[]):
         ]
         body.append("\n".join(results))
     for p in main.find_all("p"):
-        body.append(p.text.strip())
+        body.append("\n".join(c.strip() for c in p.text.split("\n")))
     clean(soup)
 
     children = [
