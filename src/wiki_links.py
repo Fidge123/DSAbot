@@ -78,7 +78,7 @@ def parse(url, parents=[]):
 
     title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
 
-    print(" > ".join(parents), " > ", title)
+    print(" > ".join(parents), ">", title)
 
     children = [
         base + link["href"]
