@@ -52,6 +52,7 @@ def parse(url, parents=[]):
     if Regelwiki.exists(url=url):
         rw = Regelwiki[url]
         input_html = rw.html
+        rw.delete()
     else:
         res = requests.get(url)
         input_html = res.text
