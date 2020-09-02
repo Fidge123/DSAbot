@@ -18,6 +18,7 @@ class Regelwiki(db.Entity):
     url = orm.PrimaryKey(str)
     title = orm.Required(str)
     body = orm.Optional(str)
+    html = orm.Required(str)
     children = orm.Optional(orm.StrArray)
     parents = orm.Optional(orm.StrArray)
 
@@ -47,10 +48,15 @@ def clean(soup):
 
 @orm.db_session
 def parse(url, parents=[]):
+    input_html = ""
     if Regelwiki.exists(url=url):
-        return Regelwiki[url]
-    res = requests.get(url)
-    soup = BeautifulSoup(res.text, "lxml")
+        rw = Regelwiki[url]
+        input_html = rw.html
+    else:
+        res = requests.get(url)
+        input_html = res.text
+    soup = BeautifulSoup(input_html, "lxml")
+    html = soup.prettify()
     main = soup.find("div", id="main")
     title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
     print(" > ".join(parents), ">", title)
@@ -60,10 +66,20 @@ def parse(url, parents=[]):
         br.replace_with("\n")
     for strong in main.find_all("strong"):
         if strong.text.strip():
-            strong.replace_with(f"**{strong.text.strip()}**")
+            replacement = f"_{strong.text.strip()}_"
+            if strong.text.lstrip() != strong.text:
+                replacement = f" {replacement}"
+            if strong.text.rstrip() != strong.text:
+                replacement = f"{replacement} "
+            strong.replace_with(replacement)
     for em in main.find_all("em"):
         if em.text.strip():
-            em.replace_with(f"_{em.text.strip()}_")
+            replacement = f"_{em.text.strip()}_"
+            if em.text.lstrip() != em.text:
+                replacement = f" {replacement}"
+            if em.text.rstrip() != em.text:
+                replacement = f"{replacement} "
+            em.replace_with(replacement)
 
     table = soup.find("table")
     if table:
@@ -87,6 +103,7 @@ def parse(url, parents=[]):
     return Regelwiki(
         title=title,
         url=url,
+        html=html,
         body="\n\n".join(body),
         children=children,
         parents=parents,
