@@ -1,5 +1,5 @@
 class Response:
-    def __init__(self, send, *args, **kwargs):
+    def __init__(self, send=None, *args, **kwargs):
         self.messages = []
         if send is not None:
             self.append(send, *args, **kwargs)
