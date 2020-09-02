@@ -91,7 +91,7 @@ def parse(url, parents=[]):
         ]
         body.append("\n".join(results))
     for p in main.find_all("p"):
-        body.append("\n".join(c.strip() for c in p.text.split("\n")))
+        body.append("\n".join(c.strip() for c in p.text.split("\n") if c.strip()))
     clean(soup)
 
     children = [
