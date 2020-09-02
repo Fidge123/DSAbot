@@ -102,7 +102,7 @@ def parse(url, parents=[]):
 
     if rw:
         rw.title = title
-        rw.body = body
+        rw.body = "\n\n".join(body)
         rw.children = children
         rw.parents = parents
         return rw
