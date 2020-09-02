@@ -49,10 +49,9 @@ def clean(soup):
 @orm.db_session
 def parse(url, parents=[]):
     input_html = ""
-    if Regelwiki.exists(url=url):
-        rw = Regelwiki[url]
+    rw = Regelwiki.get(url=url)
+    if rw:
         input_html = rw.html
-        rw.delete()
     else:
         res = requests.get(url)
         input_html = res.text
@@ -101,14 +100,21 @@ def parse(url, parents=[]):
         if validate(link) and link not in categories
     ]
 
-    return Regelwiki(
-        title=title,
-        url=url,
-        html=html,
-        body="\n\n".join(body),
-        children=children,
-        parents=parents,
-    )
+    if rw:
+        rw.title = title
+        rw.body = body
+        rw.children = children
+        rw.parents = parents
+        return rw
+    else:
+        return Regelwiki(
+            title=title,
+            url=url,
+            html=html,
+            body="\n\n".join(body),
+            children=children,
+            parents=parents,
+        )
 
 
 DB_URL = os.getenv("HEROKU_POSTGRESQL_COBALT_URL") or os.getenv("DATABASE_URL")
