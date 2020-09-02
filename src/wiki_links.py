@@ -52,6 +52,8 @@ def parse(url, parents=[]):
     res = requests.get(url)
     soup = BeautifulSoup(res.text, "lxml")
     main = soup.find("div", id="main")
+    title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
+    print(" > ".join(parents), ">", title)
 
     body = []
     for br in main.find_all("br"):
@@ -69,16 +71,12 @@ def parse(url, parents=[]):
         results = [
             f"{headers[i]}: {cell.text.strip()}"
             for i, cell in enumerate(table.find("tbody").find("tr").find_all("td"))
-            if headers[i].encode("ascii", "ignore")
+            if len(headers) > i and headers[i].encode("ascii", "ignore")
         ]
         body.append("\n".join(results))
     for p in main.find_all("p"):
         body.append(p.text.strip())
     clean(soup)
-
-    title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
-
-    print(" > ".join(parents), ">", title)
 
     children = [
         base + link["href"]
