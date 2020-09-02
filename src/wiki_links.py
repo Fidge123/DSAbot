@@ -57,9 +57,12 @@ def parse(url, parents=[]):
     for br in main.find_all("br"):
         br.replace_with("\n")
     for strong in main.find_all("strong"):
-        strong.replace_with(f"**{strong.text.strip()}**")
+        if strong.text.strip():
+            strong.replace_with(f"**{strong.text.strip()}**")
     for em in main.find_all("em"):
-        em.replace_with(f"_{em.text.strip()}_")
+        if em.text.strip():
+            em.replace_with(f"_{em.text.strip()}_")
+
     table = soup.find("table")
     if table:
         headers = [header.text for header in table.find_all("th")]
@@ -75,7 +78,7 @@ def parse(url, parents=[]):
 
     title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
 
-    print("  " * len(parents) + title)
+    print(" > ".join(parents), " > ", title)
 
     children = [
         base + link["href"]
