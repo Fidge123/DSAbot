@@ -1,6 +1,7 @@
 import os
 
 import requests
+import htmlmin
 from bs4 import BeautifulSoup
 from pony import orm
 
@@ -51,12 +52,12 @@ def parse(url, parents=[]):
     input_html = ""
     rw = Regelwiki.get(url=url)
     if rw:
-        input_html = rw.html
+        input_html = htmlmin.minify(rw.html)
     else:
         res = requests.get(url)
         input_html = res.text
     soup = BeautifulSoup(input_html, "lxml")
-    html = soup.prettify()
+    html = str(soup)
     main = soup.find("div", id="main")
     title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
     print(" > ".join(parents), ">", title)
@@ -91,7 +92,8 @@ def parse(url, parents=[]):
         ]
         body.append("\n".join(results))
     for p in main.find_all("p"):
-        body.append("\n".join(c.strip() for c in p.text.split("\n") if c.strip()))
+        if p.text.strip():
+            body.append("\n".join(c.strip() for c in p.text.split("\n") if c.strip()))
     clean(soup)
 
     children = [
@@ -102,6 +104,7 @@ def parse(url, parents=[]):
 
     if rw:
         rw.title = title
+        rw.html = html
         rw.body = "\n\n".join(body)
         rw.children = children
         rw.parents = parents

@@ -15,6 +15,7 @@ beautifulsoup4 = "*"
 lxml = "*"
 psycopg2-binary = "*"
 pony = "*"
+htmlmin = "*"
 
 [requires]
 python_version = "3.8"
