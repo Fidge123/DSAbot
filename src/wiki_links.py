@@ -48,12 +48,10 @@ def clean(soup):
 
 
 def get_content(soup) -> str:
-    for br in soup.find_all("br"):
-        br.replace_with("\n")
-    for strong in soup.find_all("strong"):
+    for strong in soup.find_all(["strong", "b"]):
         if strong.text.strip():
             strong.replace_with(f"**{strong.text.strip()}**")
-    for em in soup.find_all("em"):
+    for em in soup.find_all(["em", "i"]):
         if em.text.strip():
             em.replace_with(f"_{em.text.strip()}_")
 
@@ -78,6 +76,8 @@ def get_content(soup) -> str:
                 ]
                 content.append("\n".join(results))
         if el.name == "p" and el.text.strip():
+            for br in el.find_all("br"):
+                br.replace_with("\n")
             content.append(el.text.strip())
     return "\n\n".join(content)
 
