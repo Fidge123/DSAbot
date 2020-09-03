@@ -60,21 +60,23 @@ def get_content(soup) -> str:
     content = []
 
     for el in soup.find_all(["table", "p"]):
-        if el.name == "table" and el.thead:
-            headers = [header.text for header in el.find_all("th")]
-            results = [
-                f"{headers[i]}: {cell.text.strip()}"
-                for i, cell in enumerate(el.find("tbody").find("tr").find_all("td"))
-                if len(headers) > i
-            ]
-            content.append("\n".join(results))
-        if el.name == "table" and not el.thead:
-            results = [
-                f"{row.contents[0].text.strip()}: {row.contents[0].text.strip()}"
-                for row in el.find("tbody").find_all("tr")
-                if len(row.contents) == 2
-            ]
-            content.append("\n".join(results))
+        if el.name == "table":
+            rows = len(el.find_all("tr"))
+            columns = len(el.find("tbody").find("tr").find_all(["th", "td"]))
+            if rows == 2:
+                headers = [header.text for header in el.find_all("th")]
+                results = [
+                    f"{headers[i]}: {cell.text.strip()}"
+                    for i, cell in enumerate(el.find("tbody").find("tr").find_all("td"))
+                    if len(headers) > i
+                ]
+                content.append("\n".join(results))
+            if columns == 2:
+                results = [
+                    f"{row.find_all(['th', 'td'])[0].text.strip()}: {row.find_all(['th', 'td'])[1].text.strip()}"
+                    for row in el.find("tbody").find_all("tr")
+                ]
+                content.append("\n".join(results))
         if el.name == "p" and el.text.strip():
             content.append(el.text.strip())
     return "\n\n".join(content)
