@@ -47,65 +47,71 @@ def clean(soup):
     soup.find("div", id="main").decompose()
 
 
-@orm.db_session
-def parse(url, parents=[]):
-    input_html = ""
-    rw = Regelwiki.get(url=url)
-    if rw:
-        input_html = htmlmin.minify(rw.html)
-    else:
-        res = requests.get(url)
-        input_html = res.text
-    soup = BeautifulSoup(input_html, "lxml")
-    html = str(soup)
-    main = soup.find("div", id="main")
-    title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
-    print(" > ".join(parents), ">", title)
+def markdownify(soup, t: str, replacement: str):
+    for t in soup.find_all("tag"):
+        if t.text.strip():
+            t.replace_with(f"{replacement}{t.text.strip()}{replacement}")
+    return soup
 
-    body = []
-    for br in main.find_all("br"):
-        br.replace_with("\n")
-    for strong in main.find_all("strong"):
-        if strong.text.strip():
-            replacement = f"**{strong.text.strip()}**"
-            if strong.text.lstrip() != strong.text:
-                replacement = f" {replacement}"
-            if strong.text.rstrip() != strong.text:
-                replacement = f"{replacement} "
-            strong.replace_with(replacement)
-    for em in main.find_all("em"):
-        if em.text.strip():
-            replacement = f"_{em.text.strip()}_"
-            if em.text.lstrip() != em.text:
-                replacement = f" {replacement}"
-            if em.text.rstrip() != em.text:
-                replacement = f"{replacement} "
-            em.replace_with(replacement)
 
-    table = soup.find("table")
-    if table:
-        headers = [header.text for header in table.find_all("th")]
-        results = [
-            f"{headers[i]}: {cell.text.strip()}"
-            for i, cell in enumerate(table.find("tbody").find("tr").find_all("td"))
-            if len(headers) > i and headers[i].encode("ascii", "ignore")
-        ]
-        body.append("\n".join(results))
-    for p in main.find_all("p"):
-        if p.text.strip():
-            body.append("\n".join(c.strip() for c in p.text.split("\n") if c.strip()))
+def get_content(soup) -> str:
+    content = []
+    for el in soup.find_all(["table", "p"]):
+        if el.name == "table" and el.thead:
+            headers = [header.text for header in el.find_all("th")]
+            results = [
+                f"{headers[i]}: {cell.text.strip()}"
+                for i, cell in enumerate(el.find("tbody").find("tr").find_all("td"))
+                if len(headers) > i
+            ]
+            content.append("\n".join(results))
+        if el.name == "table" and not el.thead:
+            results = [
+                f"{row.contents[0].text.strip()}: {row.contents[0].text.strip()}"
+                for row in el.find("tbody").find_all("tr")
+                if len(row.contents) == 2
+            ]
+            content.append("\n".join(results))
+        if el.name == "p" and el.text.strip():
+            content.append(el.text.strip())
+    return "\n\n".join(content)
+
+
+def get_children(soup):
     clean(soup)
-
-    children = [
+    return [
         base + link["href"]
         for link in soup.find_all("a")
         if validate(link) and link not in categories
     ]
 
+
+@orm.db_session
+def parse(url, parents=[]):
+    input_html = ""
+    rw = Regelwiki.get(url=url)
+    if rw:
+        input_html = rw.html
+    else:
+        res = requests.get(url)
+        input_html = res.text
+    soup = BeautifulSoup(htmlmin.minify(input_html), "lxml",)
+    html = str(soup)
+    title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
+    print(" > ".join(parents), ">", title)
+
+    main = soup.find("div", id="main")
+    for br in main.find_all("br"):
+        br.replace_with("\n")
+    markdownify(main, "strong", "**")
+    markdownify(main, "em", "_")
+    body = get_content(main)
+    children = get_children(soup)
+
     if rw:
         rw.title = title
         rw.html = html
-        rw.body = "\n\n".join(body)
+        rw.body = body
         rw.children = children
         rw.parents = parents
         return rw
@@ -114,7 +120,7 @@ def parse(url, parents=[]):
             title=title,
             url=url,
             html=html,
-            body="\n\n".join(body),
+            body=body,
             children=children,
             parents=parents,
         )
