@@ -47,15 +47,18 @@ def clean(soup):
     soup.find("div", id="main").decompose()
 
 
-def markdownify(soup, t: str, replacement: str):
-    for t in soup.find_all("tag"):
-        if t.text.strip():
-            t.replace_with(f"{replacement}{t.text.strip()}{replacement}")
-    return soup
-
-
 def get_content(soup) -> str:
+    for br in soup.find_all("br"):
+        br.replace_with("\n")
+    for strong in soup.find_all("strong"):
+        if strong.text.strip():
+            strong.replace_with(f"**{strong.text.strip()}**")
+    for em in soup.find_all("em"):
+        if em.text.strip():
+            em.replace_with(f"_{em.text.strip()}_")
+
     content = []
+
     for el in soup.find_all(["table", "p"]):
         if el.name == "table" and el.thead:
             headers = [header.text for header in el.find_all("th")]
@@ -98,14 +101,10 @@ def parse(url, parents=[]):
     soup = BeautifulSoup(htmlmin.minify(input_html), "lxml",)
     html = str(soup)
     title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
+
     print(" > ".join(parents), ">", title)
 
-    main = soup.find("div", id="main")
-    for br in main.find_all("br"):
-        br.replace_with("\n")
-    markdownify(main, "strong", "**")
-    markdownify(main, "em", "_")
-    body = get_content(main)
+    body = get_content(soup.find("div", id="main"))
     children = get_children(soup)
 
     if rw:
