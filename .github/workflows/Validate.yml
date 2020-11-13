@@ -11,7 +11,7 @@ jobs:
       - name: Setup Python environment
         uses: actions/setup-python@v1.1.1
         with:
-          python-version: 3.x
+          python-version: 3.9
       - uses: dschep/install-pipenv-action@v1
       - name: Setup pipenv
         run: |
@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1.1.1
         with:
-          python-version: 3.x
+          python-version: 3.9
       - uses: pre-commit/action@v1.0.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
