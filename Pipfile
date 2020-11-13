@@ -22,7 +22,7 @@ psycopg2-binary = "*"
 pony = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "3.8"
 
 [scripts]
 start = "python -m bot"
