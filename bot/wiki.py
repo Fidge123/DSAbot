@@ -73,32 +73,36 @@ def create_response(message: Message) -> Optional[Response]:
     match = re.search(r"^wiki\ (?P<search>.*)$", message.content, re.I)
     if match:
         search_term = match.group("search")
-        title_match = filter_hits(find(search_term))
+        matches = sorted(
+            sorted(filter_hits(find(search_term)), key=lambda m: len(m["title"])),
+            key=lambda m: m["score"],
+            reverse=True,
+        )
+        response = Response()
 
-        if title_match[0]["score"] < 60:
-            body_match = find(search_term, True)
-            return Response(
-                message.channel.send,
-                "\n".join(next(message.author, body_match, search_term)),
-            )
+        if matches[0]["score"] < 60:
+            bm = find(search_term, True)
+            matches = sorted(
+                matches + bm,
+                key=lambda h: h["score"] * (6 if h in bm else 1),
+                reverse=True,
+            )[:5]
 
-        response = Response(
-            message.channel.send,
-            "\n".join(next(message.author, title_match, search_term)),
+        response.append(
+            message.channel.send, "\n".join(next(message.author, matches, search_term)),
         )
 
-        perfect_hits = [t for t in title_match if t["score"] == 100 and t["body"]]
-        if len(perfect_hits) == 1:
-            body = perfect_hits[0]["body"]
-            next_message = "**{}**".format(perfect_hits[0]["title"])
+        if len(matches) > 0 and matches[0]["score"] > 80 and matches[0]["body"]:
+            body = matches[0]["body"]
+            next_message = "**{}**".format(matches[0]["title"])
             for section in body.split("\n\n"):
                 if len(next_message) + len(section) <= 2000:
-                    next_message = "\n\n".join([next_message, section])
+                    next_message = "\n".join([next_message, section])
                 else:
-                    response.append(message.author.send, next_message[:2000])
+                    response.append(message.channel.send, next_message[:2000])
                     next_message = section
             if next_message:
-                response.append(message.author.send, next_message)
+                response.append(message.channel.send, next_message)
         return response
 
     return None

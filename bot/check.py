@@ -9,7 +9,7 @@ from bot.checks import SkillCheck, GenericCheck, AttributeCheck, CumulativeCheck
 
 lastCheck: Dict[int, GenericCheck] = {}
 fate_regex = re.compile(
-    r"^(schips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.I
+    r"^(s?chips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.I
 )
 retry_regex = re.compile(r"retry", re.I)
 repeat_regex = re.compile(r"repeat", re.I)
