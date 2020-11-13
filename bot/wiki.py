@@ -73,7 +73,11 @@ def create_response(message: Message) -> Optional[Response]:
     match = re.search(r"^wiki\ (?P<search>.*)$", message.content, re.I)
     if match:
         search_term = match.group("search")
-        matches = filter_hits(find(search_term))
+        matches = sorted(
+            sorted(filter_hits(find(search_term)), key=lambda m: len(m["title"])),
+            key=lambda m: m["score"],
+            reverse=True,
+        )
         response = Response()
 
         if matches[0]["score"] < 60:
