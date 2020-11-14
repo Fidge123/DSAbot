@@ -99,6 +99,7 @@ class TestSkillCheck(TestCase):
         sc = SkillCheck("11,9,9@4")
         self.assertEqual(sc.data["attributes"], [11, 9, 9])
         self.assertEqual(sc.data["EAV"], [11, 9, 9])
+        self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 4)
         self.assertEqual(sc.data["modifier"], 0)
         self.assertEqual(sc.data["comment"], "")
@@ -123,6 +124,7 @@ class TestSkillCheck(TestCase):
         sc = SkillCheck("!13 14 15@6-2 Sinnesschärfe")
         self.assertEqual(sc.data["attributes"], [13, 14, 15])
         self.assertEqual(sc.data["EAV"], [11, 12, 13])
+        self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 6)
         self.assertEqual(sc.data["modifier"], -2)
         self.assertEqual(sc.data["comment"], "Sinnesschärfe")
@@ -147,6 +149,7 @@ class TestSkillCheck(TestCase):
         sc = SkillCheck("!5 3, 4,@16 +1+1 -2- 2 🎉-1")
         self.assertEqual(sc.data["attributes"], [5, 3, 4])
         self.assertEqual(sc.data["EAV"], [3, 1, 2])
+        self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 16)
         self.assertEqual(sc.data["modifier"], -2)
         self.assertEqual(sc.data["comment"], "🎉-1")
@@ -174,6 +177,7 @@ class TestSkillCheck(TestCase):
         sc = SkillCheck("2,3,4@4")
         self.assertEqual(sc.data["attributes"], [2, 3, 4])
         self.assertEqual(sc.data["EAV"], [2, 3, 4])
+        self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 4)
         self.assertEqual(sc.data["modifier"], 0)
         self.assertEqual(sc.data["comment"], "")
@@ -199,6 +203,7 @@ class TestSkillCheck(TestCase):
         sc = SkillCheck("14 18 18@3 + 2")
         self.assertEqual(sc.data["attributes"], [14, 18, 18])
         self.assertEqual(sc.data["EAV"], [16, 20, 20])
+        self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 3)
         self.assertEqual(sc.data["modifier"], 2)
         self.assertEqual(sc.data["comment"], "")
@@ -224,6 +229,7 @@ class TestSkillCheck(TestCase):
         sc = SkillCheck("18,18 18@3 + 2")
         self.assertEqual(sc.data["attributes"], [18, 18, 18])
         self.assertEqual(sc.data["EAV"], [20, 20, 20])
+        self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 3)
         self.assertEqual(sc.data["modifier"], 2)
         self.assertEqual(sc.data["comment"], "")
@@ -251,6 +257,7 @@ class TestSkillCheck(TestCase):
         sc = SkillCheck("14, 14, 14 @ 7 + 1")
         self.assertEqual(sc.data["attributes"], [14, 14, 14])
         self.assertEqual(sc.data["EAV"], [15, 15, 15])
+        self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 7)
         self.assertEqual(sc.data["modifier"], 1)
         self.assertEqual(sc.data["comment"], "")
@@ -260,9 +267,35 @@ class TestSkillCheck(TestCase):
             str(sc), " \n```py\n" "Routineprobe: 4 FP = QS 2\n```",
         )
 
+        sc = SkillCheck("!force 13 14 15 @ 10 Sinnesschärfe")
+        self.assertEqual(sc.data["attributes"], [13, 14, 15])
+        self.assertEqual(sc.data["EAV"], [13, 14, 15])
+        self.assertEqual(sc.data["force"], True)
+        self.assertEqual(sc.data["SR"], 10)
+        self.assertEqual(sc.data["modifier"], 0)
+        self.assertEqual(sc.data["comment"], "Sinnesschärfe")
+        self.assertEqual(sc.data["rolls"].rolls, [9, 9, 9])
+        self.assertEqual(sc.data["rolls"].critical_success, False)
+        self.assertEqual(sc.data["rolls"].botch, False)
+        self.assertEqual(sc.routine, True)
+        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.diffs, [0, 0, 0])
+        self.assertEqual(sc.skill_points, 10)
+        self.assertEqual(
+            str(sc),
+            " Sinnesschärfe\n"
+            "```py\n"
+            "EEW:     13  14  15\n"
+            "Würfel:   9   9   9\n"
+            "FW 10               = 10 FP\n"
+            "Bestanden mit QS 4\n"
+            "```",
+        )
+
         sc = SkillCheck("2,3,4@4-2")
         self.assertEqual(sc.data["attributes"], [2, 3, 4])
         self.assertEqual(sc.data["EAV"], [0, 1, 2])
+        self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 4)
         self.assertEqual(sc.data["modifier"], -2)
         self.assertEqual(sc.data["comment"], "")

@@ -8,6 +8,7 @@ class SkillCheck(GenericCheck):
     matcher = re.compile(
         r"""
             ^!?\ ?                                # Optional exclamation mark
+            (?P<force>f(?:orce)?\ )?              # Check if force
             (?P<attributes>(?:[0-9]+,?\ ?){3})\ ? # A non-zero amount of numbers divided by comma or space
             (?:@\ ?(?P<SR>[0-9]+))\ ?             # An @ followed by a number
             (?P<modifier>(\ *[\+\-]\ *[0-9]+)*)   # A modifier
@@ -15,7 +16,11 @@ class SkillCheck(GenericCheck):
         """,
         re.VERBOSE | re.I,
     )
-    transform = {**GenericCheck.transform, "SR": int}
+    transform = {
+        **GenericCheck.transform,
+        "SR": int,
+        "force": lambda x: x is not None,
+    }
     _response = " {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\nFW {SR:<4}{diffs} = {SP} FP\n{result}\n```"
     _routine = " {comment}\n```py\nRoutineprobe: {SP} FP = QS {QL}\n```"
 
@@ -43,7 +48,11 @@ class SkillCheck(GenericCheck):
         return min([max([skill_points - 1, 0]) // 3 + 1, 6])
 
     def __str__(self) -> str:
-        if self.routine and not getattr(self, "_force", False):
+        if (
+            self.routine
+            and not getattr(self, "_force", False)
+            and not self.data["force"]
+        ):
             self._force = False
             sp = self.data["SR"] - self.data["SR"] // 2  # Rounds up
             return self._routine.format(**self.data, SP=sp, QL=self.ql(sp))

@@ -7,6 +7,7 @@ class CumulativeCheck(SkillCheck):
     matcher = re.compile(
         r"""
             ^!?\ ?                                # Optional exclamation mark
+            (?P<force>f(?:orce)?\ )?              # Check if force
             S(ammelprobe)?\ ?                     # Prefix S or Sammelprobe
             (?P<tries>[0-9]+)\ ?[x\*\ ]\ ?        # Number of allowed tries
             (?P<time>[0-9]+)\ ?(?P<unit>\w+)\ ?   # Time per round

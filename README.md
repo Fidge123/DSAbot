@@ -20,7 +20,7 @@ Input | Example Output | Comment
 
 ## Skill Checks
 
-These are specific rolls for Das Schwarze Auge. A skill check consists of three twenty-sided dice, a skill rating and an optional modifier.
+These are specific rolls for _Das Schwarze Auge_. A skill check consists of three twenty-sided dice, a skill rating and an optional modifier.
 
 If you want to roll for Kraftakt (Body Control) and you have a Fertigkeitswert (skill rating) of 4, Belastung (Encumbrance) of 1 and Gewandtheit (Agility) of 12 and Konstitution (Constitution) of 14, you should type the following:
 
@@ -66,6 +66,8 @@ FW 10    -9  -9      = -8 FP
 Patzer!
 ```
 
+### Impossible checks
+
 Impossible checks are detected automatically.
 
 > !4 5 15 @ 12 -4
@@ -75,6 +77,8 @@ Impossible checks are detected automatically.
 EEW:      0   1   9
 Probe nicht möglich
 ```
+
+### Routine checks
 
 Same applies to routine checks but they can be forced by replying with **Force**
 
@@ -94,6 +98,20 @@ Würfel:   5  18  16
 FW 17        -6  -3 = 8 FP
 Bestanden mit QS 3
 ```
+
+You may prefix any skillcheck with _force_ or _f_ directly to force the roll.
+
+> !force 14 14 15 @ 17 -2
+
+```
+@User   
+EEW:     12  12  13
+Würfel:   5  18  16
+FW 17        -6  -3 = 8 FP
+Bestanden mit QS 3
+```
+
+### Retry and Repeat
 
 Checks can be retried by replying **Retry** or repeated with **Repeat**. Retries are automatically modified with -1 on top of the previous modifier. Repeats will keep the initial modifier.
 
@@ -128,6 +146,8 @@ Würfel:   6   9  16
 FW 10            -5 = 5 FP
 Bestanden mit QS 2
 ```
+
+### Schips
 
 You can also reply with **Schips** followed by a three **Keep**/**k** or **Reroll**/**r**. This will decrease your number note called `Schips` by 1 and reroll only the dice you marked with reroll. This is not possible on critical successes or botches.
 
