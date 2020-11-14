@@ -11,6 +11,7 @@ lastCheck: Dict[int, GenericCheck] = {}
 fate_regex = re.compile(
     r"^(s?chips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.I
 )
+aptitude_regex = re.compile(r"^(begabung|aptitude)\ (?P<reroll>[1-3])$", re.I)
 retry_regex = re.compile(r"retry", re.I)
 repeat_regex = re.compile(r"repeat", re.I)
 force_regex = re.compile(r"force", re.I)
@@ -48,6 +49,23 @@ def handle_fate(content: str, author: Member) -> Optional[str]:
     for i, schip in enumerate(schip_split(match.group("reroll"))):
         if schip:
             check.data["rolls"].reroll(i)
+    return str(check)
+
+
+def handle_aptitude(content: str, author: Member) -> Optional[str]:
+    match = aptitude_regex.search(content)
+    if not match:
+        return None
+
+    check = lastCheck[hash(author)]
+
+    if check.data["rolls"].botch:
+        return " Einsatz von Begabung nicht erlaubt"
+    if isinstance(check, CumulativeCheck):
+        return " Einsatz von Begabung bei Sammelproben (bisher) nicht unterstützt"
+
+    check.data["rolls"].reroll(int(match.group("reroll")) - 1, True)
+
     return str(check)
 
 
@@ -100,7 +118,13 @@ def create_response(message: Message) -> Optional[Response]:
         return Response(message.channel.send, author.mention + str(check))
 
     if hash(author) in lastCheck:
-        for handle in [handle_fate, handle_retry, handle_repeat, handle_force]:
+        for handle in [
+            handle_fate,
+            handle_aptitude,
+            handle_retry,
+            handle_repeat,
+            handle_force,
+        ]:
             response = handle(content, author)
             if response:
                 return Response(message.channel.send, author.mention + response)

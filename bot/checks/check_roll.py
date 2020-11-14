@@ -7,8 +7,11 @@ class CheckRolls:
         if num == 1 and (self.critical_success or self.botch):
             self.confirmation_roll = random.randint(1, 20)
 
-    def reroll(self, i: int) -> None:
-        self.rolls[i] = random.randint(1, 20)
+    def reroll(self, i: int, keep_better: bool = False) -> int:
+        new_roll = random.randint(1, 20)
+        if not keep_better or new_roll < self.rolls[i]:
+            self.rolls[i] = new_roll
+        return new_roll
 
     @property
     def critical_success(self) -> bool:

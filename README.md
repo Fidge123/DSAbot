@@ -175,6 +175,34 @@ FW 10           -3 = 7 FP
 Bestanden mit QS 3
 ```
 
+### Aptitude
+
+If your character has aptitude in a certain skill, you may reroll one die and keep the better result. The bot supports this similarly to Schips.
+
+> ! 14 14 15 @ 10-1-2 Kraftakt
+
+```
+@User Kraftakt  
+EEW:     11  11  12
+Würfel:  20   1  18
+FW 10    -9      -6 = -5 FP
+Nicht bestanden
+```
+
+> Begabung 1
+
+or 
+
+> Aptitude 1
+
+```
+@User 2 Schips verbleibend - Kraftakt  
+EEW:    11  11  12
+Würfel:  3   1  18
+FW 10           -6 = 4 FP
+Bestanden mit QS 2
+```
+
 ## Cumulative Checks
 
 At the moment the bot only supports cumulative checks for one person that uses the same skill with the same base modifier throughout. Usage of schips
