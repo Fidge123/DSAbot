@@ -1,5 +1,7 @@
-* {
+html {
   font-family: Helvetica, sans-serif;
+  background-color: #dedede;
+  padding: 0 1rem;
 }
 
 .output {
@@ -17,6 +19,7 @@
 
 code {
   font-family: Monaco, "Fira Mono", Consolas, "Lucida Console", monospace;
+  background-color: #fff;
   margin: 0.5rem;
   padding: 0.5rem;
   line-height: 1.5rem;
