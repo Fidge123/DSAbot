@@ -77,7 +77,7 @@ document.getElementById('wiki-search').addEventListener(
 );
 
 function sanitizeID(noteID) {
-  return noteID.replaceAll(' ', '_').toLowerCase();
+  return noteID.replaceAll(' ', '_');
 }
 
 function modToString(number) {
