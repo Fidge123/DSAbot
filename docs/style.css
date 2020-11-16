@@ -2,14 +2,6 @@
   font-family: Helvetica, sans-serif;
 }
 
-div {
-  line-height: 3rem;
-}
-
-h2 {
-  line-height: 1rem;
-}
-
 .output {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -27,6 +19,7 @@ code {
   font-family: Monaco, "Fira Mono", Consolas, "Lucida Console", monospace;
   margin: 0.5rem;
   padding: 0.5rem;
+  line-height: 1.5rem;
   border: 1px solid #999;
   border-radius: 4px;
   -webkit-user-select: all;
@@ -39,7 +32,7 @@ code {
   padding-left: 1rem;
 }
 
-[data-tooltip]:hover:after {
+[data-tooltip]:after {
   position: relative;
   left: 0.5rem;
   line-height: 1.5rem;
@@ -58,7 +51,13 @@ select,
 textarea {
   font-family: inherit;
   font-size: 100%;
+  max-height: 2rem;
+  min-width: 4rem;
   padding: 0.25rem;
   margin: 0;
   box-sizing: border-box;
+}
+
+.input-group {
+  line-height: 3rem;
 }
