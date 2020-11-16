@@ -21,8 +21,7 @@ class TestCheck(TestCase):
     def test_fate(self, mock_randint: MagicMock):
         user = MockAuthor("TestUser")
         note_id = f"schips_{str(user)}"
-        note.delete_note(user, note_id)
-        note.create_note(note_id, 3, user)
+        note.create_note(note_id, True, 3, user)
 
         mock_randint.return_value = 12
         first = check.create_response(MockMessage(user, "11,9,9@4"))

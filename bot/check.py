@@ -41,10 +41,10 @@ def handle_fate(content: str, author: Member) -> Optional[str]:
     if isinstance(check, CumulativeCheck):
         return " Einsatz von Schips bei Sammelproben (bisher) nicht unterstützt"
     if not n:
-        n = note.create_note(note_id, 3, author)
+        n = note.create_note(note_id, True, 3, author)
     if n.value == 0:
         return " Keine Schips übrig!"
-    note.create_note(note_id, -1, author)
+    note.create_note(note_id, False, -1, author)
 
     for i, schip in enumerate(schip_split(match.group("reroll"))):
         if schip:
