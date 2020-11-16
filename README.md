@@ -205,8 +205,23 @@ Bestanden mit QS 2
 
 ## Cumulative Checks
 
-At the moment the bot only supports cumulative checks for one person that uses the same skill with the same base modifier throughout. Usage of schips
+At the moment the bot only supports cumulative checks for one person that uses the same skill with the same base modifier throughout.
 
+> !S5x5KR 12,12,12@2 Wildnisleben
+
+```
+@User
+
+Runde  1: EEW  12  12  12  Würfel   7   7   3  FW2            = 2FP  QS1
+Runde  2: EEW  12  12  12  Würfel  16  11  14  FW2  -4      -2=-4FP  Nicht bestanden
+Runde  3: EEW  11  11  11  Würfel  12  20  11  FW2  -1  -9    =-8FP  Nicht bestanden
+Runde  4: EEW  10  10  10  Würfel  11   4  11  FW2  -1      -1= 0FP  QS1
+Runde  5: EEW  10  10  10  Würfel  16   1  12  FW2  -6      -2=-6FP  Nicht bestanden
+
+Probe fehlgeschlagen nach 5 Runden (25KR)
+```
+
+Usage of chips is currently not supported for cumulative checks.
 
 ## Generic Checks
 
@@ -337,21 +352,15 @@ This will find the articles with similar titles (using fuzzysearch) and if it is
 
 ```
 @User
-Wuchtschlag I-III (100.0): http://ulisses-regelwiki.de/index.php/KSF_Wuchtschlag.html
-------------------------------------------------
-Wuchtschlag I-III
-Auszug vom Ulisses Regelwiki
-
-Regel
-Die Attacke wird um 2 pro Stufe der Sonderfertigkeit erschwert. Bei Erfolg werden die Trefferpunkte um 2 pro Stufe der Sonderfertigkeit erhöht.
-
-Erschwernis
-–2/–4/–6
-
-Kampftechniken
-Hiebwaffen, Kettenwaffen, Raufen, Schwerter, Stangenwaffen, Zweihandhiebwaffen, Zweihandschwerter
-
-Publikationen
+Wuchtschlag I-III (100%): http://ulisses-regelwiki.de/index.php/KSF_Wuchtschlag.html
+**Wuchtschlag I-III**
+(Basismanöver)
+**Regel:**Die Attacke wird um 2 pro Stufe der Sonderfertigkeit erschwert. Bei Erfolg werden die Trefferpunkte um 2 pro Stufe der Sonderfertigkeit erhöht.
+**Erschwernis:**–2/–4/–6
+**Voraussetzungen:**Stufe I: KK 13; Stufe II: KK 15, Wuchtschlag I; Stufe III: KK 17, Wuchtschlag II
+**Kampftechniken:**Hiebwaffen, Kettenwaffen, Raufen, Schwerter, Stangenwaffen, Zweihandhiebwaffen, Zweihandschwerter
+**AP-Wert:**Stufe I/II/III: 15/20/25 Abenteuerpunkte
+**Publikationen:** 
 Regelwerk, Seite 250
 Der Rote Schlächter, Seite 60
 ```
@@ -359,40 +368,31 @@ Der Rote Schlächter, Seite 60
 > wiki Ignifaxius
 
 ```
-@User
-Ignifaxius (100.0): http://ulisses-regelwiki.de/index.php/ZS_Ignifaxius.html
-Frigifaxius (90.5): http://ulisses-regelwiki.de/index.php/frigifaxius.html
-------------------------------------------------
+Ignifaxius (100%): http://ulisses-regelwiki.de/index.php/ZS_Ignifaxius.html
 Ignifaxius
-Auszug vom Ulisses Regelwiki
-
-Probe
-MU/KL/CH
-
-Wirkung
-Aus den Fingern des Zaubernden schießt einen Flammenstrahl, der in gerader Linie sein Ziel trifft. Der Magier muss keine zusätzliche Aktion aufwenden,um nach dem Wirken des Zaubers zu treffen. Das Treffen ist in der Zauberdauer inbegriffen. [...]
-
-Zauberdauer
-2 Aktionen
-
-AsP-Kosten
-8 AsP (Kosten sind nicht modifizierbar)
-
-Reichweite
-16 Schritt
-
-Wirkungsdauer
-sofort
+**Probe:** MU/KL/CH
+**Wirkung:** Aus den Fingern des Zaubernden schießt einen Flammenstrahl, der in gerader Linie sein Ziel trifft. Der Magier muss keine zusätzliche Aktion aufwenden,um nach dem Wirken des Zaubers zu treffen. Das Treffen ist in der Zauberdauer inbegriffen.
+Das getroffene Ziel erleidet 2W6+(QS x 2) TrefferpunkteSchaden.
+Der Flammenstrahl zählt als Fernkampfangriff mit einer Schusswaffe und kann entsprechend geblockt werden, und auch ein Ausweichen ist möglich. An Schilden erzeugt er Strukturschaden, wenn er auf sie trifft. Der Strahl trifft automatisch, wenn man sich nicht verteidigt.
+Trifft der Flammenstrahl sein Ziel, werden die TP durch den RS des Ziels vermindert. Entflammbare Ziele werden bei 1-3 auf 1W6 angezündet und erleidet somit den Status Brennend auf kleiner Fläche.
+**Zauberdauer:** 2 Aktionen
+**AsP-Kosten:** 8 AsP (Kosten sind nicht modifizierbar)
+**Reichweite:** 16 Schritt
 
 [...]
+
+**Publikationen:** 
+Regelwerk (3. überarbeiten. Aufl.), Seite 293
+Aventurische Magie, Seite 157
+Aventurische Magie 3 Bonusmaterial und Errata, Seite 10
 ```
 
 > wiki igni
 
 ```
 @User
-Ignifaxius (78.5): http://ulisses-regelwiki.de/index.php/ZS_Ignifaxius.html
-Ignisphaero (76.5): http://ulisses-regelwiki.de/index.php/ZS_Ignisphaero.html
+Ignifaxius (80%): http://ulisses-regelwiki.de/index.php/ZS_Ignifaxius.html
+Ignisphaero (80%): http://ulisses-regelwiki.de/index.php/ZS_Ignisphaero.html
 ```
 
 ## Numeric Notes
@@ -419,6 +419,12 @@ You can see all your notes as a list by writing `notes`
 
 > note_id : 42
 > other   :  1
+
+You can delete notes with
+
+> delete note note_id
+
+> @User note_id war 1 und wurde nun gelöscht.
 
 # Development
 
