@@ -67,7 +67,7 @@ document.getElementById('repeat-r').addEventListener(
   ev => document.getElementById('repeat-output').innerText = ev.target.checked ? 'retry' : "repeat"
 );
 
-for (let input of document.querySelectorAll("#Notiz input")) {
+for (let input of document.querySelectorAll("#Notizen input")) {
   input.addEventListener("change", () => {
     if (document.getElementById('notiz-delete').checked) {
       document.getElementById('notiz-value').disabled = true;
