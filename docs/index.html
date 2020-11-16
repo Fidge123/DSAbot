@@ -184,12 +184,17 @@
       <div class="input-group">
         <label for="notiz-value">Wertänderung</label>
         <input type="number" id="notiz-value" min=-1000000 max=1000000 value=0>
-        <span class="tooltip" data-tooltip="Der Notizwert wird geändert, nicht auf den Wert gesetzt!">⚠️</span>
+        <span class="tooltip" data-tooltip="Der Wert wird addiert! Die Notiz wird nicht auf den Wert gesetzt.">⚠️</span>
       </div>
 
       <div class="input-group">
         <label for="notiz-delete">Löschen</label>
         <input type="checkbox" id="notiz-delete">
+      </div>
+
+      <div class="input-group">
+        <label for="notiz-list">Alle Notizen zeigen</label>
+        <input type="checkbox" id="notiz-list">
       </div>
 
       <div class="input-group output">
