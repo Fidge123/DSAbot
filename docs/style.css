@@ -1,0 +1,64 @@
+* {
+  font-family: Helvetica, sans-serif;
+}
+
+div {
+  line-height: 3rem;
+}
+
+h2 {
+  line-height: 1rem;
+}
+
+.output {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  margin-top: 1rem;
+  padding-top: 1rem;
+  min-width: 25rem;
+  max-width: 35rem;
+  border-top: 1px solid #000;
+}
+
+code {
+  font-family: Monaco, "Fira Mono", Consolas, "Lucida Console", monospace;
+  margin: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #999;
+  border-radius: 4px;
+  -webkit-user-select: all;
+  -moz-user-select: all;
+  -ms-user-select: all;
+  user-select: all;
+}
+
+.tooltip {
+  padding-left: 1rem;
+}
+
+[data-tooltip]:hover:after {
+  position: relative;
+  left: 0.5rem;
+  line-height: 1.5rem;
+  content: attr(data-tooltip);
+  color: #555;
+  opacity: 0;
+}
+
+[data-tooltip]:hover:after {
+  opacity: 1;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+  padding: 0.25rem;
+  margin: 0;
+  box-sizing: border-box;
+}

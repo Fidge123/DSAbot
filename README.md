@@ -141,9 +141,9 @@ or
 
 ```
 @User Zweite Probe - Kraftakt  
-EEW:     10  10  11
+EEW:     11  11  12
 Würfel:   6   9  16
-FW 10            -5 = 5 FP
+FW 10            -4 = 6 FP
 Bestanden mit QS 2
 ```
 

@@ -1,0 +1,211 @@
+<!doctype html>
+
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <title>Würfelhelfer DSA5 Discord Bot</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <h1>Würfelhelfer</h1>
+
+    <select id="proben-select">
+      <option value="Talentprobe">Talentprobe</option>
+      <option value="Sammelprobe">Sammelprobe</option>
+      <option value="Schips">Schips</option>
+      <option value="Begabung">Begabung</option>
+      <option value="Wiederholungsprobe">Wiederholungsprobe</option>
+      <option value="Notiz">Notiz</option>
+      <option value="Wiki">Wiki</option>
+    </select>
+
+    <div id="Talentprobe">
+      <h2>Talentprobe</h2>
+      <div class="Eigenschaftswerte">
+        Eigenschaftswerte:
+        <input type="number" aria-label="Eigenschaftswert 1" id="talentprobe-e1" min=0 max=30 value=10>
+        <input type="number" aria-label="Eigenschaftswert 2" id="talentprobe-e2" min=0 max=30 value=10>
+        <input type="number" aria-label="Eigenschaftswert 3" id="talentprobe-e3" min=0 max=30 value=10>
+      </div>
+
+      <div class="Fertigkeitswert">
+        <label for="talentprobe-fw">Fertigkeitswert</label>
+        <input type="number" id="talentprobe-fw" min=0 max=20 value=0>
+      </div>
+
+      <div class="Modifikator">
+        <label for="talentprobe-mod">Modifikator</label>
+        <input type="number" id="talentprobe-mod" min=-10 max=10 value=0>
+        <span class="tooltip" data-tooltip="Erschwernis = negativer Wert, Erleichterung = postiver Wert">ℹ️</span>
+      </div>
+
+      <div class="Routine">
+        <input type="checkbox" id="talentprobe-r">
+        <label for="talentprobe-r">Routineprobe unterdrücken</label>
+        <span class="tooltip" data-tooltip="Erzwingt eine ausgewürfelte Probe, auch wenn Routine möglich wäre">ℹ️</span>
+      </div>
+
+      <div class="Kommentar">
+        <label for="talentprobe-kommentar">Kommentar</label>
+        <input type="text" id="talentprobe-kommentar">
+      </div>
+
+      <div class="output">
+        <label for="talentprobe-output">Kommando</label>
+        <code id="talentprobe-output">!10,10,10@0</code>
+      </div>
+    </div>
+
+    <div id="Sammelprobe" hidden>
+      <h2>Sammelprobe</h2>
+      <div class="Versuche">
+        <label for="sammelprobe-versuche">Versuche</label>
+        <input type="number" id="sammelprobe-versuche" min=0 max=100 value=7>
+
+        <label for="sammelprobe-zeit">Zeit</label>
+        <input type="number" id="sammelprobe-zw" min=0 max=100 value=1>
+        <select id="sammelprobe-ze" aria-label="Zeiteinheit">
+          <option value="KR">KR</option>
+          <option value="Sekunden">Sekunden</option>
+          <option value="Minuten">Minuten</option>
+          <option value="Stunden">Stunden</option>
+          <option value="Tage">Tage</option>
+        </select>
+      </div>
+
+      <div class="Eigenschaftswerte">
+        Eigenschaftswerte:
+        <input type="number" aria-label="Eigenschaftswert 1" id="sammelprobe-e1" min=0 max=30 value=10>
+        <input type="number" aria-label="Eigenschaftswert 2" id="sammelprobe-e2" min=0 max=30 value=10>
+        <input type="number" aria-label="Eigenschaftswert 3" id="sammelprobe-e3" min=0 max=30 value=10>
+      </div>
+
+      <div class="Fertigkeitswert">
+        <label for="sammelprobe-fw">Fertigkeitswert</label>
+        <input type="number" id="sammelprobe-fw" min=0 max=20 value=0>
+      </div>
+
+      <div class="Modifikator">
+        <label for="sammelprobe-mod">Modifikator</label>
+        <input type="number" id="sammelprobe-mod" min=-10 max=10 value=0>
+        <span class="tooltip" data-tooltip="Erschwernis = negativer Wert, Erleichterung = postiver Wert">ℹ️</span>
+      </div>
+
+      <div class="Routine">
+        <input type="checkbox" id="sammelprobe-r">
+        <label for="sammelprobe-r">Routineprobe unterdrücken</label>
+        <span class="tooltip" data-tooltip="Erzwingt eine ausgewürfelte Probe, auch wenn Routine möglich wäre">ℹ️</span>
+      </div>
+
+      <div class="Kommentar">
+        <label for="sammelprobe-kommentar">Kommentar</label>
+        <input type="text" id="sammelprobe-kommentar">
+      </div>
+
+      <div class="output">
+        <label for="sammelprobe-output">Kommando</label>
+        <code id="sammelprobe-output">!S7x1KR 10,10,10@0</code>
+      </div>
+    </div>
+
+    <div id="Schips" hidden>
+      <h2>Schips</h2>
+
+      <div class="dice1">
+        <input type="checkbox" id="schip-1">
+        <label for="schip-1">Würfel 1 neu würfeln</label>
+      </div>
+
+      <div class="dice2">
+        <input type="checkbox" id="schip-2">
+        <label for="schip-2">Würfel 2 neu würfeln</label>
+      </div>
+
+      <div class="dice3">
+        <input type="checkbox" id="schip-3">
+        <label for="schip-3">Würfel 3 neu würfeln</label>
+      </div>
+
+      <div class="output">
+        <label for="schips-output">Kommando</label>
+        <code id="schips-output">schips kkk</code>
+      </div>
+    </div>
+
+    <div id="Begabung" hidden>
+      <h2>Begabung</h2>
+
+      <div class="dice">
+
+        <label for="begabung-d">Welcher Würfel soll neu geworfen werden?</label>
+        <select id="begabung-d">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </div>
+
+      <div class="output">
+        <label for="begabung-output">Kommando</label>
+        <code id="begabung-output">begabung 1</code>
+      </div>
+    </div>
+
+    <div id="Wiederholungsprobe" hidden>
+      <h2>Wiederholungsprobe</h2>
+
+      <div class="Wiederholung">
+        <input type="checkbox" id="repeat-r" checked>
+        <label for="repeat-r">Automatisch erschwert um 1</label>
+        <span class="tooltip" data-tooltip="Wiederholungsproben sind normalerweise erschwert um 1.">ℹ️</span>
+      </div>
+
+      <div class="output">
+        <label for="repeat-output">Kommando</label>
+        <code id="repeat-output">retry</code>
+      </div>
+    </div>
+
+    <div id="Notiz" hidden>
+      <h2>Notiz</h2>
+
+      <div class="notiz-id">
+        <label for="notiz-id">Notiz Name</label>
+        <input type="text" id="notiz-id" value="notiz_id">
+      </div>
+
+      <div class="value">
+        <label for="notiz-value">Wertänderung</label>
+        <input type="number" id="notiz-value" min=-1000000 max=1000000 value=0>
+        <span class="tooltip" data-tooltip="Der Notizwert wird geändert, nicht auf den Wert gesetzt!">ℹ️</span>
+      </div>
+
+      <div class="delete">
+        <label for="notiz-delete">Löschen</label>
+        <input type="checkbox" id="notiz-delete">
+      </div>
+
+      <div class="output">
+        <label for="notiz-output">Kommando</label>
+        <code id="notiz-output">note:notiz_id->0</code>
+      </div>
+    </div>
+
+    <div id="Wiki" hidden>
+      <h2>Wiki</h2>
+
+      <div class="wiki">
+        <label for="search">Suchbegriff</label>
+        <input type="text" id="wiki-search" value="">
+      </div>
+
+      <div class="output">
+        <label for="wiki-output">Kommando</label>
+        <code id="wiki-output">wiki </code>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
