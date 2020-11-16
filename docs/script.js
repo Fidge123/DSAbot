@@ -1,9 +1,16 @@
-let currentSection = document.getElementById('proben-select').value;
+let currentSection = location.hash.slice(2) || document.getElementById('proben-select').value;
+
+if (currentSection !== "Talentprobe") {
+  document.getElementById("Talentprobe").hidden = true;
+  document.getElementById(currentSection).hidden = false;
+  document.getElementById('proben-select').value = currentSection;
+}
 
 document.getElementById('proben-select').addEventListener('change', (ev) => {
   document.getElementById(currentSection).hidden = true;
   document.getElementById(ev.target.value).hidden = false;
   currentSection = ev.target.value;
+  location.hash = `#/${ev.target.value}`;
 });
 
 for (let input of document.querySelectorAll("#Talentprobe input")) {
