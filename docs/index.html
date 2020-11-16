@@ -182,24 +182,28 @@
       </div>
 
       <div class="input-group">
-        <label for="notiz-value">Wertänderung</label>
+        <label for="notiz-value">
+          <select id="notiz-op">
+            <option value="->">Wertveränderung</option>
+            <option value="=">Neuer Wert</option>
+          </select>
+        </label>
         <input type="number" id="notiz-value" min=-1000000 max=1000000 value=0>
-        <span class="tooltip" data-tooltip="Der Wert wird addiert! Die Notiz wird nicht auf den Wert gesetzt.">⚠️</span>
       </div>
 
       <div class="input-group">
-        <label for="notiz-delete">Löschen</label>
         <input type="checkbox" id="notiz-delete">
+        <label for="notiz-delete">Löschen</label>
       </div>
 
       <div class="input-group">
-        <label for="notiz-list">Alle Notizen zeigen</label>
         <input type="checkbox" id="notiz-list">
+        <label for="notiz-list">Alle Notizen zeigen</label>
       </div>
 
       <div class="input-group output">
         <label for="notiz-output">Kommando</label>
-        <code id="notiz-output">note:notiz_id->0</code>
+        <code id="notiz-output">note notiz_id->0</code>
       </div>
     </div>
 

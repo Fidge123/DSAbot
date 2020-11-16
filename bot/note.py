@@ -61,10 +61,15 @@ def notes_to_str(server: str) -> str:
 
 
 @orm.db_session
-def create_note(note_id: str, value: Union[int, str], user: Member) -> str:
+def create_note(
+    note_id: str, override: bool, value: Union[int, str], user: Member
+) -> str:
     note = Note.get(key=note_id, server=str(user.guild.id))
     if note:
-        note.value += int(value)
+        if override:
+            note.value = int(value)
+        else:
+            note.value += int(value)
         note.changed_at = datetime.utcnow()
         note.changed_by = str(user)
     else:
@@ -75,7 +80,6 @@ def create_note(note_id: str, value: Union[int, str], user: Member) -> str:
             changed_at=datetime.utcnow(),
             changed_by=str(user),
         )
-
     return note
 
 
@@ -100,17 +104,24 @@ def create_response(m: Message) -> Optional[Response]:
     send = m.channel.send
     mention = m.author.mention
     c_match = re.search(
-        r"^note:(?P<id>[\w#]+)(->(?P<number>[\+\-]?[0-9]+))?$", m.content, re.I
+        r"^(note|notiz):? ?(?P<id>[\w#]+) ?((?P<op>(->|=)) ?(?P<number>[\+\-]?[0-9]+))?$",
+        m.content,
+        re.I,
     )
     if c_match:
-        note = create_note(c_match.group("id"), c_match.group("number"), m.author)
+        note = create_note(
+            c_match.group("id"),
+            c_match.group("op") == "=",
+            c_match.group("number"),
+            m.author,
+        )
         return Response(send, f"{mention} {note.key} ist jetzt {note.value}.")
 
-    get_match = re.search(r"^notes$", m.content, re.I)
+    get_match = re.search(r"^(notes|notizen)$", m.content, re.I)
     if get_match:
         return Response(send, mention + get_notes(m.author))
 
-    remove_match = re.search(r"^delete note (?P<id>[\w#]+)$", m.content, re.I)
+    remove_match = re.search(r"^delete (note|notiz) (?P<id>[\w#]+)$", m.content, re.I)
     if remove_match:
         return Response(send, mention + delete_note(m.author, remove_match.group("id")))
 

@@ -67,22 +67,25 @@ document.getElementById('repeat-r').addEventListener(
   ev => document.getElementById('repeat-output').innerText = ev.target.checked ? 'retry' : "repeat"
 );
 
-for (let input of document.querySelectorAll("#Notizen input")) {
+for (let input of document.querySelectorAll("#Notizen input, #Notizen select")) {
   input.addEventListener("change", () => {
     if (document.getElementById('notiz-delete').checked) {
+      document.getElementById('notiz-op').disabled = true;
       document.getElementById('notiz-value').disabled = true;
       document.getElementById('notiz-list').disabled = true;
       document.getElementById('notiz-output').innerText = `delete note ${sanitizeID(document.getElementById('notiz-id').value)}`;
     } else if (document.getElementById('notiz-list').checked) {
+      document.getElementById('notiz-op').disabled = true;
       document.getElementById('notiz-value').disabled = true;
       document.getElementById('notiz-delete').disabled = true;
       document.getElementById('notiz-output').innerText = 'notes';
     } else {
+      document.getElementById('notiz-op').disabled = false;
       document.getElementById('notiz-value').disabled = false;
       document.getElementById('notiz-list').disabled = false;
       document.getElementById('notiz-delete').disabled = false;
       document.getElementById('notiz-output').innerText =
-        `note:${sanitizeID(document.getElementById('notiz-id').value)}->${document.getElementById('notiz-value').value}`;
+        `note:${sanitizeID(document.getElementById('notiz-id').value)}${document.getElementById('notiz-op').value}${document.getElementById('notiz-value').value}`;
     }
   });
 }
