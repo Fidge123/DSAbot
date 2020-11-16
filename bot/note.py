@@ -75,7 +75,7 @@ def create_note(
     else:
         note = Note(
             key=note_id,
-            value=value,
+            value=int(value),
             server=str(user.guild.id),
             changed_at=datetime.utcnow(),
             changed_by=str(user),
@@ -103,6 +103,15 @@ def delete_note(user: Member, note_id: str) -> str:
 def create_response(m: Message) -> Optional[Response]:
     send = m.channel.send
     mention = m.author.mention
+
+    get_match = re.search(r"^(notes|notizen)$", m.content, re.I)
+    if get_match:
+        return Response(send, mention + get_notes(m.author))
+
+    remove_match = re.search(r"^delete (note|notiz) (?P<id>[\w#]+)$", m.content, re.I)
+    if remove_match:
+        return Response(send, mention + delete_note(m.author, remove_match.group("id")))
+
     c_match = re.search(
         r"^(note|notiz):? ?(?P<id>[\w#]+) ?((?P<op>(->|=)) ?(?P<number>[\+\-]?[0-9]+))?$",
         m.content,
@@ -116,13 +125,5 @@ def create_response(m: Message) -> Optional[Response]:
             m.author,
         )
         return Response(send, f"{mention} {note.key} ist jetzt {note.value}.")
-
-    get_match = re.search(r"^(notes|notizen)$", m.content, re.I)
-    if get_match:
-        return Response(send, mention + get_notes(m.author))
-
-    remove_match = re.search(r"^delete (note|notiz) (?P<id>[\w#]+)$", m.content, re.I)
-    if remove_match:
-        return Response(send, mention + delete_note(m.author, remove_match.group("id")))
 
     return None
