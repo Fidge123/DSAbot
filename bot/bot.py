@@ -21,8 +21,9 @@ async def on_message(message: discord.Message) -> None:
     if message.author == client.user:
         return
 
-    if channel.is_permitted(message.channel.id):
-
+    if channel.is_permitted(message.channel.id) or isinstance(
+        message.channel, discord.channel.DMChannel
+    ):
         if (
             "DIE" == message.content
             and message.author == (await client.application_info()).owner
