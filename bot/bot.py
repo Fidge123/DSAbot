@@ -31,6 +31,12 @@ async def on_message(message: discord.Message) -> None:
             await message.channel.send("I shall die.")
             return await client.close()
 
+        if "help" == message.content.lower():
+            return await message.channel.send(
+                message.author.mention
+                + " Würfelhelfer: https://fidge123.github.io/DSAbot/"
+            )
+
         for create_response in [
             channel.create_response,
             dice_roll.create_response,
