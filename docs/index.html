@@ -1,17 +1,18 @@
 <!doctype html>
 
 <html lang="de">
-  <head>
-    <meta charset="utf-8">
-    <title>Würfelhelfer DSA5 Discord Bot</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favicon.ico">
-  </head>
 
-  <body>
-    <h1>Würfelhelfer</h1>
+<head>
+  <meta charset="utf-8">
+  <title>Würfelhelfer DSA5 Discord Bot</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico">
+</head>
 
-    <select id="proben-select">
+<body>
+  <h1>Würfelhelfer</h1>
+
+  <!-- <select id="proben-select">
       <option value="Talentprobe">Talentprobe</option>
       <option value="Sammelprobe">Sammelprobe</option>
       <option value="Schips">Schips</option>
@@ -19,12 +20,12 @@
       <option value="Wiederholungsprobe">Wiederholungsprobe</option>
       <option value="Notizen">Notizen</option>
       <option value="Wiki">Wiki</option>
-    </select>
-
-    <div id="Talentprobe">
+    </select> -->
+  <main class="content">
+    <div id="Talentprobe" class="group">
       <h2>Talentprobe</h2>
       <div class="input-group">
-        Eigenschaftswerte:
+        <label>Eigenschaftswerte</label>
         <span>
           <input type="number" aria-label="Eigenschaftswert 1" id="talentprobe-e1" min=0 max=30 value=10>
           <input type="number" aria-label="Eigenschaftswert 2" id="talentprobe-e2" min=0 max=30 value=10>
@@ -38,19 +39,20 @@
       </div>
 
       <div class="input-group">
-        <label for="talentprobe-mod">Modifikator</label>
         <span>
-          <input type="number" id="talentprobe-mod" min=-10 max=10 value=0>
+          <label for="talentprobe-mod">Modifikator</label>
           <span class="tooltip" data-tooltip="Erschwernis = negativer Wert, Erleichterung = postiver Wert">ℹ️</span>
         </span>
+        <input type="number" id="talentprobe-mod" min=-10 max=10 value=0>
       </div>
 
       <div class="input-group">
         <span>
           <input type="checkbox" id="talentprobe-r">
           <label for="talentprobe-r">Routineprobe unterdrücken</label>
+          <span class="tooltip"
+            data-tooltip="Erzwingt eine ausgewürfelte Probe, auch wenn Routine möglich wäre">ℹ️</span>
         </span>
-        <span class="tooltip" data-tooltip="Erzwingt eine ausgewürfelte Probe, auch wenn Routine möglich wäre">ℹ️</span>
       </div>
 
       <div class="input-group">
@@ -64,28 +66,34 @@
       </div>
     </div>
 
-    <div id="Sammelprobe" hidden>
+    <div id="Sammelprobe" class="group">
       <h2>Sammelprobe</h2>
       <div class="input-group">
         <label for="sammelprobe-versuche">Versuche</label>
         <input type="number" id="sammelprobe-versuche" min=0 max=100 value=7>
-
-        <label for="sammelprobe-zeit">Zeit</label>
-        <input type="number" id="sammelprobe-zw" min=0 max=100 value=1>
-        <select id="sammelprobe-ze" aria-label="Zeiteinheit">
-          <option value="KR">Kampfrunde</option>
-          <option value="s">Sekunden</option>
-          <option value="min">Minuten</option>
-          <option value="h">Stunden</option>
-          <option value=" Tage">Tage</option>
-        </select>
       </div>
 
       <div class="input-group">
-        Eigenschaftswerte:
-        <input type="number" aria-label="Eigenschaftswert 1" id="sammelprobe-e1" min=0 max=30 value=10>
-        <input type="number" aria-label="Eigenschaftswert 2" id="sammelprobe-e2" min=0 max=30 value=10>
-        <input type="number" aria-label="Eigenschaftswert 3" id="sammelprobe-e3" min=0 max=30 value=10>
+        <label for="sammelprobe-zeit">Zeit</label>
+        <span>
+          <input type="number" id="sammelprobe-zw" min=0 max=100 value=1>
+          <select id="sammelprobe-ze" aria-label="Zeiteinheit">
+            <option value="KR">Kampfrunde</option>
+            <option value="s">Sekunden</option>
+            <option value="min">Minuten</option>
+            <option value="h">Stunden</option>
+            <option value=" Tage">Tage</option>
+          </select>
+        </span>
+      </div>
+
+      <div class="input-group">
+        <label>Eigenschaftswerte</label>
+        <span>
+          <input type="number" aria-label="Eigenschaftswert 1" id="sammelprobe-e1" min=0 max=30 value=10>
+          <input type="number" aria-label="Eigenschaftswert 2" id="sammelprobe-e2" min=0 max=30 value=10>
+          <input type="number" aria-label="Eigenschaftswert 3" id="sammelprobe-e3" min=0 max=30 value=10>
+        </span>
       </div>
 
       <div class="input-group">
@@ -94,15 +102,20 @@
       </div>
 
       <div class="input-group">
-        <label for="sammelprobe-mod">Modifikator</label>
+        <span>
+          <label for="sammelprobe-mod">Modifikator</label>
+          <span class="tooltip" data-tooltip="Erschwernis = negativer Wert, Erleichterung = postiver Wert">ℹ️</span>
+        </span>
         <input type="number" id="sammelprobe-mod" min=-10 max=10 value=0>
-        <span class="tooltip" data-tooltip="Erschwernis = negativer Wert, Erleichterung = postiver Wert">ℹ️</span>
       </div>
 
       <div class="input-group">
-        <input type="checkbox" id="sammelprobe-r">
-        <label for="sammelprobe-r">Routineprobe unterdrücken</label>
-        <span class="tooltip" data-tooltip="Erzwingt eine ausgewürfelte Probe, auch wenn Routine möglich wäre">ℹ️</span>
+        <span>
+          <input type="checkbox" id="sammelprobe-r">
+          <label for="sammelprobe-r">Routineprobe unterdrücken</label>
+          <span class="tooltip"
+            data-tooltip="Erzwingt eine ausgewürfelte Probe, auch wenn Routine möglich wäre">ℹ️</span>
+        </span>
       </div>
 
       <div class="input-group">
@@ -116,22 +129,32 @@
       </div>
     </div>
 
-    <div id="Schips" hidden>
+    <div id="Schips" class="group">
       <h2>Schips</h2>
 
       <div class="input-group">
-        <input type="checkbox" id="schip-1">
-        <label for="schip-1">Würfel 1 neu würfeln</label>
+        <label for="begabung-d">Welche Würfel sollen neu geworfen werden?</label>
       </div>
 
       <div class="input-group">
-        <input type="checkbox" id="schip-2">
-        <label for="schip-2">Würfel 2 neu würfeln</label>
+        <span>
+          <input type="checkbox" id="schip-1">
+          <label for="schip-1">Würfel 1 neu würfeln</label>
+        </span>
       </div>
 
       <div class="input-group">
-        <input type="checkbox" id="schip-3">
-        <label for="schip-3">Würfel 3 neu würfeln</label>
+        <span>
+          <input type="checkbox" id="schip-2">
+          <label for="schip-2">Würfel 2 neu würfeln</label>
+        </span>
+      </div>
+
+      <div class="input-group">
+        <span>
+          <input type="checkbox" id="schip-3">
+          <label for="schip-3">Würfel 3 neu würfeln</label>
+        </span>
       </div>
 
       <div class="input-group output">
@@ -140,16 +163,32 @@
       </div>
     </div>
 
-    <div id="Begabung" hidden>
+    <div id="Begabung" class="group">
       <h2>Begabung</h2>
 
       <div class="input-group">
         <label for="begabung-d">Welcher Würfel soll neu geworfen werden?</label>
-        <select id="begabung-d">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </select>
+      </div>
+
+      <div class="input-group">
+        <span>
+          <input type="radio" name="begabung" id="begabung-1" value="1" checked>
+          <label for="begabung-1">Würfel 1 neu würfeln</label>
+        </span>
+      </div>
+
+      <div class="input-group">
+        <span>
+          <input type="radio" name="begabung" id="begabung-2" value="2">
+          <label for="begabung-2">Würfel 2 neu würfeln</label>
+        </span>
+      </div>
+
+      <div class="input-group">
+        <span>
+          <input type="radio" name="begabung" id="begabung-3" value="3">
+          <label for="begabung-3">Würfel 3 neu würfeln</label>
+        </span>
       </div>
 
       <div class="input-group output">
@@ -158,13 +197,15 @@
       </div>
     </div>
 
-    <div id="Wiederholungsprobe" hidden>
+    <div id="Wiederholungsprobe" class="group">
       <h2>Wiederholungsprobe</h2>
 
       <div class="input-group">
-        <input type="checkbox" id="repeat-r" checked>
-        <label for="repeat-r">Automatisch erschwert um 1</label>
-        <span class="tooltip" data-tooltip="Wiederholungsproben sind normalerweise erschwert um 1.">ℹ️</span>
+        <span>
+          <input type="checkbox" id="repeat-r" checked>
+          <label for="repeat-r">Automatisch erschwert um 1</label>
+          <span class="tooltip" data-tooltip="Wiederholungsproben sind normalerweise erschwert um 1.">ℹ️</span>
+        </span>
       </div>
 
       <div class="input-group output">
@@ -173,7 +214,7 @@
       </div>
     </div>
 
-    <div id="Notizen" hidden>
+    <div id="Notizen" class="group">
       <h2>Notizen</h2>
 
       <div class="input-group">
@@ -192,13 +233,17 @@
       </div>
 
       <div class="input-group">
-        <input type="checkbox" id="notiz-delete">
-        <label for="notiz-delete">Löschen</label>
+        <span>
+          <input type="checkbox" id="notiz-delete">
+          <label for="notiz-delete">Löschen</label>
+        </span>
       </div>
 
       <div class="input-group">
-        <input type="checkbox" id="notiz-list">
-        <label for="notiz-list">Alle Notizen zeigen</label>
+        <span>
+          <input type="checkbox" id="notiz-list">
+          <label for="notiz-list">Alle Notizen zeigen</label>
+        </span>
       </div>
 
       <div class="input-group output">
@@ -207,7 +252,7 @@
       </div>
     </div>
 
-    <div id="Wiki" hidden>
+    <div id="Wiki" class="group">
       <h2>Wiki</h2>
 
       <div class="input-group">
@@ -220,7 +265,9 @@
         <code id="wiki-output">wiki </code>
       </div>
     </div>
+  </main>
 
-    <script src="script.js"></script>
-  </body>
+  <script src="script.js"></script>
+</body>
+
 </html>
