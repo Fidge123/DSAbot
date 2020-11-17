@@ -49,11 +49,15 @@ def clean(soup):
 
 def get_content(soup) -> str:
     for strong in soup.find_all(["strong", "b"]):
-        if strong.text.strip():
-            strong.replace_with(f"**{strong.text.strip()}**")
+        stripped = strong.text.strip()
+        if stripped:
+            pre, post = strong.text.split(stripped)
+            strong.replace_with(f"{pre}**{stripped}**{post}")
     for em in soup.find_all(["em", "i"]):
-        if em.text.strip():
-            em.replace_with(f"_{em.text.strip()}_")
+        stripped = em.text.strip()
+        if stripped:
+            pre, post = em.text.split(stripped)
+            em.replace_with(f"{pre}_{stripped}_{post}")
 
     content = []
 
