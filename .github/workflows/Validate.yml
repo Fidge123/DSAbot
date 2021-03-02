@@ -11,7 +11,7 @@ jobs:
       - name: Setup Python environment
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.9
       - uses: dschep/install-pipenv-action@v1
       - name: Setup pipenv
         run: |
