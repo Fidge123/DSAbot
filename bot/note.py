@@ -1,6 +1,6 @@
 import re
 from datetime import datetime, timedelta
-from typing import List, Union, Optional
+from typing import Union, Optional
 
 from pony import orm
 from discord import Message, Member
@@ -24,7 +24,7 @@ def get_note(note_id: str, server: str) -> Note:
 
 
 @orm.db_session
-def get_all() -> List[Note]:
+def get_all() -> list[Note]:
     return Note.get()[:]
 
 

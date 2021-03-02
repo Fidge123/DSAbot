@@ -1,5 +1,5 @@
 import re
-from typing import Dict, List, Optional
+from typing import Optional
 
 from discord import Message, Member
 
@@ -7,7 +7,7 @@ from bot import note
 from bot.response import Response
 from bot.checks import SkillCheck, GenericCheck, AttributeCheck, CumulativeCheck
 
-lastCheck: Dict[int, GenericCheck] = {}
+lastCheck: dict[int, GenericCheck] = {}
 fate_regex = re.compile(
     r"^(s?chips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.I
 )
@@ -102,7 +102,7 @@ def handle_force(content: str, author: Member) -> Optional[str]:
     return None
 
 
-def schip_split(input_string: str) -> List[bool]:
+def schip_split(input_string: str) -> list[bool]:
     input_string = re.sub(r"reroll\ ?", "r", input_string, re.I)
     input_string = re.sub(r"keep\ ?", "k", input_string, re.I)
     return [letter == "r" for letter in input_string]

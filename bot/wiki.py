@@ -1,6 +1,6 @@
 import re
 import os
-from typing import Optional, List, Any
+from typing import Optional, Any
 
 from discord import Member, Message
 import psycopg2
@@ -10,7 +10,7 @@ from bot.response import Response
 DB_URL = os.getenv("HEROKU_POSTGRESQL_COBALT_URL")
 
 
-def next(user: Member, hits: List[Any], search_term: str):
+def next(user: Member, hits: list[Any], search_term: str):
     yield user.mention
     yield from [
         "{} ({}%): <{}>".format(hit["title"], hit["score"], hit["url"]) for hit in hits
@@ -28,7 +28,7 @@ def _normalize(score: float, body: str, search_term: str, in_body: bool) -> int:
         return int(score * 100)
 
 
-def find(search_term: str, in_body=False) -> List[Any]:
+def find(search_term: str, in_body=False) -> list[Any]:
     title_stmt = "SELECT title, url, body, word_similarity(%s, title) FROM regelwiki ORDER BY 4 DESC LIMIT 5"
 
     body_stmt = """
@@ -65,7 +65,7 @@ def find(search_term: str, in_body=False) -> List[Any]:
             ]
 
 
-def filter_hits(hits: List[Any]) -> List[Any]:
+def filter_hits(hits: list[Any]) -> list[Any]:
     return [hit for hit in hits if hit["score"] + 20 > hits[0]["score"]]
 
 

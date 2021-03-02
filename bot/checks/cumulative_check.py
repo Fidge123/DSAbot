@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Any
+from typing import Any
 from bot.checks.skill_check import SkillCheck
 
 
@@ -18,7 +18,7 @@ class CumulativeCheck(SkillCheck):
         """,
         re.VERBOSE | re.I,
     )
-    transform: Dict[str, Any] = {
+    transform: dict[str, Any] = {
         **SkillCheck.transform,
         "tries": int,
         "time": int,

@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Any, Type
+from typing import Any
 
 from bot.string_math import calc
 from bot.checks.check_roll import CheckRolls
@@ -16,7 +16,7 @@ class GenericCheck:
         """,
         re.VERBOSE | re.I,
     )
-    transform: Dict[str, Any] = {
+    transform: dict[str, Any] = {
         "attributes": lambda x: Attributes(
             [int(attr) for attr in re.split(r"[, ]+", x.strip(", "))]
         ),
@@ -52,7 +52,7 @@ class GenericCheck:
         return self._response.format(**self.data, result=self._get_result(),)
 
     def _get_result(self) -> str:
-        rolls: Type[CheckRolls] = self.data["rolls"]
+        rolls: type[CheckRolls] = self.data["rolls"]
         if rolls.critical_success:
             return "Kritischer Erfolg!"
         if rolls.botch:
