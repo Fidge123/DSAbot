@@ -123,7 +123,7 @@ class TestCumulativeCheck(TestCase):
         self.assertEqual(cc.data["rolls"].rolls, [1, 1, 1])
         self.assertEqual(cc.data["rolls"].critical_success, True)
         self.assertEqual(cc.data["rolls"].botch, False)
-        self.assertEqual(cc.impossible, False)
+        self.assertEqual(cc.impossible(), False)
         self.assertEqual(
             str(cc),
             " Test\n"
@@ -147,7 +147,7 @@ class TestCumulativeCheck(TestCase):
         self.assertEqual(cc.data["rolls"].rolls, [20, 20, 20])
         self.assertEqual(cc.data["rolls"].critical_success, False)
         self.assertEqual(cc.data["rolls"].botch, True)
-        self.assertEqual(cc.impossible, False)
+        self.assertEqual(cc.impossible(), False)
         self.assertEqual(
             str(cc),
             " \n"

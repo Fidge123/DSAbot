@@ -48,7 +48,7 @@ class TestAttributeCheck(TestCase):
         self.assertEqual(ac.data["rolls"].confirmation_roll, 1)
         self.assertEqual(ac.data["rolls"].critical_success, True)
         self.assertEqual(ac.data["rolls"].botch, False)
-        self.assertEqual(ac.impossible, False)
+        self.assertEqual(ac.impossible(), False)
         self.assertEqual(
             str(ac),
             " 🎉\n"
@@ -69,7 +69,7 @@ class TestAttributeCheck(TestCase):
         self.assertEqual(ac.data["rolls"].confirmation_roll, 20)
         self.assertEqual(ac.data["rolls"].critical_success, False)
         self.assertEqual(ac.data["rolls"].botch, True)
-        self.assertEqual(ac.impossible, False)
+        self.assertEqual(ac.impossible(), False)
         self.assertEqual(
             str(ac),
             " 💥\n" "```py\n" "EEW:     18\n" "Würfel:  20 --> 20\n" "Patzer!\n" "```",
@@ -84,7 +84,7 @@ class TestAttributeCheck(TestCase):
         self.assertEqual(ac.data["rolls"].confirmation_roll, 20)
         self.assertEqual(ac.data["rolls"].critical_success, False)
         self.assertEqual(ac.data["rolls"].botch, True)
-        self.assertEqual(ac.impossible, False)
+        self.assertEqual(ac.impossible(), False)
         self.assertEqual(
             str(ac),
             " 💥\n"

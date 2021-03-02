@@ -130,7 +130,7 @@ class TestGenericCheck(TestCase):
         self.assertEqual(gc.data["rolls"].rolls, [8])
         self.assertEqual(gc.data["rolls"].critical_success, False)
         self.assertEqual(gc.data["rolls"].botch, False)
-        self.assertEqual(gc.impossible, False)
+        self.assertEqual(gc.impossible(), False)
         self.assertEqual(
             str(gc), " \n```py\nEEW:      1\nWürfel:   8\nNicht bestanden\n```",
         )
@@ -146,7 +146,7 @@ class TestGenericCheck(TestCase):
         self.assertEqual(gc.data["rolls"].rolls, [9, 9, 9])
         self.assertEqual(gc.data["rolls"].critical_success, False)
         self.assertEqual(gc.data["rolls"].botch, False)
-        self.assertEqual(gc.impossible, False)
+        self.assertEqual(gc.impossible(), False)
         self.assertEqual(
             str(gc),
             " Sinnesschärfe\n"
@@ -168,7 +168,7 @@ class TestGenericCheck(TestCase):
         self.assertEqual(gc.data["rolls"].rolls, [8, 8, 8, 8, 8])
         self.assertEqual(gc.data["rolls"].critical_success, False)
         self.assertEqual(gc.data["rolls"].botch, False)
-        self.assertEqual(gc.impossible, True)
+        self.assertEqual(gc.impossible(), True)
         self.assertEqual(
             str(gc), " 🎉\n```py\nEEW: 1061332  37  -4  -4\nProbe nicht möglich\n```",
         )
@@ -184,7 +184,7 @@ class TestGenericCheck(TestCase):
         self.assertEqual(gc.data["rolls"].rolls, [1, 1, 1])
         self.assertEqual(gc.data["rolls"].critical_success, True)
         self.assertEqual(gc.data["rolls"].botch, False)
-        self.assertEqual(gc.impossible, False)
+        self.assertEqual(gc.impossible(), False)
         self.assertEqual(
             str(gc),
             " 🎉\n"
@@ -206,7 +206,7 @@ class TestGenericCheck(TestCase):
         self.assertEqual(gc.data["rolls"].rolls, [20, 20, 20])
         self.assertEqual(gc.data["rolls"].critical_success, False)
         self.assertEqual(gc.data["rolls"].botch, True)
-        self.assertEqual(gc.impossible, False)
+        self.assertEqual(gc.impossible(), False)
         self.assertEqual(
             str(gc),
             " 💥\n"

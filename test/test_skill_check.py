@@ -107,7 +107,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["rolls"].critical_success, False)
         self.assertEqual(sc.data["rolls"].botch, False)
         self.assertEqual(sc.routine, False)
-        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.impossible(), False)
         self.assertEqual(sc.diffs, [0, 0, 0])
         self.assertEqual(sc.skill_points, 4)
         self.assertEqual(
@@ -132,7 +132,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["rolls"].critical_success, False)
         self.assertEqual(sc.data["rolls"].botch, False)
         self.assertEqual(sc.routine, False)
-        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.impossible(), False)
         self.assertEqual(sc.diffs, [0, 0, 0])
         self.assertEqual(sc.skill_points, 6)
         self.assertEqual(
@@ -157,7 +157,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["rolls"].critical_success, False)
         self.assertEqual(sc.data["rolls"].botch, False)
         self.assertEqual(sc.routine, False)
-        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.impossible(), False)
         self.assertEqual(sc.diffs, [-6, -8, -7])
         self.assertEqual(sc.skill_points, -5)
         self.assertEqual(
@@ -185,7 +185,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["rolls"].critical_success, True)
         self.assertEqual(sc.data["rolls"].botch, False)
         self.assertEqual(sc.routine, False)
-        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.impossible(), False)
         self.assertEqual(sc.diffs, [0, 0, 0])
         self.assertEqual(sc.skill_points, 4)
         self.assertEqual(
@@ -211,7 +211,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["rolls"].critical_success, False)
         self.assertEqual(sc.data["rolls"].botch, True)
         self.assertEqual(sc.routine, False)
-        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.impossible(), False)
         self.assertEqual(sc.diffs, [-4, 0, 0])
         self.assertEqual(sc.skill_points, -1)
         self.assertEqual(
@@ -237,7 +237,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["rolls"].critical_success, False)
         self.assertEqual(sc.data["rolls"].botch, True)
         self.assertEqual(sc.routine, False)
-        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.impossible(), False)
         self.assertEqual(sc.diffs, [0, 0, 0])
         self.assertEqual(sc.skill_points, 3)
         self.assertEqual(
@@ -262,7 +262,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["modifier"], 1)
         self.assertEqual(sc.data["comment"], "")
         self.assertEqual(sc.routine, True)
-        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.impossible(), False)
         self.assertEqual(
             str(sc), " \n```py\n" "Routineprobe: 4 FP = QS 2\n```",
         )
@@ -278,7 +278,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["rolls"].critical_success, False)
         self.assertEqual(sc.data["rolls"].botch, False)
         self.assertEqual(sc.routine, True)
-        self.assertEqual(sc.impossible, False)
+        self.assertEqual(sc.impossible(), False)
         self.assertEqual(sc.diffs, [0, 0, 0])
         self.assertEqual(sc.skill_points, 10)
         self.assertEqual(
@@ -300,7 +300,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["modifier"], -2)
         self.assertEqual(sc.data["comment"], "")
         self.assertEqual(sc.routine, False)
-        self.assertEqual(sc.impossible, True)
+        self.assertEqual(sc.impossible(), True)
         self.assertEqual(
             str(sc), " \n```py\nEEW:   0   1   2\nProbe nicht möglich\n```",
         )

@@ -26,7 +26,6 @@ class GenericCheck:
     _response = " {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\n{result}\n```"
     _impossible = " {comment}\n```py\nEEW:{EAV}\nProbe nicht möglich\n```"
 
-    @property
     def impossible(self) -> bool:
         return any(int(eav) <= 0 for eav in self.data["EAV"])
 
@@ -47,7 +46,7 @@ class GenericCheck:
             raise ValueError
 
     def __str__(self) -> str:
-        if self.impossible:
+        if self.impossible():
             return self._impossible.format(**self.data)
         return self._response.format(**self.data, result=self._get_result(),)
 
