@@ -16,9 +16,6 @@ jobs:
       - name: Setup pipenv
         run: |
           pipenv install --dev
-      - name: Run mypy
-        run: |
-          pipenv run lint
       - name: Run unittests/coverage
         run: |
           pipenv run tests

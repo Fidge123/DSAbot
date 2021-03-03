@@ -24,7 +24,7 @@ class Statistic(db.Entity):
 def save_check(
     user: Member,
     roll_type: str,
-    rolls: [int],
+    rolls: list[int],
     sides: int,
 ):
     rowcount = Statistic.select().count()
@@ -32,8 +32,8 @@ def save_check(
     delete_rows = rowcount - limit
 
     if delete_rows > 0:
-        min_id = orm.min(s.id for s in Statistic)
-        orm.delete(stat for stat in Statistic if stat.id <= min_id + delete_rows + 100)
+        min_id = Statistic.select(lambda s: s.id).min()
+        Statistic.select(lambda s: s.id <= min_id + delete_rows + 100).delete(bulk=True)
 
     return Statistic(
         user=str(user),
