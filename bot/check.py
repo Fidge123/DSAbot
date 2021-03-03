@@ -17,10 +17,10 @@ repeat_regex = re.compile(r"repeat", re.I)
 force_regex = re.compile(r"force", re.I)
 
 
-def create_check(content: str) -> Optional[GenericCheck]:
+def create_check(author: Member, content: str) -> Optional[GenericCheck]:
     for Check in [CumulativeCheck, SkillCheck, AttributeCheck, GenericCheck]:
         try:
-            return Check(content)
+            return Check(author, content)
         except ValueError:
             pass
 
@@ -111,7 +111,7 @@ def schip_split(input_string: str) -> list[bool]:
 def create_response(message: Message) -> Optional[Response]:
     author = message.author
     content = message.content
-    check = create_check(content)
+    check = create_check(author, content)
 
     if check:
         lastCheck[hash(author)] = check

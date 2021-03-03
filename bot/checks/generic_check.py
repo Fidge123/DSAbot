@@ -1,6 +1,9 @@
 import re
 from typing import Any
 
+from discord import Member
+
+from bot.stats import save_check
 from bot.string_math import calc
 from bot.checks.check_roll import CheckRolls
 from bot.checks.attributes import Attributes
@@ -35,8 +38,9 @@ class GenericCheck:
         )
         self.data["rolls"] = CheckRolls(len(self.data["attributes"]))
 
-    def __init__(self, message: str):
+    def __init__(self, author: Member, message: str):
         parsed = self.matcher.search(message)
+        self.author = author
         if parsed:
             self.data = {}
             for name, value in parsed.groupdict().items():
@@ -48,7 +52,13 @@ class GenericCheck:
     def __str__(self) -> str:
         if self.impossible():
             return self._impossible.format(**self.data)
-        return self._response.format(**self.data, result=self._get_result(),)
+
+        save_check(self.author, self.__class__.__name__, self.data["rolls"], 20)
+
+        return self._response.format(
+            **self.data,
+            result=self._get_result(),
+        )
 
     def _get_result(self) -> str:
         rolls: type[CheckRolls] = self.data["rolls"]

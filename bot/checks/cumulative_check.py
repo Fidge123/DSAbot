@@ -1,5 +1,8 @@
 import re
 from typing import Any
+
+from discord import Member
+
 from bot.checks.skill_check import SkillCheck
 
 
@@ -39,8 +42,8 @@ class CumulativeCheck(SkillCheck):
             self.data["modifier"] = self._initial_mod
         super().recalculate()
 
-    def __init__(self, message: str):
-        super().__init__(message)
+    def __init__(self, author: Member, message: str):
+        super().__init__(author, message)
         self._initial_mod = self.data["modifier"]
 
     def __str__(self) -> str:

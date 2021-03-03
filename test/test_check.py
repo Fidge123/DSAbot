@@ -8,11 +8,13 @@ from test.mocks import MockAuthor, MockMessage
 
 class TestCheck(TestCase):
     def test_parse(self):
-        self.assertIsInstance(check.create_check("13 14 15@2"), SkillCheck)
-        self.assertIsInstance(check.create_check("13"), AttributeCheck)
-        self.assertIsInstance(check.create_check("13 @2"), AttributeCheck)
-        self.assertIsInstance(check.create_check("13 14 -2"), GenericCheck)
-        self.assertIsInstance(check.create_check("13 14 @2"), GenericCheck)
+        author = MockAuthor("TestUser")
+
+        self.assertIsInstance(check.create_check(author, "13 14 15@2"), SkillCheck)
+        self.assertIsInstance(check.create_check(author, "13"), AttributeCheck)
+        self.assertIsInstance(check.create_check(author, "13 @2"), AttributeCheck)
+        self.assertIsInstance(check.create_check(author, "13 14 -2"), GenericCheck)
+        self.assertIsInstance(check.create_check(author, "13 14 @2"), GenericCheck)
 
     def checkPayload(self, response_object, expected):
         self.assertEqual(response_object.messages[0]["args"][0], "@TestUser" + expected)
@@ -87,7 +89,8 @@ class TestCheck(TestCase):
         mock_randint.return_value = 12
         first = check.create_response(MockMessage(user, "14,14,14@12"))
         self.checkPayload(
-            first, " \n```py\nRoutineprobe: 6 FP = QS 2\n```",
+            first,
+            " \n```py\nRoutineprobe: 6 FP = QS 2\n```",
         )
         second = check.create_response(MockMessage(user, "force"))
         self.checkPayload(

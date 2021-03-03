@@ -23,11 +23,6 @@ def get_note(note_id: str, server: str) -> Note:
     return Note.get(key=note_id, server=str(server))
 
 
-@orm.db_session
-def get_all() -> list[Note]:
-    return Note.get()[:]
-
-
 def date_to_str(utc: datetime) -> str:
     delta = datetime.utcnow() - utc
     if delta < timedelta(minutes=2):
@@ -40,6 +35,8 @@ def date_to_str(utc: datetime) -> str:
         return f"{delta.days} days ago"
     if delta < timedelta(days=70):
         return f"{delta.days // 7} weeks ago"
+    if delta < timedelta(days=300):
+        return f"{delta.days // 30} months ago"
     return "a long time ago"
 
 
@@ -63,7 +60,7 @@ def notes_to_str(server: str) -> str:
 @orm.db_session
 def create_note(
     note_id: str, override: bool, value: Union[int, str], user: Member
-) -> str:
+) -> Note:
     note = Note.get(key=note_id, server=str(user.guild.id))
     if note:
         if override:

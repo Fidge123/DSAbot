@@ -2,127 +2,130 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from bot.checks import GenericCheck
+from test.mocks import MockAuthor
+
+author = MockAuthor("TestUser")
 
 
 class TestGenericCheck(TestCase):
     def test_parse(self):
-        gc = GenericCheck("13")
+        gc = GenericCheck(author, "13")
         self.assertEqual(gc.data["attributes"], [13])
         self.assertEqual(gc.data["modifier"], 0)
         self.assertEqual(gc.data["comment"], "")
 
-        gc = GenericCheck("1,12,18")
+        gc = GenericCheck(author, "1,12,18")
         self.assertEqual(gc.data["attributes"], [1, 12, 18])
         self.assertEqual(gc.data["modifier"], 0)
         self.assertEqual(gc.data["comment"], "")
 
-        gc = GenericCheck("8 19 1400")
+        gc = GenericCheck(author, "8 19 1400")
         self.assertEqual(gc.data["attributes"], [8, 19, 1400])
         self.assertEqual(gc.data["modifier"], 0)
         self.assertEqual(gc.data["comment"], "")
 
-        gc = GenericCheck("2 2, 2, 2,2,2")
+        gc = GenericCheck(author, "2 2, 2, 2,2,2")
         self.assertEqual(gc.data["attributes"], [2, 2, 2, 2, 2, 2])
         self.assertEqual(gc.data["modifier"], 0)
         self.assertEqual(gc.data["comment"], "")
 
     def test_parse_with_prefix(self):
-        gc = GenericCheck("!13 1")
+        gc = GenericCheck(author, "!13 1")
         self.assertEqual(gc.data["attributes"], [13, 1])
         self.assertEqual(gc.data["modifier"], 0)
         self.assertEqual(gc.data["comment"], "")
 
-        gc = GenericCheck("! 1,12,18")
+        gc = GenericCheck(author, "! 1,12,18")
         self.assertEqual(gc.data["attributes"], [1, 12, 18])
         self.assertEqual(gc.data["modifier"], 0)
         self.assertEqual(gc.data["comment"], "")
 
         with self.assertRaises(ValueError):
-            GenericCheck("!!13 1")
+            GenericCheck(author, "!!13 1")
         with self.assertRaises(ValueError):
-            GenericCheck("!  1 13")
+            GenericCheck(author, "!  1 13")
         with self.assertRaises(ValueError):
-            GenericCheck("!?4")
+            GenericCheck(author, "!?4")
         with self.assertRaises(ValueError):
-            GenericCheck("#2,2,2")
+            GenericCheck(author, "#2,2,2")
 
     def test_parse_with_large_numbers(self):
-        gc = GenericCheck("1337")
+        gc = GenericCheck(author, "1337")
         self.assertEqual(gc.data["attributes"], [1337])
         self.assertEqual(gc.data["modifier"], 0)
         self.assertEqual(gc.data["comment"], "")
 
-        gc = GenericCheck("100000 100000 1000000")
+        gc = GenericCheck(author, "100000 100000 1000000")
         self.assertEqual(gc.data["attributes"], [100000, 100000, 1000000])
         self.assertEqual(gc.data["modifier"], 0)
         self.assertEqual(gc.data["comment"], "")
 
-        gc = GenericCheck("999999988888888")
+        gc = GenericCheck(author, "999999988888888")
         self.assertEqual(gc.data["attributes"], [999999988888888])
         self.assertEqual(gc.data["modifier"], 0)
         self.assertEqual(gc.data["comment"], "")
 
     def test_parse_with_modifiers(self):
-        gc = GenericCheck("8,9,10-4")
+        gc = GenericCheck(author, "8,9,10-4")
         self.assertEqual(gc.data["attributes"], [8, 9, 10])
         self.assertEqual(gc.data["modifier"], -4)
         self.assertEqual(gc.data["comment"], "")
 
-        gc = GenericCheck("!1 + 1 - 4")
+        gc = GenericCheck(author, "!1 + 1 - 4")
         self.assertEqual(gc.data["attributes"], [1])
         self.assertEqual(gc.data["modifier"], -3)
         self.assertEqual(gc.data["comment"], "")
 
-        gc = GenericCheck("!1+1- 4 +3 -   9 ")
+        gc = GenericCheck(author, "!1+1- 4 +3 -   9 ")
         self.assertEqual(gc.data["attributes"], [1])
         self.assertEqual(gc.data["modifier"], -9)
         self.assertEqual(gc.data["comment"], "")
 
     def test_parse_with_comment(self):
-        gc = GenericCheck("12 test")
+        gc = GenericCheck(author, "12 test")
         self.assertEqual(gc.data["attributes"], [12])
         self.assertEqual(gc.data["modifier"], 0)
         self.assertEqual(gc.data["comment"], "test")
 
-        gc = GenericCheck("!12,12+3 this is a comment")
+        gc = GenericCheck(author, "!12,12+3 this is a comment")
         self.assertEqual(gc.data["attributes"], [12, 12])
         self.assertEqual(gc.data["modifier"], +3)
         self.assertEqual(gc.data["comment"], "this is a comment")
 
-        gc = GenericCheck("!12,12-6 lolololol")
+        gc = GenericCheck(author, "!12,12-6 lolololol")
         self.assertEqual(gc.data["attributes"], [12, 12])
         self.assertEqual(gc.data["modifier"], -6)
         self.assertEqual(gc.data["comment"], "lolololol")
 
-        gc = GenericCheck("20 + 1 - 4 can I put anything here? 🤔")
+        gc = GenericCheck(author, "20 + 1 - 4 can I put anything here? 🤔")
         self.assertEqual(gc.data["attributes"], [20])
         self.assertEqual(gc.data["modifier"], -3)
         self.assertEqual(gc.data["comment"], "can I put anything here? 🤔")
 
     def test_parse_with_other_commands(self):
         with self.assertRaises(ValueError):
-            GenericCheck("d3")
+            GenericCheck(author, "d3")
         with self.assertRaises(ValueError):
-            GenericCheck("note:foobar")
+            GenericCheck(author, "note:foobar")
         with self.assertRaises(ValueError):
-            GenericCheck("SUMMON")
+            GenericCheck(author, "SUMMON")
         with self.assertRaises(ValueError):
-            GenericCheck("BEGONE")
+            GenericCheck(author, "BEGONE")
         with self.assertRaises(ValueError):
-            GenericCheck("DIE")
+            GenericCheck(author, "DIE")
 
         # Careful, these are not None. Execution order matters!
         # with self.assertRaises(ValueError):
-        #     GenericCheck("!13,13,13@13+3 Foobar")
+        #     GenericCheck(author, "!13,13,13@13+3 Foobar")
         # with self.assertRaises(ValueError):
-        #     GenericCheck("!3w6")
+        #     GenericCheck(author, "!3w6")
         # with self.assertRaises(ValueError):
-        #     GenericCheck("12d12+2")
+        #     GenericCheck(author, "12d12+2")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end(self, mock_randint: MagicMock):
         mock_randint.return_value = 8
-        gc = GenericCheck("1")
+        gc = GenericCheck(author, "1")
         self.assertEqual(gc.data["attributes"], [1])
         self.assertEqual(gc.data["EAV"], [1])
         self.assertEqual(gc.data["modifier"], 0)
@@ -132,13 +135,14 @@ class TestGenericCheck(TestCase):
         self.assertEqual(gc.data["rolls"].botch, False)
         self.assertEqual(gc.impossible(), False)
         self.assertEqual(
-            str(gc), " \n```py\nEEW:      1\nWürfel:   8\nNicht bestanden\n```",
+            str(gc),
+            " \n```py\nEEW:      1\nWürfel:   8\nNicht bestanden\n```",
         )
 
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_modifier(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
-        gc = GenericCheck("11,13,13-2 Sinnesschärfe")
+        gc = GenericCheck(author, "11,13,13-2 Sinnesschärfe")
         self.assertEqual(gc.data["attributes"], [11, 13, 13])
         self.assertEqual(gc.data["EAV"], [9, 11, 11])
         self.assertEqual(gc.data["modifier"], -2)
@@ -160,7 +164,7 @@ class TestGenericCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_impossible(self, mock_randint: MagicMock):
         mock_randint.return_value = 8
-        gc = GenericCheck("!111 1337 42 1 1 +1 - 2 -4 🎉")
+        gc = GenericCheck(author, "!111 1337 42 1 1 +1 - 2 -4 🎉")
         self.assertEqual(gc.data["attributes"], [111, 1337, 42, 1, 1])
         self.assertEqual(gc.data["EAV"], [106, 1332, 37, -4, -4])
         self.assertEqual(gc.data["modifier"], -5)
@@ -170,13 +174,14 @@ class TestGenericCheck(TestCase):
         self.assertEqual(gc.data["rolls"].botch, False)
         self.assertEqual(gc.impossible(), True)
         self.assertEqual(
-            str(gc), " 🎉\n```py\nEEW: 1061332  37  -4  -4\nProbe nicht möglich\n```",
+            str(gc),
+            " 🎉\n```py\nEEW: 1061332  37  -4  -4\nProbe nicht möglich\n```",
         )
 
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_crit(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        gc = GenericCheck("!12 15 16 -4 🎉")
+        gc = GenericCheck(author, "!12 15 16 -4 🎉")
         self.assertEqual(gc.data["attributes"], [12, 15, 16])
         self.assertEqual(gc.data["EAV"], [8, 11, 12])
         self.assertEqual(gc.data["modifier"], -4)
@@ -198,7 +203,7 @@ class TestGenericCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_botch(self, mock_randint: MagicMock):
         mock_randint.return_value = 20
-        gc = GenericCheck("!18 18 19 +3 💥")
+        gc = GenericCheck(author, "!18 18 19 +3 💥")
         self.assertEqual(gc.data["attributes"], [18, 18, 19])
         self.assertEqual(gc.data["EAV"], [21, 21, 22])
         self.assertEqual(gc.data["modifier"], +3)

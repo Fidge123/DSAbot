@@ -6,6 +6,7 @@ from discord import Message
 
 from bot.response import Response
 from bot.string_math import calc
+from bot.stats import save_check
 
 
 def parse(message: str) -> Optional[re.Match]:
@@ -34,15 +35,18 @@ def create_response(message: Message) -> Optional[Response]:
 
         for _ in range(die_amount):
             roll = random.randint(1, die_sides)
-            result_array.append(str(roll))
+            result_array.append(roll)
             aggregate += roll
 
         response = " {comment}\n{results}{modifier} = {FP}".format(
             comment=regex_result.group("comment").strip(),
-            results=(" + ").join(result_array),
+            results=(" + ").join(str(x) for x in result_array),
             modifier=modifier_string,
             FP=aggregate + modifier,
         )
+
+        save_check(message.author, "DiceRoll", result_array, die_sides)
+
         return Response(message.channel.send, message.author.mention + response)
 
     return None
