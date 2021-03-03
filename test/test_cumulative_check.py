@@ -4,46 +4,48 @@ from unittest.mock import MagicMock, patch
 from bot.checks import CumulativeCheck
 from test.mocks import MockAuthor
 
-author = MockAuthor("TestUser")
-
 
 class TestCumulativeCheck(TestCase):
+    @classmethod
+    def setUpClass(self) -> None:
+        self.author = MockAuthor("TestUser")
+
     def test_parse(self):
-        self.assertIsNotNone(CumulativeCheck(author, "S5x5KR 13 13 13 @ 5"))
+        self.assertIsNotNone(CumulativeCheck(self.author, "S5x5KR 13 13 13 @ 5"))
         self.assertIsNotNone(
             CumulativeCheck(
-                author,
+                self.author,
                 "!Sammelprobe 15x120 Stunden 13,13,13@15 - 2 +1 Kommentar",
             )
         )
 
         with self.assertRaises(ValueError):
-            CumulativeCheck(author, "!!13 ")
+            CumulativeCheck(self.author, "!!13 ")
         with self.assertRaises(ValueError):
-            CumulativeCheck(author, "!  1 ")
+            CumulativeCheck(self.author, "!  1 ")
         with self.assertRaises(ValueError):
-            CumulativeCheck(author, "!?4")
+            CumulativeCheck(self.author, "!?4")
         with self.assertRaises(ValueError):
-            CumulativeCheck(author, "#2")
+            CumulativeCheck(self.author, "#2")
 
     def test_parse_with_other_commands(self):
         with self.assertRaises(ValueError):
-            CumulativeCheck(author, "d3")
+            CumulativeCheck(self.author, "d3")
         with self.assertRaises(ValueError):
-            CumulativeCheck(author, "note:foobar")
+            CumulativeCheck(self.author, "note:foobar")
         with self.assertRaises(ValueError):
-            CumulativeCheck(author, "SUMMON")
+            CumulativeCheck(self.author, "SUMMON")
         with self.assertRaises(ValueError):
-            CumulativeCheck(author, "BEGONE")
+            CumulativeCheck(self.author, "BEGONE")
         with self.assertRaises(ValueError):
-            CumulativeCheck(author, "DIE")
+            CumulativeCheck(self.author, "DIE")
         with self.assertRaises(ValueError):
-            CumulativeCheck(author, "13,13,13+1")
+            CumulativeCheck(self.author, "13,13,13+1")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end(self, mock_randint: MagicMock):
         mock_randint.return_value = 13
-        cc = CumulativeCheck(author, "!Sammelprobe 5x2 Tage 12 14 10 @ 3")
+        cc = CumulativeCheck(self.author, "!Sammelprobe 5x2 Tage 12 14 10 @ 3")
         self.assertEqual(
             str(cc),
             " \n"
@@ -58,7 +60,7 @@ class TestCumulativeCheck(TestCase):
         )
 
         mock_randint.return_value = 13
-        cc = CumulativeCheck(author, "!Sammelprobe 5x2 Tage 12 14 10 @ 5")
+        cc = CumulativeCheck(self.author, "!Sammelprobe 5x2 Tage 12 14 10 @ 5")
         self.assertEqual(
             str(cc),
             " \n"
@@ -73,7 +75,7 @@ class TestCumulativeCheck(TestCase):
         )
 
         mock_randint.return_value = 13
-        cc = CumulativeCheck(author, "!Sammelprobe 6x2 Tage 12 14 10 @ 5")
+        cc = CumulativeCheck(self.author, "!Sammelprobe 6x2 Tage 12 14 10 @ 5")
         self.assertEqual(
             str(cc),
             " \n"
@@ -89,7 +91,7 @@ class TestCumulativeCheck(TestCase):
         )
 
         mock_randint.return_value = 13
-        cc = CumulativeCheck(author, "!Sammelprobe 5x2 Tage 12 14 10 @ 10")
+        cc = CumulativeCheck(self.author, "!Sammelprobe 5x2 Tage 12 14 10 @ 10")
         self.assertEqual(
             str(cc),
             " \n"
@@ -104,7 +106,7 @@ class TestCumulativeCheck(TestCase):
         )
 
         mock_randint.return_value = 13
-        cc = CumulativeCheck(author, "!Sammelprobe 5x2 Tage 12 14 10 @ 11")
+        cc = CumulativeCheck(self.author, "!Sammelprobe 5x2 Tage 12 14 10 @ 11")
         self.assertEqual(
             str(cc),
             " \n"
@@ -120,7 +122,7 @@ class TestCumulativeCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_crit(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        cc = CumulativeCheck(author, "S5x5KR 13 13 13 @ 5 -2 Test")
+        cc = CumulativeCheck(self.author, "S5x5KR 13 13 13 @ 5 -2 Test")
         self.assertEqual(cc.data["attributes"], [13, 13, 13])
         self.assertEqual(cc.data["EAV"], [11, 11, 11])
         self.assertEqual(cc.data["modifier"], -2)
@@ -144,7 +146,7 @@ class TestCumulativeCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_botch(self, mock_randint: MagicMock):
         mock_randint.return_value = 20
-        cc = CumulativeCheck(author, "S10 * 4 h 17 16 10 @ 10")
+        cc = CumulativeCheck(self.author, "S10 * 4 h 17 16 10 @ 10")
         self.assertEqual(cc.data["attributes"], [17, 16, 10])
         self.assertEqual(cc.data["EAV"], [17, 16, 10])
         self.assertEqual(cc.data["modifier"], 0)

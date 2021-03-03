@@ -4,102 +4,104 @@ from unittest.mock import MagicMock, patch
 from bot.checks import SkillCheck
 from test.mocks import MockAuthor
 
-author = MockAuthor("TestUser")
-
 
 class TestSkillCheck(TestCase):
+    @classmethod
+    def setUpClass(self) -> None:
+        self.author = MockAuthor("TestUser")
+
     def test_parse(self):
-        self.assertIsNotNone(SkillCheck(author, "13 14 15@2"))
-        self.assertIsNotNone(SkillCheck(author, "1,12,18@18"))
-        self.assertIsNotNone(SkillCheck(author, "8 19 1400@0 + 14"))
-        self.assertIsNotNone(SkillCheck(author, "2 2,2, @1400-2-2-2"))
-        self.assertIsNotNone(SkillCheck(author, "!13 1 12@2 +1+1 Test"))
-        self.assertIsNotNone(SkillCheck(author, "! 1,12,18@18 Krit"))
+        self.assertIsNotNone(SkillCheck(self.author, "13 14 15@2"))
+        self.assertIsNotNone(SkillCheck(self.author, "1,12,18@18"))
+        self.assertIsNotNone(SkillCheck(self.author, "8 19 1400@0 + 14"))
+        self.assertIsNotNone(SkillCheck(self.author, "2 2,2, @1400-2-2-2"))
+        self.assertIsNotNone(SkillCheck(self.author, "!13 1 12@2 +1+1 Test"))
+        self.assertIsNotNone(SkillCheck(self.author, "! 1,12,18@18 Krit"))
 
         with self.assertRaises(ValueError):
-            SkillCheck(author, "!!13 1@2")
+            SkillCheck(self.author, "!!13 1@2")
         with self.assertRaises(ValueError):
-            SkillCheck(author, "!  1 13@0")
+            SkillCheck(self.author, "!  1 13@0")
         with self.assertRaises(ValueError):
-            SkillCheck(author, "!?4")
+            SkillCheck(self.author, "!?4")
         with self.assertRaises(ValueError):
-            SkillCheck(author, "#2,2,2@2")
+            SkillCheck(self.author, "#2,2,2@2")
 
     def test_parse_with_other_commands(self):
         with self.assertRaises(ValueError):
-            SkillCheck(author, "d3")
+            SkillCheck(self.author, "d3")
         with self.assertRaises(ValueError):
-            SkillCheck(author, "note:foobar")
+            SkillCheck(self.author, "note:foobar")
         with self.assertRaises(ValueError):
-            SkillCheck(author, "SUMMON")
+            SkillCheck(self.author, "SUMMON")
         with self.assertRaises(ValueError):
-            SkillCheck(author, "BEGONE")
+            SkillCheck(self.author, "BEGONE")
         with self.assertRaises(ValueError):
-            SkillCheck(author, "DIE")
+            SkillCheck(self.author, "DIE")
         with self.assertRaises(ValueError):
-            SkillCheck(author, "13,13,13+1")
+            SkillCheck(self.author, "13,13,13+1")
         with self.assertRaises(ValueError):
-            SkillCheck(author, "13")
+            SkillCheck(self.author, "13")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_quality_level(self, mock_randint: MagicMock):
         mock_randint.return_value = 2
-        sc = SkillCheck(author, "11,9,9@0")
+        sc = SkillCheck(self.author, "11,9,9@0")
         self.assertEqual(sc.skill_points, 0)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck(author, "11,9,9@1")
+        sc = SkillCheck(self.author, "11,9,9@1")
         self.assertEqual(sc.skill_points, 1)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck(author, "11,9,9@2")
+        sc = SkillCheck(self.author, "11,9,9@2")
         self.assertEqual(sc.skill_points, 2)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck(author, "11,9,9@3")
+        sc = SkillCheck(self.author, "11,9,9@3")
         self.assertEqual(sc.skill_points, 3)
         self.assertEqual(sc.ql(sc.skill_points), 1)
 
-        sc = SkillCheck(author, "11,9,9@4")
+        sc = SkillCheck(self.author, "11,9,9@4")
         self.assertEqual(sc.skill_points, 4)
         self.assertEqual(sc.ql(sc.skill_points), 2)
 
-        sc = SkillCheck(author, "11,9,9@5")
+        sc = SkillCheck(self.author, "11,9,9@5")
         self.assertEqual(sc.skill_points, 5)
         self.assertEqual(sc.ql(sc.skill_points), 2)
 
-        sc = SkillCheck(author, "11,9,9@6")
+        sc = SkillCheck(self.author, "11,9,9@6")
         self.assertEqual(sc.skill_points, 6)
         self.assertEqual(sc.ql(sc.skill_points), 2)
 
-        sc = SkillCheck(author, "11,9,9@7")
+        sc = SkillCheck(self.author, "11,9,9@7")
         self.assertEqual(sc.skill_points, 7)
         self.assertEqual(sc.ql(sc.skill_points), 3)
 
-        sc = SkillCheck(author, "11,9,9@8")
+        sc = SkillCheck(self.author, "11,9,9@8")
         self.assertEqual(sc.skill_points, 8)
         self.assertEqual(sc.ql(sc.skill_points), 3)
 
-        sc = SkillCheck(author, "11,9,9@9")
+        sc = SkillCheck(self.author, "11,9,9@9")
         self.assertEqual(sc.skill_points, 9)
         self.assertEqual(sc.ql(sc.skill_points), 3)
 
-        sc = SkillCheck(author, "11,9,9@10")
+        sc = SkillCheck(self.author, "11,9,9@10")
         self.assertEqual(sc.skill_points, 10)
         self.assertEqual(sc.ql(sc.skill_points), 4)
 
-        sc = SkillCheck(author, "11,9,9@16")
+        sc = SkillCheck(self.author, "11,9,9@16")
         self.assertEqual(sc.skill_points, 16)
         self.assertEqual(sc.ql(sc.skill_points), 6)
 
-        sc = SkillCheck(author, "11,9,9@26")
+        sc = SkillCheck(self.author, "11,9,9@26")
         self.assertEqual(sc.skill_points, 26)
         self.assertEqual(sc.ql(sc.skill_points), 6)
 
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
-        sc = SkillCheck(author, "11,9,9@4")
+        sc = SkillCheck(self.author, "11,9,9@4")
         self.assertEqual(sc.data["attributes"], [11, 9, 9])
         self.assertEqual(sc.data["EAV"], [11, 9, 9])
         self.assertEqual(sc.data["force"], False)
@@ -124,7 +126,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
 
-        sc = SkillCheck(author, "!13 14 15@6-2 Sinnesschärfe")
+        sc = SkillCheck(self.author, "!13 14 15@6-2 Sinnesschärfe")
         self.assertEqual(sc.data["attributes"], [13, 14, 15])
         self.assertEqual(sc.data["EAV"], [11, 12, 13])
         self.assertEqual(sc.data["force"], False)
@@ -149,7 +151,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
 
-        sc = SkillCheck(author, "!5 3, 4,@16 +1+1 -2- 2 🎉-1")
+        sc = SkillCheck(self.author, "!5 3, 4,@16 +1+1 -2- 2 🎉-1")
         self.assertEqual(sc.data["attributes"], [5, 3, 4])
         self.assertEqual(sc.data["EAV"], [3, 1, 2])
         self.assertEqual(sc.data["force"], False)
@@ -177,7 +179,7 @@ class TestSkillCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_crit_botch(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        sc = SkillCheck(author, "2,3,4@4")
+        sc = SkillCheck(self.author, "2,3,4@4")
         self.assertEqual(sc.data["attributes"], [2, 3, 4])
         self.assertEqual(sc.data["EAV"], [2, 3, 4])
         self.assertEqual(sc.data["force"], False)
@@ -203,7 +205,7 @@ class TestSkillCheck(TestCase):
         )
 
         mock_randint.return_value = 20
-        sc = SkillCheck(author, "14 18 18@3 + 2")
+        sc = SkillCheck(self.author, "14 18 18@3 + 2")
         self.assertEqual(sc.data["attributes"], [14, 18, 18])
         self.assertEqual(sc.data["EAV"], [16, 20, 20])
         self.assertEqual(sc.data["force"], False)
@@ -229,7 +231,7 @@ class TestSkillCheck(TestCase):
         )
 
         mock_randint.return_value = 20
-        sc = SkillCheck(author, "18,18 18@3 + 2")
+        sc = SkillCheck(self.author, "18,18 18@3 + 2")
         self.assertEqual(sc.data["attributes"], [18, 18, 18])
         self.assertEqual(sc.data["EAV"], [20, 20, 20])
         self.assertEqual(sc.data["force"], False)
@@ -257,7 +259,7 @@ class TestSkillCheck(TestCase):
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_routine_impossible(self, mock_randint: MagicMock):
         mock_randint.return_value = 9
-        sc = SkillCheck(author, "14, 14, 14 @ 7 + 1")
+        sc = SkillCheck(self.author, "14, 14, 14 @ 7 + 1")
         self.assertEqual(sc.data["attributes"], [14, 14, 14])
         self.assertEqual(sc.data["EAV"], [15, 15, 15])
         self.assertEqual(sc.data["force"], False)
@@ -271,7 +273,7 @@ class TestSkillCheck(TestCase):
             " \n```py\n" "Routineprobe: 4 FP = QS 2\n```",
         )
 
-        sc = SkillCheck(author, "!force 13 14 15 @ 10 Sinnesschärfe")
+        sc = SkillCheck(self.author, "!force 13 14 15 @ 10 Sinnesschärfe")
         self.assertEqual(sc.data["attributes"], [13, 14, 15])
         self.assertEqual(sc.data["EAV"], [13, 14, 15])
         self.assertEqual(sc.data["force"], True)
@@ -296,7 +298,7 @@ class TestSkillCheck(TestCase):
             "```",
         )
 
-        sc = SkillCheck(author, "2,3,4@4-2")
+        sc = SkillCheck(self.author, "2,3,4@4-2")
         self.assertEqual(sc.data["attributes"], [2, 3, 4])
         self.assertEqual(sc.data["EAV"], [0, 1, 2])
         self.assertEqual(sc.data["force"], False)

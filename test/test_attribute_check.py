@@ -2,47 +2,53 @@ from unittest import TestCase
 from unittest.mock import MagicMock, patch
 
 from bot.checks import AttributeCheck
+from bot import persistence
 from test.mocks import MockAuthor
-
-author = MockAuthor("TestUser")
 
 
 class TestAttributeCheck(TestCase):
+    @classmethod
+    def setUpClass(self) -> None:
+        self.author = MockAuthor("TestUser")
+
+        # This needs to be executed before the first test
+        persistence.on_ready()
+
     def test_parse(self):
-        self.assertIsNotNone(AttributeCheck(author, "13"))
-        self.assertIsNotNone(AttributeCheck(author, "1"))
-        self.assertIsNotNone(AttributeCheck(author, "1400+14"))
-        self.assertIsNotNone(AttributeCheck(author, "2 -2-2-2"))
-        self.assertIsNotNone(AttributeCheck(author, "!13  +1+1 Test"))
-        self.assertIsNotNone(AttributeCheck(author, "! 1 Krit"))
+        self.assertIsNotNone(AttributeCheck(self.author, "13"))
+        self.assertIsNotNone(AttributeCheck(self.author, "1"))
+        self.assertIsNotNone(AttributeCheck(self.author, "1400+14"))
+        self.assertIsNotNone(AttributeCheck(self.author, "2 -2-2-2"))
+        self.assertIsNotNone(AttributeCheck(self.author, "!13  +1+1 Test"))
+        self.assertIsNotNone(AttributeCheck(self.author, "! 1 Krit"))
 
         with self.assertRaises(ValueError):
-            AttributeCheck(author, "!!13 ")
+            AttributeCheck(self.author, "!!13 ")
         with self.assertRaises(ValueError):
-            AttributeCheck(author, "!  1 ")
+            AttributeCheck(self.author, "!  1 ")
         with self.assertRaises(ValueError):
-            AttributeCheck(author, "!?4")
+            AttributeCheck(self.author, "!?4")
         with self.assertRaises(ValueError):
-            AttributeCheck(author, "#2")
+            AttributeCheck(self.author, "#2")
 
     def test_parse_with_other_commands(self):
         with self.assertRaises(ValueError):
-            AttributeCheck(author, "d3")
+            AttributeCheck(self.author, "d3")
         with self.assertRaises(ValueError):
-            AttributeCheck(author, "note:foobar")
+            AttributeCheck(self.author, "note:foobar")
         with self.assertRaises(ValueError):
-            AttributeCheck(author, "SUMMON")
+            AttributeCheck(self.author, "SUMMON")
         with self.assertRaises(ValueError):
-            AttributeCheck(author, "BEGONE")
+            AttributeCheck(self.author, "BEGONE")
         with self.assertRaises(ValueError):
-            AttributeCheck(author, "DIE")
+            AttributeCheck(self.author, "DIE")
         with self.assertRaises(ValueError):
-            AttributeCheck(author, "13,13,13+1")
+            AttributeCheck(self.author, "13,13,13+1")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_crit_botch(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        ac = AttributeCheck(author, "!12 -4 🎉")
+        ac = AttributeCheck(self.author, "!12 -4 🎉")
         self.assertEqual(ac.data["attributes"], [12])
         self.assertEqual(ac.data["EAV"], [8])
         self.assertEqual(ac.data["modifier"], -4)
@@ -63,7 +69,7 @@ class TestAttributeCheck(TestCase):
         )
 
         mock_randint.return_value = 20
-        ac = AttributeCheck(author, "!18 💥")
+        ac = AttributeCheck(self.author, "!18 💥")
         self.assertEqual(ac.data["attributes"], [18])
         self.assertEqual(ac.data["EAV"], [18])
         self.assertEqual(ac.data["modifier"], 0)
@@ -78,7 +84,7 @@ class TestAttributeCheck(TestCase):
             " 💥\n" "```py\n" "EEW:     18\n" "Würfel:  20 --> 20\n" "Patzer!\n" "```",
         )
 
-        ac = AttributeCheck(author, "!18 +3 💥")
+        ac = AttributeCheck(self.author, "!18 +3 💥")
         self.assertEqual(ac.data["attributes"], [18])
         self.assertEqual(ac.data["EAV"], [21])
         self.assertEqual(ac.data["modifier"], +3)

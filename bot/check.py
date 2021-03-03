@@ -5,7 +5,7 @@ from discord import Message, Member
 
 from bot import note
 from bot.response import Response
-from bot.checks import SkillCheck, GenericCheck, AttributeCheck, CumulativeCheck
+from bot.checks import CumulativeCheck, SkillCheck, AttributeCheck, GenericCheck
 
 lastCheck: dict[int, GenericCheck] = {}
 fate_regex = re.compile(

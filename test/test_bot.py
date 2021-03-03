@@ -3,16 +3,14 @@ from unittest import IsolatedAsyncioTestCase
 from unittest.mock import MagicMock, patch
 
 from bot.bot import on_message
-from bot import persistence
 from test.mocks import MockAuthor, MockChannel, MockMessage, AsyncMock
 
 
 class TestBot(IsolatedAsyncioTestCase):
     @classmethod
-    def setUpClass(cls) -> None:
-        cls.testchannel = MockChannel()
-        cls.testauthor = MockAuthor("Author")
-        persistence.on_ready()
+    def setUpClass(self) -> None:
+        self.testchannel = MockChannel()
+        self.testauthor = MockAuthor("Author")
 
     def message(self, msg):
         return MockMessage(
