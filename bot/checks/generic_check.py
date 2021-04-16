@@ -23,7 +23,7 @@ class GenericCheck:
         "attributes": lambda x: Attributes(
             [int(attr) for attr in re.split(r"[, ]+", x.strip(", "))]
         ),
-        "modifier": lambda x: int(calc(x or "0")),
+        "modifier": lambda x: int(calc(x or "0")[0]),
         "comment": lambda x: (x or "").strip(),
     }
     _response = " {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\n{result}\n```"

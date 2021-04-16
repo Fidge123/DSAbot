@@ -36,6 +36,10 @@ class TestDiceRoll(TestCase):
         self.assertIsNotNone(dice_roll.parse("3d20-4"))
         self.assertIsNotNone(dice_roll.parse("3w20+1-4"))
         self.assertIsNotNone(dice_roll.parse("3w20 + 1 - 4"))
+        # self.assertIsNotNone(dice_roll.parse("14+1d6"))
+        # self.assertIsNotNone(dice_roll.parse("5+1w6+2"))
+        # self.assertIsNotNone(dice_roll.parse("(2d6+4+8)*2"))
+        # self.assertIsNotNone(dice_roll.parse("2*(3w10+4)"))
 
     def test_parse_with_comment(self):
         self.assertIsNotNone(dice_roll.parse("2d6+3 test"))
@@ -85,3 +89,9 @@ class TestDiceRoll(TestCase):
         self.assertEqual(
             create_response("5d6 + 3-2"), "@TestUser \n1 + 1 + 1 + 1 + 1 (+1) = 6"
         )
+        # self.assertEqual(create_response("14+1d6"), "@TestUser \n1 (+14) = 15")
+        # self.assertEqual(create_response("5+w6+2"), "@TestUser \n1 (+7) = 8")
+        # self.assertEqual(create_response("(2d6+4+8)*2"), "@TestUser \n1 (-3) = -2")
+        # self.assertEqual(
+        #     create_response("2*(3w10+4)"), "@TestUser \n1 + 1 + 1 + 1 + 1 (+1) = 6"
+        # )

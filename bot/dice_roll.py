@@ -30,7 +30,7 @@ def create_response(message: Message) -> Optional[Response]:
         result_array = []
         aggregate = 0
 
-        modifier = int(calc(regex_result.group("mod") or "0"))
+        modifier = int(calc(regex_result.group("mod") or "0")[0])
         modifier_string = (" ({:+d})").format(modifier) if modifier != 0 else ""
 
         for _ in range(die_amount):
