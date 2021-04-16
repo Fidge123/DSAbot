@@ -32,8 +32,10 @@ def save_check(
     delete_rows = rowcount - limit
 
     if delete_rows > 0:
-        min_id = Statistic.select(lambda s: s.id).min()
-        Statistic.select(lambda s: s.id <= min_id + delete_rows + 100).delete(bulk=True)
+        oldest = Statistic.select().order_by(lambda s: s.id)[:1][0]
+        Statistic.select(lambda s: s.id <= oldest.id + delete_rows + 100).delete(
+            bulk=True
+        )
 
     return Statistic(
         user=str(user),
