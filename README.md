@@ -8,15 +8,15 @@ A bot that makes it easy to roll skill checks for 5th edition Das Schwarze Auge 
 
 The bot allows normal dice rolls with comments and modifiers
 
-Input | Example Output | Comment
-------|------|------
-`1d6` | @User <br>5 = 5 | Rolls one six-sided die 
-`3d20` | @User <br>3 + 12 + 9 = 24 | First number is the amount of dice, second the number of sides
-`!2d13` | @User <br>1 + 13 = 14 | Prefixing with `!` is optional
-`3w20` | @User <br>1 + 1 + 19 = 21 | You can use `d` as in dice or `w` as in Würfel (german for dice)
-`3D20 +1` | @User <br>2 + 4 + 6 (+1) = 13 | You can add or subtract from the total.<br> **IMPORTANT:** this works different for skill checks (see below).
-`!d20-1-2` | @User <br>4 (-3) = 1 | Multiple modifiers are summed up.
-`3d6+3 Axt` | @User Axt<br>5 + 3 + 4 (+3) = 15 | You can add a comment at the end
+| Input       | Example Output                   | Comment                                                                                                       |
+| ----------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `1d6`       | @User <br>5 = 5                  | Rolls one six-sided die                                                                                       |
+| `3d20`      | @User <br>3 + 12 + 9 = 24        | First number is the amount of dice, second the number of sides                                                |
+| `!2d13`     | @User <br>1 + 13 = 14            | Prefixing with `!` is optional                                                                                |
+| `3w20`      | @User <br>1 + 1 + 19 = 21        | You can use `d` as in dice or `w` as in Würfel (german for dice)                                              |
+| `3D20 +1`   | @User <br>2 + 4 + 6 (+1) = 13    | You can add or subtract from the total.<br> **IMPORTANT:** this works different for skill checks (see below). |
+| `!d20-1-2`  | @User <br>4 (-3) = 1             | Multiple modifiers are summed up.                                                                             |
+| `3d6+3 Axt` | @User Axt<br>5 + 3 + 4 (+3) = 15 | You can add a comment at the end                                                                              |
 
 ## Skill Checks
 
@@ -27,21 +27,21 @@ If you want to roll for Kraftakt (Body Control) and you have a Fertigkeitswert (
 > 12,12,14 @ 4 - 1
 
 ```
-@User  
-EEW:     11  11  13   
-Würfel:  15   8  16  
-FW 4     -4      -3 = -3 FP  
-Nicht bestanden  
+@User
+EEW:     11  11  13
+Würfel:  15   8  16
+FW 4     -4      -3 = -3 FP
+Nicht bestanden
 ```
 
 In this example you have failed the check. If you succeed, it also calculated the Qualitätsstufe (quality level).
 
 ```
-@User  
-EEW:     11  11  13   
-Würfel:   4  10  14  
-FW 4            -1 = 3 FP  
-Bestanden mit QS 1    
+@User
+EEW:     11  11  13
+Würfel:   4  10  14
+FW 4            -1 = 3 FP
+Bestanden mit QS 1
 ```
 
 It also allows giving multiple modifiers which are summed up and automatically detects critical successes and botches. You can also pass a comment.
@@ -49,7 +49,7 @@ It also allows giving multiple modifiers which are summed up and automatically d
 > ! 14 14 15 @ 10-1-2 Kraftakt
 
 ```
-@User Kraftakt  
+@User Kraftakt
 EEW:     11  11  12
 Würfel:   1   1  18
 FW 10            -6 = 4 FP
@@ -59,7 +59,7 @@ Kritischer Erfolg! (QS 2)
 or
 
 ```
-@User Kraftakt  
+@User Kraftakt
 EEW:     11  11  12
 Würfel:  20  20   1
 FW 10    -9  -9      = -8 FP
@@ -73,7 +73,7 @@ Impossible checks are detected automatically.
 > !4 5 15 @ 12 -4
 
 ```
-@User   
+@User
 EEW:      0   1   9
 Probe nicht möglich
 ```
@@ -85,14 +85,14 @@ Same applies to routine checks but they can be forced by replying with **Force**
 > ! 14 14 15 @ 17 -2
 
 ```
-@User   
+@User
 Routineprobe: 9 FP = QS 3
 ```
 
 > Force
 
 ```
-@User   
+@User
 EEW:     12  12  13
 Würfel:   5  18  16
 FW 17        -6  -3 = 8 FP
@@ -104,7 +104,7 @@ You may prefix any skillcheck with _force_ or _f_ directly to force the roll.
 > !force 14 14 15 @ 17 -2
 
 ```
-@User   
+@User
 EEW:     12  12  13
 Würfel:   5  18  16
 FW 17        -6  -3 = 8 FP
@@ -118,7 +118,7 @@ Checks can be retried by replying **Retry** or repeated with **Repeat**. Retries
 > ! 14 14 15 @ 10-1-2 Kraftakt
 
 ```
-@User Kraftakt  
+@User Kraftakt
 EEW:     11  11  12
 Würfel:  20   1  18
 FW 10    -9      -6 = -5 FP
@@ -128,7 +128,7 @@ Nicht bestanden
 > Retry
 
 ```
-@User Zweiter Versuch - Kraftakt  
+@User Zweiter Versuch - Kraftakt
 EEW:     10  10  11
 Würfel:   6   9  16
 FW 10            -5 = 5 FP
@@ -140,21 +140,21 @@ or
 > Repeat
 
 ```
-@User Zweite Probe - Kraftakt  
+@User Zweite Probe - Kraftakt
 EEW:     11  11  12
 Würfel:   6   9  16
 FW 10            -4 = 6 FP
 Bestanden mit QS 2
 ```
 
-### Schips
+### Fate Points / Schips
 
 You can also reply with **Schips** followed by a three **Keep**/**k** or **Reroll**/**r**. This will decrease your number note called `Schips` by 1 and reroll only the dice you marked with reroll. This is not possible on critical successes or botches.
 
 > ! 14 14 15 @ 10-1-2 Kraftakt
 
 ```
-@User Kraftakt  
+@User Kraftakt
 EEW:     11  11  12
 Würfel:  20   1  18
 FW 10    -9      -6 = -5 FP
@@ -168,7 +168,7 @@ or
 > Schips Reroll Keep Reroll
 
 ```
-@User 2 Schips verbleibend - Kraftakt  
+@User 2 Schips verbleibend - Kraftakt
 EEW:    11  11  12
 Würfel:  3   1  15
 FW 10           -3 = 7 FP
@@ -177,12 +177,12 @@ Bestanden mit QS 3
 
 ### Aptitude
 
-If your character has aptitude in a certain skill, you may reroll one die and keep the better result. The bot supports this similarly to Schips.
+If your character has aptitude in a certain skill, you may reroll one die and keep the better result. The bot supports this similarly to fate points.
 
 > ! 14 14 15 @ 10-1-2 Kraftakt
 
 ```
-@User Kraftakt  
+@User Kraftakt
 EEW:     11  11  12
 Würfel:  20   1  18
 FW 10    -9      -6 = -5 FP
@@ -191,12 +191,12 @@ Nicht bestanden
 
 > Begabung 1
 
-or 
+or
 
 > Aptitude 1
 
 ```
-@User 2 Schips verbleibend - Kraftakt  
+@User Kraftakt
 EEW:    11  11  12
 Würfel:  3   1  18
 FW 10           -6 = 4 FP
@@ -221,7 +221,7 @@ Runde  5: EEW  10  10  10  Würfel  16   1  12  FW2  -6      -2=-6FP  Nicht best
 Probe fehlgeschlagen nach 5 Runden (25KR)
 ```
 
-Usage of chips is currently not supported for cumulative checks.
+Usage of fate points is not (yet) supported for cumulative checks.
 
 ## Generic Checks
 
@@ -230,14 +230,14 @@ These follow almost the same guidelines as skill checks but allow any number of 
 > 12,12 - 1
 
 ```
-@User  
+@User
 EEW:    11  11
 Würfel: 15   8
 Nicht bestanden
 ```
 
 ```
-@User  
+@User
 EEW:    11  11
 Würfel:  4  10
 Bestanden
@@ -248,7 +248,7 @@ It also allows giving multiple modifiers which are summed up and automatically d
 > ! 14 14 15 -1-2 Kraftakt
 
 ```
-@User Kraftakt  
+@User Kraftakt
 EEW:    11  11  12
 Würfel:  1   1  18
 Kritischer Erfolg!
@@ -257,7 +257,7 @@ Kritischer Erfolg!
 or
 
 ```
-@User Kraftakt  
+@User Kraftakt
 EEW:    11  11  12
 Würfel: 20  20   1
 Patzer!
@@ -298,11 +298,10 @@ Impossible checks are detected automatically.
 > 8 -3 -2 -4 Angst Schmerz WuchtschlagII
 
 ```
-@User   
+@User
 EEW:     -1
 Probe nicht möglich
 ```
-
 
 You can also reply with **Schips** followed by a number of **Keep**/**k** or **Reroll**/**r**. This will decrease your number note called `Schips` by 1 and reroll only the dice you marked with reroll. This is not possible on critical successes or botches.
 
@@ -360,7 +359,7 @@ Wuchtschlag I-III (100%): http://ulisses-regelwiki.de/index.php/KSF_Wuchtschlag.
 **Voraussetzungen:**Stufe I: KK 13; Stufe II: KK 15, Wuchtschlag I; Stufe III: KK 17, Wuchtschlag II
 **Kampftechniken:**Hiebwaffen, Kettenwaffen, Raufen, Schwerter, Stangenwaffen, Zweihandhiebwaffen, Zweihandschwerter
 **AP-Wert:**Stufe I/II/III: 15/20/25 Abenteuerpunkte
-**Publikationen:** 
+**Publikationen:**
 Regelwerk, Seite 250
 Der Rote Schlächter, Seite 60
 ```
@@ -381,7 +380,7 @@ Trifft der Flammenstrahl sein Ziel, werden die TP durch den RS des Ziels vermind
 
 [...]
 
-**Publikationen:** 
+**Publikationen:**
 Regelwerk (3. überarbeiten. Aufl.), Seite 293
 Aventurische Magie, Seite 157
 Aventurische Magie 3 Bonusmaterial und Errata, Seite 10
@@ -413,18 +412,24 @@ If the note already existed it will be updated
 
 > note_id is now 42
 
+If you want to overwrite a note, you can use `=` instead of `->`
+
+> note: note_id=1337
+
+> note_id is now 1337
+
 You can see all your notes as a list by writing `notes`
 
 > notes
 
-> note_id : 42
-> other   :  1
+> note_id : 1337
+> other : 1
 
 You can delete notes with
 
 > delete note note_id
 
-> @User note_id war 1 und wurde nun gelöscht.
+> @User note_id war 1337 und wurde nun gelöscht.
 
 # Development
 
@@ -443,6 +448,7 @@ DISCORD_TOKEN=<YOUR TOKEN HERE>
 Select your [application](https://discord.com/developers/applications) and go to the **OAuth2** in the list on the left. Here you need to generate a URL that will allow you to add the bot to any of your servers.
 
 To generate this URL, select _bot_ in the **SCOPES** section. A new section **BOT PERMISSIONS** appears. Here you need to select:
+
 - _Send Messages_
 - _Add Reactions_
 - _Read Message History_
@@ -456,7 +462,7 @@ To interact with the bot, make sure it has permissions to read in the relevant c
 
 The bot uses `pipenv` for dependency management. If you don't have `pipenv` installed, you can install via one of the following commands or by following the [official documentation](https://pipenv.pypa.io/en/latest/install/#installing-pipenv).
 
-``` sh-session
+```sh-session
 # Using pip
 $ pip install -U pipenv
 
@@ -469,22 +475,22 @@ $ sudo dnf install pipenv
 
 Once `pipenv` is installed, you need to install the dependencies and dev dependencies and enable the `pre-commit` hooks (optional).
 
-``` sh-session
+```sh-session
 $ pipenv install --dev
 
 $ pipenv run pre-commit install
 ```
 
-Afterwards execute the script via `pipenv` 
+Afterwards execute the script via `pipenv`
 
-``` sh-session
+```sh-session
 $ pipenv run start
 ```
 
 or active the `virtualenv` to run it as you would normally.
 
-``` sh-session
-$ pipenv shell 
+```sh-session
+$ pipenv shell
 Loading .env environment variables…
 Launching subshell in virtual environment…
 
@@ -498,12 +504,12 @@ $ exit
 
 Use the following command to run tests and generate coverage
 
-``` sh-session
+```sh-session
 pipenv run test
 ```
 
 After that it is possible to generate a coverage report by running
 
-``` sh-session
+```sh-session
 pipenv run cov
 ```
