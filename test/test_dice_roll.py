@@ -63,28 +63,35 @@ class TestDiceRoll(TestCase):
     def test_response(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
         self.assertEqual(
-            create_response("3d6"), "@TestUser \n[1 + 1 + 1]\nErgebnis: **3**"
+            create_response("3d6"), "@TestUser \n3d6: [1 + 1 + 1]\nErgebnis: **3**"
         )
 
     @patch("random.randint", new_callable=MagicMock())
     def test_response_with_modifier(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
         self.assertEqual(
-            create_response("3d6 + 3"), "@TestUser \n[1 + 1 + 1]\nErgebnis: **6**"
+            create_response("3d6 + 3"), "@TestUser \n3d6: [1 + 1 + 1]\nErgebnis: **6**"
         )
-        self.assertEqual(create_response("d6 - 4"), "@TestUser \n[1]\nErgebnis: **-3**")
         self.assertEqual(
-            create_response("d6 - 4 + 6 - 5"), "@TestUser \n[1]\nErgebnis: **-2**"
+            create_response("d6 - 4"), "@TestUser \n1d6: [1]\nErgebnis: **-3**"
+        )
+        self.assertEqual(
+            create_response("d6 - 4 + 6 - 5"), "@TestUser \n1d6: [1]\nErgebnis: **-2**"
         )
         self.assertEqual(
             create_response("5d6 + 3-2"),
-            "@TestUser \n[1 + 1 + 1 + 1 + 1]\nErgebnis: **6**",
-        )
-        self.assertEqual(create_response("14+1d6"), "@TestUser \n[1]\nErgebnis: **15**")
-        self.assertEqual(create_response("5+w6+2"), "@TestUser \n[1]\nErgebnis: **8**")
-        self.assertEqual(
-            create_response("(2d6+4+8)*2"), "@TestUser \n[1 + 1]\nErgebnis: **28**"
+            "@TestUser \n5d6: [1 + 1 + 1 + 1 + 1]\nErgebnis: **6**",
         )
         self.assertEqual(
-            create_response("2*(3w10+4)"), "@TestUser \n[1 + 1 + 1]\nErgebnis: **14**"
+            create_response("14+1d6"), "@TestUser \n1d6: [1]\nErgebnis: **15**"
+        )
+        self.assertEqual(
+            create_response("5+w6+2"), "@TestUser \n1d6: [1]\nErgebnis: **8**"
+        )
+        self.assertEqual(
+            create_response("(2d6+4+8)*2"), "@TestUser \n2d6: [1 + 1]\nErgebnis: **28**"
+        )
+        self.assertEqual(
+            create_response("2*(3w10+4)"),
+            "@TestUser \n3d10: [1 + 1 + 1]\nErgebnis: **14**",
         )

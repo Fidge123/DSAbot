@@ -26,11 +26,11 @@ def create_response(message: Message) -> Optional[Response]:
         try:
             result, rolls = calc(regex_result.group("calc") or "0")
 
-            response = " {comment}\n[{results}]\nErgebnis: **{FP}**".format(
+            response = " {comment}\n{results}\nErgebnis: **{FP}**".format(
                 comment=regex_result.group("comment").strip(),
-                results=("] [").join(
+                results=(" ").join(
                     [
-                        " + ".join([str(roll) for roll in roll_list])
+                        f"{len(roll_list)}d{sides}: [{' + '.join([str(roll) for roll in roll_list])}]"
                         for sides, roll_list in rolls
                     ]
                 ),

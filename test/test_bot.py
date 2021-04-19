@@ -40,12 +40,12 @@ class TestBot(IsolatedAsyncioTestCase):
                 if i == 1:
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with(
-                        "@Author \n[1 + 1 + 1 + 1 + 1]\nErgebnis: **5**"
+                        "@Author \n5d10: [1 + 1 + 1 + 1 + 1]\nErgebnis: **5**"
                     )
                 if i == 2:
                     mock_randint.assert_called_with(1, 10)
                     m.channel.send.assert_called_with(
-                        "@Author \n[1 + 1 + 1 + 1 + 1]\nErgebnis: **10**"
+                        "@Author \n5d10: [1 + 1 + 1 + 1 + 1]\nErgebnis: **10**"
                     )
                 if i == 3:
                     mock_randint.assert_called_with(1, 20)
