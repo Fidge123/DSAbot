@@ -36,7 +36,9 @@ def parse(message: str) -> Optional[Any]:
     words = message.split(" ")
 
     try:
-        has_keyword = any([word in ["hz", "hitzone"] for word in words])
+        has_keyword = any(
+            [word in ["hz", "hitzone", "tz", "trefferzone"] for word in words]
+        )
         size = sizes.get(
             [word.lower() for word in words if sizes.get(word.lower(), False)][0]
         )
