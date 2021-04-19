@@ -22,7 +22,6 @@ class TestDiceRoll(TestCase):
         self.assertIsNotNone(dice_roll.parse("! 2D12"))
 
         self.assertIsNone(dice_roll.parse("!!1w3"))
-        self.assertIsNone(dice_roll.parse("!  4W20"))
         self.assertIsNone(dice_roll.parse("!?4W20"))
         self.assertIsNone(dice_roll.parse("#4W20"))
 
@@ -36,6 +35,10 @@ class TestDiceRoll(TestCase):
         self.assertIsNotNone(dice_roll.parse("3d20-4"))
         self.assertIsNotNone(dice_roll.parse("3w20+1-4"))
         self.assertIsNotNone(dice_roll.parse("3w20 + 1 - 4"))
+        self.assertIsNotNone(dice_roll.parse("14+1d6"))
+        self.assertIsNotNone(dice_roll.parse("5+1w6+2"))
+        self.assertIsNotNone(dice_roll.parse("(2d6+4+8)*2"))
+        self.assertIsNotNone(dice_roll.parse("2*(3w10+4)"))
 
     def test_parse_with_comment(self):
         self.assertIsNotNone(dice_roll.parse("2d6+3 test"))
@@ -43,45 +46,52 @@ class TestDiceRoll(TestCase):
         self.assertIsNotNone(dice_roll.parse("3w20+1-4 lolololol"))
         self.assertIsNotNone(dice_roll.parse("3w20 + 1 - 4 can I put anything here? 🤔"))
 
-    def test_parse_with_other_commands(self):
-        self.assertIsNone(dice_roll.parse("!13,13,13@8"))
-        self.assertIsNone(dice_roll.parse("13"))
-        self.assertIsNone(dice_roll.parse("!13 d"))
-        self.assertIsNone(dice_roll.parse("note:foobar"))
-        self.assertIsNone(dice_roll.parse("SUMMON"))
-        self.assertIsNone(dice_roll.parse("BEGONE"))
-        self.assertIsNone(dice_roll.parse("DIE"))
-
     def test_parse_results(self):
         parsed = dice_roll.parse("3d20-2 Sinnesschärfe")
-        self.assertEqual(parsed.group("amount"), "3")
-        self.assertEqual(parsed.group("sides"), "20")
-        self.assertEqual(parsed.group("mod"), "-2")
+        self.assertEqual(parsed.group("calc"), "3d20-2 ")
         self.assertEqual(parsed.group("comment"), "Sinnesschärfe")
 
         parsed = dice_roll.parse("! 1337w100 + 1 - 4")
-        self.assertEqual(parsed.group("amount"), "1337")
-        self.assertEqual(parsed.group("sides"), "100")
-        self.assertEqual(parsed.group("mod"), "+ 1 - 4")
+        self.assertEqual(parsed.group("calc"), "1337w100 + 1 - 4")
         self.assertEqual(parsed.group("comment"), "")
 
         parsed = dice_roll.parse("!13w3d20")
-        self.assertEqual(parsed.group("amount"), "13")
-        self.assertEqual(parsed.group("sides"), "3")
-        self.assertEqual(parsed.group("mod"), "")
-        self.assertEqual(parsed.group("comment"), "d20")
+        self.assertEqual(parsed.group("calc"), "13w3d20")
+        self.assertEqual(parsed.group("comment"), "")
 
     @patch("random.randint", new_callable=MagicMock())
     def test_response(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        self.assertEqual(create_response("3d6"), "@TestUser \n1 + 1 + 1 = 3")
+        self.assertEqual(
+            create_response("3d6"), "@TestUser \n3d6: [1 + 1 + 1]\nErgebnis: **3**"
+        )
 
     @patch("random.randint", new_callable=MagicMock())
     def test_response_with_modifier(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
-        self.assertEqual(create_response("3d6 + 3"), "@TestUser \n1 + 1 + 1 (+3) = 6")
-        self.assertEqual(create_response("d6 - 4"), "@TestUser \n1 (-4) = -3")
-        self.assertEqual(create_response("d6 - 4 + 6 - 5"), "@TestUser \n1 (-3) = -2")
         self.assertEqual(
-            create_response("5d6 + 3-2"), "@TestUser \n1 + 1 + 1 + 1 + 1 (+1) = 6"
+            create_response("3d6 + 3"), "@TestUser \n3d6: [1 + 1 + 1]\nErgebnis: **6**"
+        )
+        self.assertEqual(
+            create_response("d6 - 4"), "@TestUser \n1d6: [1]\nErgebnis: **-3**"
+        )
+        self.assertEqual(
+            create_response("d6 - 4 + 6 - 5"), "@TestUser \n1d6: [1]\nErgebnis: **-2**"
+        )
+        self.assertEqual(
+            create_response("5d6 + 3-2"),
+            "@TestUser \n5d6: [1 + 1 + 1 + 1 + 1]\nErgebnis: **6**",
+        )
+        self.assertEqual(
+            create_response("14+1d6"), "@TestUser \n1d6: [1]\nErgebnis: **15**"
+        )
+        self.assertEqual(
+            create_response("5+w6+2"), "@TestUser \n1d6: [1]\nErgebnis: **8**"
+        )
+        self.assertEqual(
+            create_response("(2d6+4+8)*2"), "@TestUser \n2d6: [1 + 1]\nErgebnis: **28**"
+        )
+        self.assertEqual(
+            create_response("2*(3w10+4)"),
+            "@TestUser \n3d10: [1 + 1 + 1]\nErgebnis: **14**",
         )

@@ -40,11 +40,11 @@ async def on_message(message: discord.Message) -> None:
 
         for create_response in [
             channel.create_response,
-            dice_roll.create_response,
             check.create_response,
             note.create_response,
             wiki.create_response,
             stats.create_response,
+            dice_roll.create_response,
         ]:
             response = create_response(message)
             if response:
