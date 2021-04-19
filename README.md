@@ -431,6 +431,16 @@ You can delete notes with
 
 > @User note_id war 1337 und wurde nun gelöscht.
 
+## Hit Zones
+
+You can generate a hit zone by using
+
+> hitzone humanoid small
+
+> @User - Ergebnis: 5
+> Humanoid (klein): Kopf getroffen
+> Wundeffekt ab KO/2 Schadenspunkte: Eine Stufe Betäubung
+
 # Development
 
 ## Discord Token

@@ -3,7 +3,7 @@ import random
 
 import discord
 
-from bot import persistence, dice_roll, note, check, wiki, channel, stats
+from bot import persistence, dice_roll, note, check, wiki, channel, hit_zone, stats
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 client = discord.Client()
@@ -43,6 +43,7 @@ async def on_message(message: discord.Message) -> None:
             check.create_response,
             note.create_response,
             wiki.create_response,
+            hit_zone.create_response,
             stats.create_response,
             dice_roll.create_response,
         ]:

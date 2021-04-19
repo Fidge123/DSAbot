@@ -81,6 +81,24 @@ for (let input of document.querySelectorAll("#Begabung input")) {
   );
 }
 
+for (let input of document.querySelectorAll("#Trefferzone input")) {
+  input.addEventListener("change", () => {
+    let size = "klein";
+    if (document.getElementById(`hit-zone-2`).checked) {
+      size = "mittel";
+    }
+    if (document.getElementById(`hit-zone-3`).checked) {
+      size = "groß";
+    }
+    if (document.getElementById(`hit-zone-4`).checked) {
+      size = "riesig";
+    }
+    document.getElementById("hit-zone-output").innerText = `hitzone ${
+      document.getElementById("hit-zone-r").checked ? "humanoid" : "kreatur"
+    } ${size}`;
+  });
+}
+
 document
   .getElementById("repeat-r")
   .addEventListener(
