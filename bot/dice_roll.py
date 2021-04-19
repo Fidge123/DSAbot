@@ -31,18 +31,19 @@ def create_response(message: Message) -> Optional[Response]:
                 results=("] [").join(
                     [
                         " + ".join([str(roll) for roll in roll_list])
-                        for roll_list in rolls
+                        for sides, roll_list in rolls
                     ]
                 ),
                 FP=int(result),
             )
 
-            save_check(
-                message.author,
-                "DiceRoll",
-                int(result),
-                0,
-            )
+            for sides, roll_list in rolls:
+                save_check(
+                    message.author,
+                    "DiceRoll",
+                    [int(roll) for roll in roll_list],
+                    sides,
+                )
 
             return Response(message.channel.send, message.author.mention + response)
         except:

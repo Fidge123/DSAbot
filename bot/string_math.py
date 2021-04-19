@@ -1,5 +1,7 @@
 import operator
 import random
+from typing import Any
+
 from pyparsing import (
     ParserElement,
     pyparsing_common as ppc,
@@ -11,14 +13,16 @@ from pyparsing import (
 ParserElement.enablePackrat()
 
 
-def dice_roll(amount: int, sides: int, rolls: list[list[int]]) -> int:
+def dice_roll(amount: int, sides: int, rolls: list[Any]) -> (int, list[Any]):
     aggregate = 0
     results = []
     for _ in range(int(amount)):
         roll = random.randint(1, int(sides))
         results.append(roll)
         aggregate += roll
-    rolls.append(results)
+
+    rolls.append((int(sides), results))
+
     return (aggregate, rolls)
 
 
@@ -36,7 +40,7 @@ class EvalSignOp:
     def __init__(self, tokens):
         self.sign, self.value = tokens[0]
 
-    def eval(self, rolls) -> float:
+    def eval(self, rolls) -> (float, list[Any]):
         mult = {"+": 1, "-": -1}[self.sign]
         res, rolls = self.value.eval(rolls)
         return (mult * res, rolls)
@@ -46,13 +50,13 @@ class EvalDieOp:
     def __init__(self, tokens):
         self.sign, self.value = tokens[0]
 
-    def eval(self, rolls) -> int:
+    def eval(self, rolls) -> (int, list[Any]):
         sides, rolls = self.value.eval(rolls)
         return dice_roll(1, sides, rolls)
 
 
 class EvalDiceOp(EvalBase):
-    def eval(self, rolls) -> int:
+    def eval(self, rolls) -> (int, list[Any]):
         amount, rolls = self.value[0].eval(rolls)
 
         it = iter(self.value[1:])
@@ -70,7 +74,7 @@ class EvalInfixOp(EvalBase):
         "/": operator.truediv,
     }
 
-    def eval(self, rolls) -> float:
+    def eval(self, rolls) -> (float, list[Any]):
         res, rolls = self.value[0].eval(rolls)
 
         it = iter(self.value[1:])
@@ -92,9 +96,5 @@ grammar = infixNotation(
 )
 
 
-def foo(math_string: str) -> str:
-    return str(grammar.parseString(math_string)[0])
-
-
-def calc(math_string: str) -> float:
+def calc(math_string: str) -> (float, list[Any]):
     return grammar.parseString(math_string)[0].eval([])
