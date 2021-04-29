@@ -52,9 +52,9 @@ class TestBot(IsolatedAsyncioTestCase):
                     m.channel.send.assert_called_with(
                         "@Author Verbergen\n"
                         "```py\n"
-                        "EEW:      9   9   9\n"
-                        "Würfel:   1   1   1\n"
-                        "FW 10               = 10 FP\n"
+                        "EEW:       9   9   9\n"
+                        "Würfel:    1   1   1\n"
+                        "FW 10                = 10 FP\n"
                         "Kritischer Erfolg! (QS 4)\n"
                         "```"
                     )

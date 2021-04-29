@@ -1,27 +1,30 @@
 import re
 from typing import List
 
+from bot.string_math import calc
 from bot.checks.generic_check import GenericCheck
 
 
 class SkillCheck(GenericCheck):
     matcher = re.compile(
         r"""
-            ^!?\ ?                                # Optional exclamation mark
-            (?P<force>f(?:orce)?\ )?              # Check if force
-            (?P<attributes>(?:[0-9]+,?\ ?){3})\ ? # A non-zero amount of numbers divided by comma or space
-            (?:@\ ?(?P<SR>[0-9]+))\ ?             # An @ followed by a number
-            (?P<modifier>(\ *[\+\-]\ *[0-9]+)*)   # A modifier
-            (\ (?P<comment>.*?))?$                # Anything else is lazy-matched as a comment
+            ^!?\ ?                                  # Optional exclamation mark
+            (?P<force>f(?:orce)?\ )?                # Check if force
+            (?P<attributes>(?:[0-9]+,?\ ?){3})\ ?   # A non-zero amount of numbers divided by comma or space
+            (?:@\ ?(?P<SR>[0-9]+))\ ?               # An @ followed by a number
+            (?P<modifier>(\ *[\+\-]\ *[0-9]+)*)     # A modifier
+            (?P<modifierFP>(\ *[\+\-]\ *[0-9]+FP)*) # FP modifier
+            (\ (?P<comment>.*?))?$                  # Anything else is lazy-matched as a comment
         """,
         re.VERBOSE | re.I,
     )
     transform = {
         **GenericCheck.transform,
         "SR": int,
+        "modifierFP": lambda x: int(calc(x.replace("FP", "") or "0")[0]),
         "force": lambda x: x is not None,
     }
-    _response = " {comment}\n```py\nEEW:   {EAV}\nWürfel:{rolls}\nFW {SR:<4}{diffs} = {SP} FP\n{result}\n```"
+    _response = " {comment}\n```py\nEEW:    {EAV}\nWürfel: {rolls}\nFW {SR_mod}{diffs} = {SP} FP\n{result}\n```"
     _routine = " {comment}\n```py\nRoutineprobe: {SP} FP = QS {QL}\n```"
 
     @property
@@ -33,7 +36,7 @@ class SkillCheck(GenericCheck):
 
     @property
     def skill_points(self) -> int:
-        return self.data["SR"] + sum(self.diffs)
+        return self.data["SR"] + sum(self.diffs) + self.data["modifierFP"]
 
     @property
     def routine(self) -> bool:
@@ -59,6 +62,11 @@ class SkillCheck(GenericCheck):
         else:
             self.data["diffs"] = "".join("{:>4}".format(d or "") for d in self.diffs)
             self.data["SP"] = self.skill_points
+            if self.data["modifierFP"]:
+                mod = f"{self.data['modifierFP']:+d}"
+                self.data["SR_mod"] = f"{self.data['SR']:<2}{mod:<3}"
+            else:
+                self.data["SR_mod"] = f"{self.data['SR']:<5}"
             return super().__str__()
 
     def _get_result(self) -> str:

@@ -9,15 +9,16 @@ from bot.checks.skill_check import SkillCheck
 class CumulativeCheck(SkillCheck):
     matcher = re.compile(
         r"""
-            ^!?\ ?                                # Optional exclamation mark
-            (?P<force>f(?:orce)?\ )?              # Check if force
-            S(ammelprobe)?\ ?                     # Prefix S or Sammelprobe
-            (?P<tries>[0-9]+)\ ?[x\*\ ]\ ?        # Number of allowed tries
-            (?P<time>[0-9]+)\ ?(?P<unit>\w+)\ ?   # Time per round
-            (?P<attributes>(?:[0-9]+,?\ ?){3})\ ? # A non-zero amount of numbers divided by comma or space
-            (?:@\ ?(?P<SR>[0-9]+))\ ?             # An @ followed by a number
-            (?P<modifier>(\ *[\+\-]\ *[0-9]+)*)   # A modifier
-            (\ (?P<comment>.*?))?$                # Anything else is lazy-matched as a comment
+            ^!?\ ?                                  # Optional exclamation mark
+            (?P<force>f(?:orce)?\ )?                # Check if force
+            S(ammelprobe)?\ ?                       # Prefix S or Sammelprobe
+            (?P<tries>[0-9]+)\ ?[x\*\ ]\ ?          # Number of allowed tries
+            (?P<time>[0-9]+)\ ?(?P<unit>\w+)\ ?     # Time per round
+            (?P<attributes>(?:[0-9]+,?\ ?){3})\ ?   # A non-zero amount of numbers divided by comma or space
+            (?:@\ ?(?P<SR>[0-9]+))\ ?               # An @ followed by a number
+            (?P<modifier>(\ *[\+\-]\ *[0-9]+)*)     # A modifier
+            (?P<modifierFP>(\ *[\+\-]\ *[0-9]+FP)*) # FP modifier
+            (\ (?P<comment>.*?))?$                  # Anything else is lazy-matched as a comment
         """,
         re.VERBOSE | re.I,
     )

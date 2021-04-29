@@ -31,9 +31,9 @@ class TestCheck(TestCase):
             first,
             " \n"
             "```py\n"
-            "EEW:     11   9   9\n"
-            "Würfel:  12  12  12\n"
-            "FW 4     -1  -3  -3 = -3 FP\n"
+            "EEW:      11   9   9\n"
+            "Würfel:   12  12  12\n"
+            "FW 4      -1  -3  -3 = -3 FP\n"
             "Nicht bestanden\n"
             "```",
         )
@@ -47,9 +47,9 @@ class TestCheck(TestCase):
             second,
             " \n"
             "```py\n"
-            "EEW:     11   9   9\n"
-            "Würfel:   2   2   2\n"
-            "FW 4                = 4 FP\n"
+            "EEW:      11   9   9\n"
+            "Würfel:    2   2   2\n"
+            "FW 4                 = 4 FP\n"
             "Bestanden mit QS 2\n"
             "```",
         )
@@ -59,9 +59,9 @@ class TestCheck(TestCase):
             third,
             " \n"
             "```py\n"
-            "EEW:     11   9   9\n"
-            "Würfel:  10   2   2\n"
-            "FW 4                = 4 FP\n"
+            "EEW:      11   9   9\n"
+            "Würfel:   10   2   2\n"
+            "FW 4                 = 4 FP\n"
             "Bestanden mit QS 2\n"
             "```",
         )
@@ -71,9 +71,9 @@ class TestCheck(TestCase):
             fourth,
             " \n"
             "```py\n"
-            "EEW:     11   9   9\n"
-            "Würfel:  10   2   2\n"
-            "FW 4                = 4 FP\n"
+            "EEW:      11   9   9\n"
+            "Würfel:   10   2   2\n"
+            "FW 4                 = 4 FP\n"
             "Bestanden mit QS 2\n"
             "```",
         )
@@ -97,9 +97,9 @@ class TestCheck(TestCase):
             second,
             " \n"
             "```py\n"
-            "EEW:     14  14  14\n"
-            "Würfel:  12  12  12\n"
-            "FW 12               = 12 FP\n"
+            "EEW:      14  14  14\n"
+            "Würfel:   12  12  12\n"
+            "FW 12                = 12 FP\n"
             "Bestanden mit QS 4\n"
             "```",
         )
@@ -113,9 +113,9 @@ class TestCheck(TestCase):
             first,
             " \n"
             "```py\n"
-            "EEW:     11   9   9\n"
-            "Würfel:  12  12  12\n"
-            "FW 4     -1  -3  -3 = -3 FP\n"
+            "EEW:      11   9   9\n"
+            "Würfel:   12  12  12\n"
+            "FW 4      -1  -3  -3 = -3 FP\n"
             "Nicht bestanden\n"
             "```",
         )
@@ -125,9 +125,9 @@ class TestCheck(TestCase):
             second,
             " \n"
             "```py\n"
-            "EEW:     11   9   9\n"
-            "Würfel:  10  10  10\n"
-            "FW 4         -1  -1 = 2 FP\n"
+            "EEW:      11   9   9\n"
+            "Würfel:   10  10  10\n"
+            "FW 4          -1  -1 = 2 FP\n"
             "Bestanden mit QS 1\n"
             "```",
         )
@@ -137,9 +137,9 @@ class TestCheck(TestCase):
             third,
             " \n"
             "```py\n"
-            "EEW:     10   8   8\n"
-            "Würfel:   9   9   9\n"
-            "FW 4         -1  -1 = 2 FP\n"
+            "EEW:      10   8   8\n"
+            "Würfel:    9   9   9\n"
+            "FW 4          -1  -1 = 2 FP\n"
             "Bestanden mit QS 1\n"
             "```",
         )

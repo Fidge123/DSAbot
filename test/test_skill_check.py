@@ -17,6 +17,8 @@ class TestSkillCheck(TestCase):
         self.assertIsNotNone(SkillCheck(self.author, "2 2,2, @1400-2-2-2"))
         self.assertIsNotNone(SkillCheck(self.author, "!13 1 12@2 +1+1 Test"))
         self.assertIsNotNone(SkillCheck(self.author, "! 1,12,18@18 Krit"))
+        self.assertIsNotNone(SkillCheck(self.author, "14 14 14@5+2FP Spezialisierung"))
+        self.assertIsNotNone(SkillCheck(self.author, "14 14 14 @ 5 -2 +3 -5FP +3FP"))
 
         with self.assertRaises(ValueError):
             SkillCheck(self.author, "!!13 1@2")
@@ -107,6 +109,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 4)
         self.assertEqual(sc.data["modifier"], 0)
+        self.assertEqual(sc.data["modifierFP"], 0)
         self.assertEqual(sc.data["comment"], "")
         self.assertEqual(sc.data["rolls"].rolls, [9, 9, 9])
         self.assertEqual(sc.data["rolls"].critical_success, False)
@@ -119,9 +122,9 @@ class TestSkillCheck(TestCase):
             str(sc),
             " \n"
             "```py\n"
-            "EEW:     11   9   9\n"
-            "Würfel:   9   9   9\n"
-            "FW 4                = 4 FP\n"
+            "EEW:      11   9   9\n"
+            "Würfel:    9   9   9\n"
+            "FW 4                 = 4 FP\n"
             "Bestanden mit QS 2\n"
             "```",
         )
@@ -132,6 +135,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 6)
         self.assertEqual(sc.data["modifier"], -2)
+        self.assertEqual(sc.data["modifierFP"], 0)
         self.assertEqual(sc.data["comment"], "Sinnesschärfe")
         self.assertEqual(sc.data["rolls"].rolls, [9, 9, 9])
         self.assertEqual(sc.data["rolls"].critical_success, False)
@@ -144,9 +148,9 @@ class TestSkillCheck(TestCase):
             str(sc),
             " Sinnesschärfe\n"
             "```py\n"
-            "EEW:     11  12  13\n"
-            "Würfel:   9   9   9\n"
-            "FW 6                = 6 FP\n"
+            "EEW:      11  12  13\n"
+            "Würfel:    9   9   9\n"
+            "FW 6                 = 6 FP\n"
             "Bestanden mit QS 2\n"
             "```",
         )
@@ -157,6 +161,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 16)
         self.assertEqual(sc.data["modifier"], -2)
+        self.assertEqual(sc.data["modifierFP"], 0)
         self.assertEqual(sc.data["comment"], "🎉-1")
         self.assertEqual(sc.data["rolls"].rolls, [9, 9, 9])
         self.assertEqual(sc.data["rolls"].critical_success, False)
@@ -169,10 +174,62 @@ class TestSkillCheck(TestCase):
             str(sc),
             " 🎉-1\n"
             "```py\n"
-            "EEW:      3   1   2\n"
-            "Würfel:   9   9   9\n"
-            "FW 16    -6  -8  -7 = -5 FP\n"
+            "EEW:       3   1   2\n"
+            "Würfel:    9   9   9\n"
+            "FW 16     -6  -8  -7 = -5 FP\n"
             "Nicht bestanden\n"
+            "```",
+        )
+
+        sc = SkillCheck(self.author, "14 14 14@5-5FP Spezialisierung")
+        self.assertEqual(sc.data["attributes"], [14, 14, 14])
+        self.assertEqual(sc.data["EAV"], [14, 14, 14])
+        self.assertEqual(sc.data["force"], False)
+        self.assertEqual(sc.data["SR"], 5)
+        self.assertEqual(sc.data["modifier"], 0)
+        self.assertEqual(sc.data["modifierFP"], -5)
+        self.assertEqual(sc.data["comment"], "Spezialisierung")
+        self.assertEqual(sc.data["rolls"].rolls, [9, 9, 9])
+        self.assertEqual(sc.data["rolls"].critical_success, False)
+        self.assertEqual(sc.data["rolls"].botch, False)
+        self.assertEqual(sc.routine, False)
+        self.assertEqual(sc.impossible(), False)
+        self.assertEqual(sc.diffs, [0, 0, 0])
+        self.assertEqual(sc.skill_points, 0)
+        self.assertEqual(
+            str(sc),
+            " Spezialisierung\n"
+            "```py\n"
+            "EEW:      14  14  14\n"
+            "Würfel:    9   9   9\n"
+            "FW 5 -5              = 0 FP\n"
+            "Bestanden mit QS 1\n"
+            "```",
+        )
+
+        sc = SkillCheck(self.author, "7 5 6 @ 16 -1 -3 -1FP +6FP +3FP test")
+        self.assertEqual(sc.data["attributes"], [7, 5, 6])
+        self.assertEqual(sc.data["EAV"], [3, 1, 2])
+        self.assertEqual(sc.data["force"], False)
+        self.assertEqual(sc.data["SR"], 16)
+        self.assertEqual(sc.data["modifier"], -4)
+        self.assertEqual(sc.data["modifierFP"], 8)
+        self.assertEqual(sc.data["comment"], "test")
+        self.assertEqual(sc.data["rolls"].rolls, [9, 9, 9])
+        self.assertEqual(sc.data["rolls"].critical_success, False)
+        self.assertEqual(sc.data["rolls"].botch, False)
+        self.assertEqual(sc.routine, False)
+        self.assertEqual(sc.impossible(), False)
+        self.assertEqual(sc.diffs, [-6, -8, -7])
+        self.assertEqual(sc.skill_points, 3)
+        self.assertEqual(
+            str(sc),
+            " test\n"
+            "```py\n"
+            "EEW:       3   1   2\n"
+            "Würfel:    9   9   9\n"
+            "FW 16+8   -6  -8  -7 = 3 FP\n"
+            "Bestanden mit QS 1\n"
             "```",
         )
 
@@ -185,6 +242,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 4)
         self.assertEqual(sc.data["modifier"], 0)
+        self.assertEqual(sc.data["modifierFP"], 0)
         self.assertEqual(sc.data["comment"], "")
         self.assertEqual(sc.data["rolls"].rolls, [1, 1, 1])
         self.assertEqual(sc.data["rolls"].critical_success, True)
@@ -197,9 +255,9 @@ class TestSkillCheck(TestCase):
             str(sc),
             " \n"
             "```py\n"
-            "EEW:      2   3   4\n"
-            "Würfel:   1   1   1\n"
-            "FW 4                = 4 FP\n"
+            "EEW:       2   3   4\n"
+            "Würfel:    1   1   1\n"
+            "FW 4                 = 4 FP\n"
             "Kritischer Erfolg! (QS 2)\n"
             "```",
         )
@@ -211,6 +269,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 3)
         self.assertEqual(sc.data["modifier"], 2)
+        self.assertEqual(sc.data["modifierFP"], 0)
         self.assertEqual(sc.data["comment"], "")
         self.assertEqual(sc.data["rolls"].rolls, [20, 20, 20])
         self.assertEqual(sc.data["rolls"].critical_success, False)
@@ -223,9 +282,9 @@ class TestSkillCheck(TestCase):
             str(sc),
             " \n"
             "```py\n"
-            "EEW:     16  20  20\n"
-            "Würfel:  20  20  20\n"
-            "FW 3     -4         = -1 FP\n"
+            "EEW:      16  20  20\n"
+            "Würfel:   20  20  20\n"
+            "FW 3      -4         = -1 FP\n"
             "Patzer!\n"
             "```",
         )
@@ -237,6 +296,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 3)
         self.assertEqual(sc.data["modifier"], 2)
+        self.assertEqual(sc.data["modifierFP"], 0)
         self.assertEqual(sc.data["comment"], "")
         self.assertEqual(sc.data["rolls"].rolls, [20, 20, 20])
         self.assertEqual(sc.data["rolls"].critical_success, False)
@@ -249,9 +309,9 @@ class TestSkillCheck(TestCase):
             str(sc),
             " \n"
             "```py\n"
-            "EEW:     20  20  20\n"
-            "Würfel:  20  20  20\n"
-            "FW 3                = 3 FP\n"
+            "EEW:      20  20  20\n"
+            "Würfel:   20  20  20\n"
+            "FW 3                 = 3 FP\n"
             "Patzer! - Automatisch nicht bestanden\n"
             "```",
         )
@@ -265,6 +325,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 7)
         self.assertEqual(sc.data["modifier"], 1)
+        self.assertEqual(sc.data["modifierFP"], 0)
         self.assertEqual(sc.data["comment"], "")
         self.assertEqual(sc.routine, True)
         self.assertEqual(sc.impossible(), False)
@@ -279,6 +340,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["force"], True)
         self.assertEqual(sc.data["SR"], 10)
         self.assertEqual(sc.data["modifier"], 0)
+        self.assertEqual(sc.data["modifierFP"], 0)
         self.assertEqual(sc.data["comment"], "Sinnesschärfe")
         self.assertEqual(sc.data["rolls"].rolls, [9, 9, 9])
         self.assertEqual(sc.data["rolls"].critical_success, False)
@@ -291,9 +353,9 @@ class TestSkillCheck(TestCase):
             str(sc),
             " Sinnesschärfe\n"
             "```py\n"
-            "EEW:     13  14  15\n"
-            "Würfel:   9   9   9\n"
-            "FW 10               = 10 FP\n"
+            "EEW:      13  14  15\n"
+            "Würfel:    9   9   9\n"
+            "FW 10                = 10 FP\n"
             "Bestanden mit QS 4\n"
             "```",
         )
@@ -304,6 +366,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.data["force"], False)
         self.assertEqual(sc.data["SR"], 4)
         self.assertEqual(sc.data["modifier"], -2)
+        self.assertEqual(sc.data["modifierFP"], 0)
         self.assertEqual(sc.data["comment"], "")
         self.assertEqual(sc.routine, False)
         self.assertEqual(sc.impossible(), True)

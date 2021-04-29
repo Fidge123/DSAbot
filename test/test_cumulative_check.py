@@ -119,6 +119,23 @@ class TestCumulativeCheck(TestCase):
             "```",
         )
 
+        mock_randint.return_value = 13
+        cc = CumulativeCheck(
+            self.author, "!Sammelprobe 5x2 Tage 11 13 9 @ 11 + 1 - 2FP"
+        )
+        self.assertEqual(
+            str(cc),
+            " \n"
+            "```py\n"
+            "Runde  1: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3= 5FP  QS2\n"
+            "Runde  2: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3= 5FP  QS2\n"
+            "Runde  3: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3= 5FP  QS2\n"
+            "Runde  4: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3= 5FP  QS2\n"
+            "Runde  5: EEW  12  14  10  Würfel  13  13  13  FW11  -1      -3= 5FP  QS2\n\n"
+            "Probe erfolgreich nach 5 Runden (10Tage)\n"
+            "```",
+        )
+
     @patch("random.randint", new_callable=MagicMock())
     def test_end2end_crit(self, mock_randint: MagicMock):
         mock_randint.return_value = 1
