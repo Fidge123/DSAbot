@@ -24,11 +24,13 @@ for (let input of document.querySelectorAll("#Talentprobe input")) {
     const e3 = document.getElementById("talentprobe-e3").value;
     const fw = document.getElementById("talentprobe-fw").value;
     const mod = modToString(document.getElementById("talentprobe-mod").value);
+    const modFP =
+      modToString(document.getElementById("talentprobe-mod-fp").value) + "FP";
     const comment = document.getElementById("talentprobe-kommentar").value;
 
     document.getElementById(
       "talentprobe-output"
-    ).innerText = `!${force}${e1},${e2},${e3} @ ${fw} ${mod} ${comment}`;
+    ).innerText = `!${force}${e1},${e2},${e3} @ ${fw} ${mod} ${modFP} ${comment}`;
   });
 }
 
@@ -46,11 +48,13 @@ const updateSammelprobe = () => {
   const e3 = document.getElementById("sammelprobe-e3").value;
   const fw = document.getElementById("sammelprobe-fw").value;
   const mod = modToString(document.getElementById("sammelprobe-mod").value);
+  const modFP =
+    modToString(document.getElementById("sammelprobe-mod-fp").value) + "FP";
   const comment = document.getElementById("sammelprobe-kommentar").value;
 
   document.getElementById(
     "sammelprobe-output"
-  ).innerText = `!${force}S${v}x${time} ${e1},${e2},${e3} @ ${fw} ${mod} ${comment}`;
+  ).innerText = `!${force}S${v}x${time} ${e1},${e2},${e3} @ ${fw} ${mod} ${modFP} ${comment}`;
 };
 
 for (let input of document.querySelectorAll("#Sammelprobe input")) {

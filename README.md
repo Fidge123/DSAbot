@@ -66,6 +66,19 @@ FW 10    -9  -9      = -8 FP
 Patzer!
 ```
 
+If you have a special abilities like a skill specialization, you may want to modify the resulting skill points (`FP`).
+This modifier needs to be added AFTER any general modifier.
+
+> ! 14 14 15 @ 10 -3 +2FP Fertigkeitsspezialisierung
+
+```
+@User Fertigkeitsspezialisierung
+EEW:     11  11  12
+Würfel:   4   5  18
+FW 10 +2         -6 = 6 FP
+Bestanden mit QS 2
+```
+
 ### Impossible checks
 
 Impossible checks are detected automatically.
