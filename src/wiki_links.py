@@ -5,7 +5,7 @@ import htmlmin
 from bs4 import BeautifulSoup
 from pony import orm
 
-base = "http://ulisses-regelwiki.de/"
+base = "https://ulisses-regelwiki.de/"
 blacklist = [
     "index.php/start.html",
     "index.php/kontakt.html",
@@ -26,11 +26,7 @@ class Regelwiki(db.Entity):
 
 def validate(link):
     try:
-        return (
-            link["href"].startswith("index.php")
-            and "#" not in link["href"]
-            and link["href"] not in blacklist
-        )
+        return not link["href"].startswith("index.php") and "#" not in link["href"]
     except:
         return False
 
