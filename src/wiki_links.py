@@ -7,6 +7,7 @@ from pony import orm
 
 base = "https://ulisses-regelwiki.de/"
 blacklist = [
+    "/index.php/tde-games-reference-en.html",
     "index.php/start.html",
     "index.php/kontakt.html",
     "index.php/impressum.html",
@@ -26,12 +27,12 @@ class Regelwiki(db.Entity):
 
 def validate(link):
     try:
-        return not link["href"].startswith("index.php") and "#" not in link["href"]
+        return "index.php" not in link["href"] and "#" not in link["href"]
     except:
         return False
 
 
-def clean(soup):
+def clean(soup, keep_main):
     soup.header.decompose()
     soup.footer.decompose()
     for form in soup.find_all("form"):
@@ -40,7 +41,8 @@ def clean(soup):
     for bc in soup.find_all("div", class_="breadcrumb_boxed"):
         bc.decompose()
 
-    soup.find("div", id="main").decompose()
+    if not keep_main:
+        soup.find("div", id="main").decompose()
 
 
 def get_content(soup) -> str:
@@ -82,8 +84,8 @@ def get_content(soup) -> str:
     return "\n\n".join(content)
 
 
-def get_children(soup):
-    clean(soup)
+def get_children(soup, keep_main):
+    clean(soup, keep_main)
     return [
         base + link["href"]
         for link in soup.find_all("a")
@@ -91,11 +93,19 @@ def get_children(soup):
     ]
 
 
+def minify(input_html, url):
+    try:
+        return htmlmin.minify(input_html)
+    except:
+        print(url)
+        return input_html
+
+
 @orm.db_session
-def parse(url, parents=[]):
+def parse(url, parents=[], allow_skipping=True):
     input_html = ""
     rw = Regelwiki.get(url=url)
-    if rw:
+    if rw and allow_skipping:
         input_html = rw.html
     else:
         res = requests.get(url)
@@ -107,7 +117,7 @@ def parse(url, parents=[]):
     print(" > ".join(parents), ">", title)
 
     body = get_content(soup.find("div", id="main"))
-    children = get_children(soup)
+    children = get_children(soup, "auswahl.html" in url)
 
     if rw:
         rw.title = title
@@ -146,7 +156,7 @@ queue = [(category, []) for category in categories]
 
 while len(queue) > 0:
     url, parents = queue.pop(0)
-    site = parse(url, parents)
+    site = parse(url, parents, False)
     p = site.parents[:]
     p.append(site.title)
     for child in site.children:
