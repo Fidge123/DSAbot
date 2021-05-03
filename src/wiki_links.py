@@ -1,4 +1,5 @@
 import os
+import re
 
 import requests
 import htmlmin
@@ -93,12 +94,25 @@ def get_children(soup, keep_main):
     ]
 
 
+def repair(input_html, url):
+    try:
+        repaired = re.sub(
+            r"<!DOCTYPE html>[\W]*<html>[\w\W]*<body>([\w\W]*?)<\/body>[\W]*<\/html>",
+            r"\g<1>",
+            input_html,
+            re.M,
+        )
+        return htmlmin.minify(repaired)
+    except:
+        print(f"Could not repair - {url}")
+        return input_html
+
+
 def minify(input_html, url):
     try:
         return htmlmin.minify(input_html)
     except:
-        print(url)
-        return input_html
+        return repair(input_html, url)
 
 
 @orm.db_session
@@ -156,7 +170,7 @@ queue = [(category, []) for category in categories]
 
 while len(queue) > 0:
     url, parents = queue.pop(0)
-    site = parse(url, parents, False)
+    site = parse(url, parents, True)
     p = site.parents[:]
     p.append(site.title)
     for child in site.children:
