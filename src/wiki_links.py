@@ -16,7 +16,7 @@ blacklist = [
 db = orm.Database()
 
 
-class Regelwiki(db.Entity):
+class RegelwikiNeu(db.Entity):
     url = orm.PrimaryKey(str)
     title = orm.Required(str)
     body = orm.Optional(str)
@@ -104,13 +104,13 @@ def minify(input_html, url):
 @orm.db_session
 def parse(url, parents=[], allow_skipping=True):
     input_html = ""
-    rw = Regelwiki.get(url=url)
+    rw = RegelwikiNeu.get(url=url)
     if rw and allow_skipping:
         input_html = rw.html
     else:
         res = requests.get(url)
         input_html = res.text
-    soup = BeautifulSoup(htmlmin.minify(input_html), "lxml",)
+    soup = BeautifulSoup(minify(input_html, url), "lxml",)
     html = str(soup)
     title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
 
@@ -127,7 +127,7 @@ def parse(url, parents=[], allow_skipping=True):
         rw.parents = parents
         return rw
     else:
-        return Regelwiki(
+        return RegelwikiNeu(
             title=title,
             url=url,
             html=html,
