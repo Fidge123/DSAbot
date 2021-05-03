@@ -46,7 +46,33 @@ def clean(soup, keep_main):
         soup.find("div", id="main").decompose()
 
 
-def get_content(soup) -> str:
+def get_spell_content(body) -> str:
+    for br in body.find_all("br"):
+        br.replace_with("\n")
+
+    for spalte in body.find_all("div", class_="spalte1"):
+        stripped = spalte.text.strip()
+        if stripped:
+            spalte.replace_with(f"\n\n**{stripped}**")
+
+    for line in body.find_all("div", class_="body_einzeln"):
+        stripped = line.text.strip()
+        if stripped:
+            pre, post = line.text.split(stripped)
+            line.replace_with(f"\n\n{pre}**{stripped}**{post}\n\n")
+
+    text = body.text.strip()
+
+    return "\n\n#".join([x.strip() for x in text.split("#")])
+
+
+def colon(key, value):
+    return ": ".join(
+        [el for el in [key, value,] if el.encode("ascii", errors="ignore")]
+    )
+
+
+def get_content(soup, url) -> str:
     for strong in soup.find_all(["strong", "b"]):
         stripped = strong.text.strip()
         if stripped:
@@ -58,6 +84,13 @@ def get_content(soup) -> str:
             pre, post = em.text.split(stripped)
             em.replace_with(f"{pre}_{stripped}_{post}")
 
+    spell_content = ""
+    try:
+        body = soup.find("div", class_="grid").find("div", class_="body").extract()
+        spell_content = get_spell_content(body)
+    except:
+        pass
+
     content = []
 
     for el in soup.find_all(["table", "p"]):
@@ -65,16 +98,19 @@ def get_content(soup) -> str:
             rows = len(el.find_all("tr"))
             columns = len(el.find("tbody").find("tr").find_all(["th", "td"]))
             if rows == 2:
-                headers = [header.text for header in el.find_all("th")]
+                headers = [header.text.strip() for header in el.find_all("th")]
                 results = [
-                    f"{headers[i]}: {cell.text.strip()}"
+                    colon(headers[i], cell.text.strip())
                     for i, cell in enumerate(el.find("tbody").find("tr").find_all("td"))
                     if len(headers) > i
                 ]
                 content.append("\n".join(results))
             if columns == 2:
                 results = [
-                    f"{row.find_all(['th', 'td'])[0].text.strip()}: {row.find_all(['th', 'td'])[1].text.strip()}"
+                    colon(
+                        row.find_all(["th", "td"])[0].text.strip(),
+                        row.find_all(["th", "td"])[1].text.strip(),
+                    )
                     for row in el.find("tbody").find_all("tr")
                 ]
                 content.append("\n".join(results))
@@ -82,7 +118,11 @@ def get_content(soup) -> str:
             for br in el.find_all("br"):
                 br.replace_with("\n")
             content.append(el.text.strip())
-    return "\n\n".join(content)
+
+    if spell_content and content:
+        print(url)
+
+    return "\n\n".join([spell_content] + content)
 
 
 def get_children(soup, keep_main):
@@ -135,7 +175,7 @@ def parse(url, parents=[], allow_skipping=True):
 
     print(" > ".join(parents), ">", title)
 
-    body = get_content(soup.find("div", id="main"))
+    body = get_content(soup.find("div", id="main"), url)
     children = get_children(soup, "auswahl.html" in url)
 
     if rw:
