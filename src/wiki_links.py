@@ -263,17 +263,20 @@ while len(queue) > 0:
     for child in site.children:
         queue.append((child, p))
 
-print()
-print("Body not matching:")
-for a in body_not_matching:
-    print(a)
+if body_not_matching:
+    print()
+    print(f"Body not matching ({len(body_not_matching)}):")
+    for article in body_not_matching:
+        print(article)
 
-print()
-print("Title not matching")
-for a in title_not_matching:
-    print(a)
+if title_not_matching:
+    print()
+    print(f"Title not matching ({len(title_not_matching)}):")
+    for article in title_not_matching:
+        print(article)
 
-# print()
-# print("Article not found:")
-# for a in article_not_found:
-#     print(a)
+# if article_not_found:
+#     print()
+#     print("Article not found:")
+#     for article in article_not_found:
+#         print(article)
