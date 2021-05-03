@@ -17,7 +17,16 @@ blacklist = [
 db = orm.Database()
 
 
-class RegelwikiNeu(db.Entity):
+class Regelwiki(db.Entity):
+    url = orm.PrimaryKey(str)
+    title = orm.Required(str)
+    body = orm.Optional(str)
+    html = orm.Required(str)
+    children = orm.Optional(orm.StrArray)
+    parents = orm.Optional(orm.StrArray)
+
+
+class RegelwikiBackup(db.Entity):
     url = orm.PrimaryKey(str)
     title = orm.Required(str)
     body = orm.Optional(str)
@@ -68,7 +77,14 @@ def get_spell_content(body) -> str:
 
 def colon(key, value):
     return ": ".join(
-        [el for el in [key, value,] if el.encode("ascii", errors="ignore")]
+        [
+            el
+            for el in [
+                key,
+                value,
+            ]
+            if el.encode("ascii", errors="ignore")
+        ]
     )
 
 
@@ -111,7 +127,7 @@ def get_content(soup, url) -> str:
                         row.find_all(["th", "td"])[0].text.strip(),
                         row.find_all(["th", "td"])[1].text.strip(),
                     )
-                    for row in el.find("tbody").find_all("tr")
+                    for row in el.find_all("tr")
                 ]
                 content.append("\n".join(results))
         if el.name == "p" and el.text.strip():
@@ -155,16 +171,26 @@ def minify(input_html, url):
         return repair(input_html, url)
 
 
+body_not_matching = []
+title_not_matching = []
+article_not_found = []
+
+
 @orm.db_session
 def parse(url, parents=[], allow_skipping=True):
     input_html = ""
-    rw = RegelwikiNeu.get(url=url)
+    rw = Regelwiki.get(url=url)
+
     if rw and allow_skipping:
         input_html = rw.html
     else:
         res = requests.get(url)
         input_html = res.text
-    soup = BeautifulSoup(minify(input_html, url), "lxml",)
+
+    soup = BeautifulSoup(
+        minify(input_html, url),
+        "lxml",
+    )
     html = str(soup)
 
     title = ""
@@ -173,10 +199,25 @@ def parse(url, parents=[], allow_skipping=True):
     except:
         title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
 
-    print(" > ".join(parents), ">", title)
+    print(" > ".join(parents + [title]))
 
     body = get_content(soup.find("div", id="main"), url)
     children = get_children(soup, "auswahl.html" in url)
+
+    if rw and not (Regelwiki.select(title=title) and Regelwiki.select(body=body)):
+        RegelwikiBackup(
+            title=rw.title,
+            url=rw.url,
+            html=rw.html,
+            body=rw.body,
+            children=rw.children,
+            parents=rw.parents,
+        )
+
+        if Regelwiki.select(title=title):
+            body_not_matching.append(f"- [ ] {' > '.join(parents + [title])} ({url})")
+        elif Regelwiki.select(body=body):
+            title_not_matching.append(f"- [ ] {' > '.join(parents + [title])} ({url})")
 
     if rw:
         rw.title = title
@@ -186,7 +227,8 @@ def parse(url, parents=[], allow_skipping=True):
         rw.parents = parents
         return rw
     else:
-        return RegelwikiNeu(
+        article_not_found.append(f"- [ ] {' > '.join(parents + [title])} ({url})")
+        return Regelwiki(
             title=title,
             url=url,
             html=html,
@@ -220,3 +262,18 @@ while len(queue) > 0:
     p.append(site.title)
     for child in site.children:
         queue.append((child, p))
+
+print()
+print("Body not matching:")
+for a in body_not_matching:
+    print(a)
+
+print()
+print("Title not matching")
+for a in title_not_matching:
+    print(a)
+
+# print()
+# print("Article not found:")
+# for a in article_not_found:
+#     print(a)
