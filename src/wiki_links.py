@@ -126,7 +126,12 @@ def parse(url, parents=[], allow_skipping=True):
         input_html = res.text
     soup = BeautifulSoup(minify(input_html, url), "lxml",)
     html = str(soup)
-    title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
+
+    title = ""
+    try:
+        title = soup.find("div", class_="header").string.strip()
+    except:
+        title = soup.title.string.split("- DSA Regel Wiki")[0].strip()
 
     print(" > ".join(parents), ">", title)
 
