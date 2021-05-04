@@ -89,7 +89,8 @@ def create_response(message: Message) -> Optional[Response]:
             )[:5]
 
         response.append(
-            message.channel.send, "\n".join(next(message.author, matches, search_term)),
+            message.channel.send,
+            "\n".join(next(message.author, matches, search_term)),
         )
 
         if len(matches) > 0 and matches[0]["score"] > 80 and matches[0]["body"]:

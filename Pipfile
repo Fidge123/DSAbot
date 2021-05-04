@@ -20,6 +20,7 @@ lxml = "*"
 fuzzywuzzy = {extras = ["speedup"], version = "*"}
 psycopg2-binary = "*"
 pony = "*"
+htmlmin = "*"
 
 [requires]
 python_version = "3.9"
