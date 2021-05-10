@@ -483,7 +483,8 @@ To interact with the bot, make sure it has permissions to read in the relevant c
 
 ## How to install dependencies and run the script
 
-The bot uses `pipenv` for dependency management. If you don't have `pipenv` installed, you can install via one of the following commands or by following the [official documentation](https://pipenv.pypa.io/en/latest/install/#installing-pipenv).
+The bot uses `pipenv` for dependency management.
+If you don't have `pipenv` installed, you can install via one of the following commands or by following the [official documentation](https://pipenv.pypa.io/en/latest/install/#installing-pipenv).
 
 ```sh-session
 # Using pip
@@ -535,4 +536,20 @@ After that it is possible to generate a coverage report by running
 
 ```sh-session
 pipenv run cov
+```
+
+## Create local copy of regelwiki
+
+Add postgres URL to `.env` file.
+
+```
+DATABASE_URL=postgres://localhost/DSABot
+```
+
+This file will be loaded automatically by pipenv.
+
+To start the generation, run
+
+```
+$ pipenv run wiki
 ```
