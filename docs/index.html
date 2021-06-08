@@ -150,7 +150,7 @@
         <h2>Schips</h2>
 
         <div class="input-group">
-          <label for="begabung-d">Welche Würfel sollen neu geworfen werden?</label>
+          <label>Welche Würfel sollen neu geworfen werden?</label>
         </div>
 
         <div class="input-group">
@@ -231,10 +231,19 @@
 
     <div id="Begabung" class="group">
       <div>
-        <h2>Begabung</h2>
+        <h2>Begabung und Unfähig</h2>
 
         <div class="input-group">
-          <label for="begabung-d">Welcher Würfel soll neu geworfen werden?</label>
+          <span>
+            <select id="begabung-select" aria-label="Auswahl Begabung oder Unfähig">
+              <option value="aptitude">Begabung</option>
+              <option value="incompetent">Unfähig</option>
+            </select>
+          </span>
+        </div>
+
+        <div class="input-group">
+          <label>Welcher Würfel soll neu geworfen werden?</label>
         </div>
 
         <div class="input-group">

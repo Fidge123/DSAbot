@@ -13,7 +13,7 @@ The bot allows normal dice rolls with comments and modifiers
 | `1d6`       | @User <br>5 = 5                  | Rolls one six-sided die                                                                                       |
 | `3d20`      | @User <br>3 + 12 + 9 = 24        | First number is the amount of dice, second the number of sides                                                |
 | `!2d13`     | @User <br>1 + 13 = 14            | Prefixing with `!` is optional                                                                                |
-| `3w20`      | @User <br>1 + 1 + 19 = 21        | You can use `d` as in dice or `w` as in Würfel (german for dice)                                              |
+| `3w20`      | @User <br>1 + 1 + 19 = 21        | You can use `d` as in dice or `w` as in Würfel (German for dice)                                              |
 | `3D20 +1`   | @User <br>2 + 4 + 6 (+1) = 13    | You can add or subtract from the total.<br> **IMPORTANT:** this works different for skill checks (see below). |
 | `!d20-1-2`  | @User <br>4 (-3) = 1             | Multiple modifiers are summed up.                                                                             |
 | `3d6+3 Axt` | @User Axt<br>5 + 3 + 4 (+3) = 15 | You can add a comment at the end                                                                              |
@@ -93,7 +93,7 @@ Probe nicht möglich
 
 ### Routine checks
 
-Same applies to routine checks but they can be forced by replying with **Force**
+Same applies to routine checks, but they can be forced by replying with **Force**
 
 > ! 14 14 15 @ 17 -2
 
@@ -112,7 +112,7 @@ FW 17        -6  -3 = 8 FP
 Bestanden mit QS 3
 ```
 
-You may prefix any skillcheck with _force_ or _f_ directly to force the roll.
+You may prefix any skill check with _force_ or _f_ directly to force the roll.
 
 > !force 14 14 15 @ 17 -2
 
@@ -162,7 +162,7 @@ Bestanden mit QS 2
 
 ### Fate Points / Schips
 
-You can also reply with **Schips** followed by a three **Keep**/**k** or **Reroll**/**r**. This will decrease your number note called `Schips` by 1 and reroll only the dice you marked with reroll. This is not possible on critical successes or botches.
+You can also reply with **Schips** followed by a three **Keep**/**k** or **Reroll**/**r**. This will decrease your number note called `Schips` by 1 and re-roll only the dice you marked with re-roll. This is not possible on critical successes or botches.
 
 > ! 14 14 15 @ 10-1-2 Kraftakt
 
@@ -188,9 +188,10 @@ FW 10           -3 = 7 FP
 Bestanden mit QS 3
 ```
 
-### Aptitude
+### Aptitude and Incompetent
 
-If your character has aptitude in a certain skill, you may reroll one die and keep the better result. The bot supports this similarly to fate points.
+If your character has aptitude in a certain skill, you may re-roll one die and keep the better result.
+The bot supports this similarly to fate points.
 
 > ! 14 14 15 @ 10-1-2 Kraftakt
 
@@ -216,6 +217,33 @@ FW 10           -6 = 4 FP
 Bestanden mit QS 2
 ```
 
+If your character is incompetent in a certain skill, your best die needs to be re-rolled.
+This is interpreted as the lowest rolled number, using the lowest attribute value as a tiebreaker.
+
+> ! 14 14 15 @ 10-1-2 Kraftakt
+
+```
+@User Kraftakt
+EEW:     13  11  12
+Würfel:   1   1  18
+FW 10            -6 = 4 FP
+Kritischer Erfolg! (QS 2)
+```
+
+> Unfähig
+
+or
+
+> Incompetent
+
+```
+@User Kraftakt
+EEW:    13  11  12
+Würfel:  1  20  18
+FW 10       -9  -6 = -5 FP
+Nicht bestanden
+```
+
 ## Cumulative Checks
 
 At the moment the bot only supports cumulative checks for one person that uses the same skill with the same base modifier throughout.
@@ -238,7 +266,8 @@ Usage of fate points is not (yet) supported for cumulative checks.
 
 ## Generic Checks
 
-These follow almost the same guidelines as skill checks but allow any number of attributes and don't support adding skill rating. It shows the minimum needed skill rating to succeed after the arrow.
+These follow almost the same guidelines as skill checks but allow any number of attributes and don't support adding skill rating.
+It shows the minimum needed skill rating to succeed after the arrow.
 
 > 12,12 - 1
 
@@ -256,7 +285,8 @@ Würfel:  4  10
 Bestanden
 ```
 
-It also allows giving multiple modifiers which are summed up and automatically detects critical successes and botches if you roll for 1 or 3 attributes. You can also pass a comment.
+It also allows giving multiple modifiers which are summed up and automatically detects critical successes and botches if you roll for 1 or 3 attributes.
+You can also pass a comment.
 
 > ! 14 14 15 -1-2 Kraftakt
 
@@ -316,7 +346,7 @@ EEW:     -1
 Probe nicht möglich
 ```
 
-You can also reply with **Schips** followed by a number of **Keep**/**k** or **Reroll**/**r**. This will decrease your number note called `Schips` by 1 and reroll only the dice you marked with reroll. This is not possible on critical successes or botches.
+You can also reply with **Schips** followed by a number of **Keep**/**k** or **Reroll**/**r**. This will decrease your number note called `Schips` by 1 and re-roll only the dice you marked with re-roll. This is not possible on critical successes or botches.
 
 > 11-4 Parieren gegen Finte 2
 
@@ -354,11 +384,11 @@ No specific rolls are implemented yet. You can use the generic roll as a workaro
 
 ## Regelwiki Integration
 
-You can get links (and content) from ulisses-regelwiki.de by typing
+You can get links (and content) from https://ulisses-regelwiki.de by typing
 
 > wiki [TITLE]
 
-This will find the articles with similar titles (using fuzzysearch) and if it is a perfect match, load the content from the linked article to display it directly inline.
+This will find the articles with similar titles (using `fuzzysearch`) and if it is a perfect match, load the content from the linked article to display it directly inline.
 
 > wiki Wuchtschlag
 
@@ -458,7 +488,8 @@ You can generate a hit zone by using
 
 ## Discord Token
 
-If you don't have a token, [create a new app](https://discord.com/developers/applications) and activate the bot account for that app. Use the token from the "Bot" section (NOT the client secret).
+If you don't have a token, [create a new app](https://discord.com/developers/applications) and activate the bot account for that app.
+Use the token from the "Bot" section (NOT the client secret).
 
 Once you have a token, create a file `.env` and add your token.
 
@@ -468,18 +499,23 @@ DISCORD_TOKEN=<YOUR TOKEN HERE>
 
 ## How to add the bot to your discord server
 
-Select your [application](https://discord.com/developers/applications) and go to the **OAuth2** in the list on the left. Here you need to generate a URL that will allow you to add the bot to any of your servers.
+Select your [application](https://discord.com/developers/applications) and go to the **OAuth2** in the list on the left.
+Here you need to generate a URL that will allow you to add the bot to any of your servers.
 
-To generate this URL, select _bot_ in the **SCOPES** section. A new section **BOT PERMISSIONS** appears. Here you need to select:
+To generate this URL, select _bot_ in the **SCOPES** section.
+A new section **BOT PERMISSIONS** appears.
+You need to select:
 
 - _Send Messages_
 - _Add Reactions_
 - _Read Message History_
 - _Mention Everyone_
 
-Afterwards copy the URL from the **SCOPES** section (e.g. `https://discord.com/api/oauth2/authorize?client_id=YOUR-CLIENT-ID&permissions=206912&scope=bot`) and open it in a new tab. Now you can add the bot to your server if you have the correct server permissions.
+Afterwards copy the URL from the **SCOPES** section (e.g. `https://discord.com/api/oauth2/authorize?client_id=YOUR-CLIENT-ID&permissions=206912&scope=bot`) and open it in a new tab.
+Now you can add the bot to your server if you have the correct server permissions.
 
-To interact with the bot, make sure it has permissions to read in the relevant channel, the script is running (see below) and you write `SUMMON`. If everything works, the bot will respond with `I am listening for rolls here`.
+To interact with the bot, make sure it has permissions to read in the relevant channel, the script is running (see below) and you write `SUMMON`.
+If everything works, the bot will respond with `I am listening for rolls here`.
 
 ## How to install dependencies and run the script
 
@@ -526,13 +562,13 @@ $ exit
 
 ## Run tests
 
-Use the following command to run tests and generate coverage
+Use the following command to run tests and generate coverage.
 
 ```sh-session
 pipenv run test
 ```
 
-After that it is possible to generate a coverage report by running
+To generate a coverage report run the command below.
 
 ```sh-session
 pipenv run cov

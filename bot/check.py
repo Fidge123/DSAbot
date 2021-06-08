@@ -1,5 +1,6 @@
 import re
 from typing import Optional
+from functools import reduce
 
 from discord import Message, Member
 
@@ -12,6 +13,7 @@ fate_regex = re.compile(
     r"^(s?chips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.I
 )
 aptitude_regex = re.compile(r"^(begabung|aptitude)\ (?P<reroll>[1-3])$", re.I)
+incompetence_regex = re.compile(r"^(unfaehig|unfähig|incompetence|incompetent)$", re.I)
 retry_regex = re.compile(r"retry", re.I)
 repeat_regex = re.compile(r"repeat", re.I)
 force_regex = re.compile(r"force", re.I)
@@ -69,6 +71,40 @@ def handle_aptitude(content: str, author: Member) -> Optional[str]:
     return str(check)
 
 
+def find_best(prev_data, curr_data):
+    prev_index, (prev_roll, prev_att) = prev_data
+    curr_index, (curr_roll, curr_att) = curr_data
+
+    if prev_roll < curr_roll:
+        return prev_data
+    if prev_roll > curr_roll:
+        return curr_data
+    if prev_att < curr_att:
+        return prev_data
+    if prev_att > curr_att:
+        return curr_data
+    return prev_data
+
+
+def handle_incompetence(content: str, author: Member) -> Optional[str]:
+    match = incompetence_regex.search(content)
+    if not match:
+        return None
+
+    check = lastCheck[hash(author)]
+
+    if isinstance(check, CumulativeCheck):
+        return " Einsatz von Unfähig bei Sammelproben (bisher) nicht unterstützt"
+
+    best_index, _ = reduce(
+        find_best, enumerate(zip(check.data["rolls"], check.data["EAV"]))
+    )
+
+    check.data["rolls"].reroll(best_index)
+
+    return str(check)
+
+
 def handle_retry(content: str, author: Member) -> Optional[str]:
     match = retry_regex.search(content)
     if not match:
@@ -121,6 +157,7 @@ def create_response(message: Message) -> Optional[Response]:
         for handle in [
             handle_fate,
             handle_aptitude,
+            handle_incompetence,
             handle_retry,
             handle_repeat,
             handle_force,

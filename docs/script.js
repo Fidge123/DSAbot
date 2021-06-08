@@ -60,14 +60,26 @@ for (let input of document.querySelectorAll("#Schips input")) {
   });
 }
 
+document.getElementById("begabung-select").addEventListener("change", () => {
+  const incompetent =
+    document.getElementById("begabung-select").value === "incompetent";
+  for (let input of document.querySelectorAll("#Begabung input")) {
+    input.disabled = incompetent;
+  }
+  document.getElementById("begabung-output").innerText = incompetent
+    ? "unfähig"
+    : `begabung ${begabung_selected}`;
+});
+begabung_selected = 1;
 for (let input of document.querySelectorAll("#Begabung input")) {
-  input.addEventListener(
-    "change",
-    (ev) =>
-      (document.getElementById(
-        "begabung-output"
-      ).innerText = `begabung ${ev.target.value}`)
-  );
+  input.addEventListener("change", (ev) => {
+    const command =
+      document.getElementById("begabung-select").value === "incompetent"
+        ? "unfähig"
+        : `begabung  ${ev.target.value}`;
+    begabung_selected = ev.target.value;
+    document.getElementById("begabung-output").innerText = command;
+  });
 }
 
 for (let input of document.querySelectorAll("#Trefferzone input")) {
