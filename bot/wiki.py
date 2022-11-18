@@ -7,7 +7,7 @@ import psycopg2
 
 from bot.response import Response
 
-DB_URL = os.getenv("HEROKU_POSTGRESQL_COBALT_URL")
+DB_URL = os.getenv("DATABASE_URL")
 
 
 def next(user: Member, hits: list[Any], search_term: str):
