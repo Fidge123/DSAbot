@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 from pony import orm
 from discord import Message
@@ -37,7 +36,7 @@ async def add_channel(message: Message):
 
 
 @orm.db_session
-def create_response(message: Message) -> Optional[Response]:
+def create_response(message: Message) -> Response | None:
     if "SUMMON" == message.content:
         return Response(message.channel.send, "I am already listening")
 

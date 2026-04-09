@@ -1,5 +1,5 @@
 import random
-from typing import Optional, Any
+from typing import Any
 
 from discord import Message
 
@@ -32,7 +32,7 @@ categories = {
 }
 
 
-def parse(message: str) -> Optional[Any]:
+def parse(message: str) -> Any | None:
     words = message.split(" ")
 
     try:
@@ -108,7 +108,7 @@ def hitzone_effect(zone):
         return "Wundeffekt ab KO/2 Schadenspunkte: Geht zu Boden und erleidet Status _Liegend_"
 
 
-def create_response(message: Message) -> Optional[Response]:
+def create_response(message: Message) -> Response | None:
     parse_result = parse(message.content)
 
     if parse_result:

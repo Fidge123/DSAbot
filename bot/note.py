@@ -1,6 +1,5 @@
 import re
 from datetime import datetime, timedelta
-from typing import Union, Optional
 
 from pony import orm
 from discord import Message, Member
@@ -59,7 +58,7 @@ def notes_to_str(server: str) -> str:
 
 @orm.db_session
 def create_note(
-    note_id: str, override: bool, value: Union[int, str], user: Member
+    note_id: str, override: bool, value: int | str, user: Member
 ) -> Note:
     note = Note.get(key=note_id, server=str(user.guild.id))
     if note:
@@ -97,7 +96,7 @@ def delete_note(user: Member, note_id: str) -> str:
         return f" Es gibt keine Notiz {note_id}."
 
 
-def create_response(m: Message) -> Optional[Response]:
+def create_response(m: Message) -> Response | None:
     send = m.channel.send
     mention = m.author.mention
 

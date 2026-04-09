@@ -1,6 +1,6 @@
 import re
 import os
-from typing import Optional, Any
+from typing import Any
 
 from discord import Member, Message
 import psycopg2
@@ -69,7 +69,7 @@ def filter_hits(hits: list[Any]) -> list[Any]:
     return [hit for hit in hits if hit["score"] + 20 > hits[0]["score"]]
 
 
-def create_response(message: Message) -> Optional[Response]:
+def create_response(message: Message) -> Response | None:
     match = re.search(r"^wiki\ (?P<search>.*)$", message.content, re.I)
     if match:
         search_term = match.group("search")

@@ -1,5 +1,4 @@
 import re
-from typing import List
 
 from bot.string_math import calc
 from bot.checks.generic_check import GenericCheck
@@ -28,7 +27,7 @@ class SkillCheck(GenericCheck):
     _routine = " {comment}\n```py\nRoutineprobe: {SP} FP = QS {QL}\n```"
 
     @property
-    def diffs(self) -> List[int]:
+    def diffs(self) -> list[int]:
         return [
             min([eav - roll, 0])
             for eav, roll in zip(self.data["EAV"], self.data["rolls"])

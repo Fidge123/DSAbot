@@ -2,7 +2,7 @@ import os
 import re
 
 import requests
-import htmlmin
+import minify_html
 from bs4 import BeautifulSoup
 from pony import orm
 
@@ -158,7 +158,7 @@ def repair(input_html, url):
             input_html,
             re.M,
         )
-        return htmlmin.minify(repaired)
+        return minify_html.minify(repaired)
     except:
         print(f"Could not repair - {url}")
         return input_html
@@ -166,7 +166,7 @@ def repair(input_html, url):
 
 def minify(input_html, url):
     try:
-        return htmlmin.minify(input_html)
+        return minify_html.minify(input_html)
     except:
         return repair(input_html, url)
 

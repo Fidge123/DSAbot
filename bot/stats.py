@@ -1,8 +1,6 @@
 import re
 from datetime import datetime
 
-from typing import Optional
-
 from pony import orm
 from discord import Member, Message
 
@@ -75,7 +73,7 @@ def get_statistics(user: Member) -> str:
         return " Keine Würfelergebnisse gespeichert."
 
 
-def create_response(m: Message) -> Optional[Response]:
+def create_response(m: Message) -> Response | None:
     send = m.channel.send
     mention = m.author.mention
 

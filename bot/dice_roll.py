@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 
 from discord import Message
 
@@ -8,7 +7,7 @@ from bot.string_math import calc
 from bot.stats import save_check
 
 
-def parse(message: str) -> Optional[re.Match]:
+def parse(message: str) -> re.Match | None:
     return re.search(
         r"""
             ^!?\ ?                                # Optional exclamation mark
@@ -20,7 +19,7 @@ def parse(message: str) -> Optional[re.Match]:
     )
 
 
-def create_response(message: Message) -> Optional[Response]:
+def create_response(message: Message) -> Response | None:
     regex_result = parse(message.content)
     if regex_result:
         try:

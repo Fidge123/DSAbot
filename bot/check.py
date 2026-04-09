@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 from functools import reduce
 
 from discord import Message, Member
@@ -19,7 +18,7 @@ repeat_regex = re.compile(r"repeat", re.I)
 force_regex = re.compile(r"force", re.I)
 
 
-def create_check(author: Member, content: str) -> Optional[GenericCheck]:
+def create_check(author: Member, content: str) -> GenericCheck | None:
     for Check in [CumulativeCheck, SkillCheck, AttributeCheck, GenericCheck]:
         try:
             return Check(author, content)
@@ -29,7 +28,7 @@ def create_check(author: Member, content: str) -> Optional[GenericCheck]:
     return None
 
 
-def handle_fate(content: str, author: Member) -> Optional[str]:
+def handle_fate(content: str, author: Member) -> str | None:
     match = fate_regex.search(content)
     if not match:
         return None
@@ -54,7 +53,7 @@ def handle_fate(content: str, author: Member) -> Optional[str]:
     return str(check)
 
 
-def handle_aptitude(content: str, author: Member) -> Optional[str]:
+def handle_aptitude(content: str, author: Member) -> str | None:
     match = aptitude_regex.search(content)
     if not match:
         return None
@@ -86,7 +85,7 @@ def find_best(prev_data, curr_data):
     return prev_data
 
 
-def handle_incompetence(content: str, author: Member) -> Optional[str]:
+def handle_incompetence(content: str, author: Member) -> str | None:
     match = incompetence_regex.search(content)
     if not match:
         return None
@@ -105,7 +104,7 @@ def handle_incompetence(content: str, author: Member) -> Optional[str]:
     return str(check)
 
 
-def handle_retry(content: str, author: Member) -> Optional[str]:
+def handle_retry(content: str, author: Member) -> str | None:
     match = retry_regex.search(content)
     if not match:
         return None
@@ -119,7 +118,7 @@ def handle_retry(content: str, author: Member) -> Optional[str]:
     return str(check)
 
 
-def handle_repeat(content: str, author: Member) -> Optional[str]:
+def handle_repeat(content: str, author: Member) -> str | None:
     match = repeat_regex.search(content)
     if not match:
         return None
@@ -128,7 +127,7 @@ def handle_repeat(content: str, author: Member) -> Optional[str]:
     return str(check)
 
 
-def handle_force(content: str, author: Member) -> Optional[str]:
+def handle_force(content: str, author: Member) -> str | None:
     match = force_regex.search(content)
     if match:
         check = lastCheck[hash(author)]
@@ -144,7 +143,7 @@ def schip_split(input_string: str) -> list[bool]:
     return [letter == "r" for letter in input_string]
 
 
-def create_response(message: Message) -> Optional[Response]:
+def create_response(message: Message) -> Response | None:
     author = message.author
     content = message.content
     check = create_check(author, content)
