@@ -6,7 +6,9 @@ import discord
 from bot import persistence, dice_roll, note, check, wiki, channel, hit_zone, stats
 
 TOKEN = os.getenv("DISCORD_TOKEN")
-client = discord.Client()
+intents = discord.Intents.default()
+intents.message_content = True
+client = discord.Client(intents=intents)
 random.seed()
 
 

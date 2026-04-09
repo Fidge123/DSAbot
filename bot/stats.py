@@ -30,10 +30,9 @@ def save_check(
     delete_rows = rowcount - limit
 
     if delete_rows > 0:
-        oldest = Statistic.select().order_by(lambda s: s.id)[:1][0]
-        Statistic.select(lambda s: s.id <= oldest.id + delete_rows + 100).delete(
-            bulk=True
-        )
+        oldest = Statistic.select().order_by(Statistic.id)[:1][0]
+        threshold = int(oldest.id + delete_rows + 100)
+        db.execute(f"DELETE FROM statistic WHERE id <= {threshold}")
 
     return Statistic(
         user=str(user),
@@ -47,7 +46,7 @@ def save_check(
 
 @orm.db_session
 def statistics_to_str(server: str) -> str:
-    sides = orm.select(s.sides for s in Statistic)
+    sides = {s.sides for s in Statistic.select()}
 
     if len(sides) == 0:
         raise RuntimeError
@@ -55,7 +54,7 @@ def statistics_to_str(server: str) -> str:
     results = []
 
     for side in sides:
-        checks = Statistic.select(lambda n: n.server == str(server) and n.sides == side)
+        checks = [s for s in Statistic.select() if s.server == str(server) and s.sides == side]
         rolls = [roll for c in checks for roll in c.rolls]
         result_string = f"W{side}:\n"
 

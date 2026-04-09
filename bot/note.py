@@ -41,8 +41,9 @@ def date_to_str(utc: datetime) -> str:
 
 @orm.db_session
 def notes_to_str(server: str) -> str:
-    sorted_notes = Note.select(lambda n: n.server == str(server)).order_by(
-        Note.changed_at, Note.key
+    sorted_notes = sorted(
+        [n for n in Note.select() if n.server == str(server)],
+        key=lambda n: (n.changed_at, n.key),
     )
     if len(sorted_notes) == 0:
         raise RuntimeError
