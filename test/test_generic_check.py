@@ -155,12 +155,7 @@ class TestGenericCheck(TestCase):
         self.assertEqual(gc.impossible(), False)
         self.assertEqual(
             str(gc),
-            " Sinnesschärfe\n"
-            "```py\n"
-            "EEW:      9  11  11\n"
-            "Würfel:   9   9   9\n"
-            "Bestanden\n"
-            "```",
+            " Sinnesschärfe\n```py\nEEW:      9  11  11\nWürfel:   9   9   9\nBestanden\n```",
         )
 
     @patch("random.randint", new_callable=MagicMock())
@@ -194,12 +189,7 @@ class TestGenericCheck(TestCase):
         self.assertEqual(gc.impossible(), False)
         self.assertEqual(
             str(gc),
-            " 🎉\n"
-            "```py\n"
-            "EEW:      8  11  12\n"
-            "Würfel:   1   1   1\n"
-            "Kritischer Erfolg!\n"
-            "```",
+            " 🎉\n```py\nEEW:      8  11  12\nWürfel:   1   1   1\nKritischer Erfolg!\n```",
         )
 
     @patch("random.randint", new_callable=MagicMock())
@@ -216,10 +206,5 @@ class TestGenericCheck(TestCase):
         self.assertEqual(gc.impossible(), False)
         self.assertEqual(
             str(gc),
-            " 💥\n"
-            "```py\n"
-            "EEW:     21  21  22\n"
-            "Würfel:  20  20  20\n"
-            "Patzer!\n"
-            "```",
+            " 💥\n```py\nEEW:     21  21  22\nWürfel:  20  20  20\nPatzer!\n```",
         )

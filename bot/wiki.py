@@ -1,6 +1,6 @@
 import re
 import os
-from typing import Optional, Any
+from typing import Any
 
 from discord import Member, Message
 import psycopg2
@@ -12,9 +12,7 @@ DB_URL = os.getenv("DATABASE_URL")
 
 def next(user: Member, hits: list[Any], search_term: str):
     yield user.mention
-    yield from [
-        "{} ({}%): <{}>".format(hit["title"], hit["score"], hit["url"]) for hit in hits
-    ]
+    yield from ["{} ({}%): <{}>".format(hit["title"], hit["score"], hit["url"]) for hit in hits]
 
 
 def _normalize(score: float, body: str, search_term: str, in_body: bool) -> int:
@@ -69,7 +67,7 @@ def filter_hits(hits: list[Any]) -> list[Any]:
     return [hit for hit in hits if hit["score"] + 20 > hits[0]["score"]]
 
 
-def create_response(message: Message) -> Optional[Response]:
+def create_response(message: Message) -> Response | None:
     match = re.search(r"^wiki\ (?P<search>.*)$", message.content, re.I)
     if match:
         search_term = match.group("search")

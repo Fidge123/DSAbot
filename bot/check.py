@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 from functools import reduce
 
 from discord import Message, Member
@@ -9,9 +8,7 @@ from bot.response import Response
 from bot.checks import CumulativeCheck, SkillCheck, AttributeCheck, GenericCheck
 
 lastCheck: dict[int, GenericCheck] = {}
-fate_regex = re.compile(
-    r"^(s?chips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.I
-)
+fate_regex = re.compile(r"^(s?chips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.I)
 aptitude_regex = re.compile(r"^(begabung|aptitude)\ (?P<reroll>[1-3])$", re.I)
 incompetence_regex = re.compile(r"^(unfaehig|unfähig|incompetence|incompetent)$", re.I)
 retry_regex = re.compile(r"retry", re.I)
@@ -19,7 +16,7 @@ repeat_regex = re.compile(r"repeat", re.I)
 force_regex = re.compile(r"force", re.I)
 
 
-def create_check(author: Member, content: str) -> Optional[GenericCheck]:
+def create_check(author: Member, content: str) -> GenericCheck | None:
     for Check in [CumulativeCheck, SkillCheck, AttributeCheck, GenericCheck]:
         try:
             return Check(author, content)
@@ -29,7 +26,7 @@ def create_check(author: Member, content: str) -> Optional[GenericCheck]:
     return None
 
 
-def handle_fate(content: str, author: Member) -> Optional[str]:
+def handle_fate(content: str, author: Member) -> str | None:
     match = fate_regex.search(content)
     if not match:
         return None
@@ -54,7 +51,7 @@ def handle_fate(content: str, author: Member) -> Optional[str]:
     return str(check)
 
 
-def handle_aptitude(content: str, author: Member) -> Optional[str]:
+def handle_aptitude(content: str, author: Member) -> str | None:
     match = aptitude_regex.search(content)
     if not match:
         return None
@@ -86,7 +83,7 @@ def find_best(prev_data, curr_data):
     return prev_data
 
 
-def handle_incompetence(content: str, author: Member) -> Optional[str]:
+def handle_incompetence(content: str, author: Member) -> str | None:
     match = incompetence_regex.search(content)
     if not match:
         return None
@@ -96,16 +93,14 @@ def handle_incompetence(content: str, author: Member) -> Optional[str]:
     if isinstance(check, CumulativeCheck):
         return " Einsatz von Unfähig bei Sammelproben (bisher) nicht unterstützt"
 
-    best_index, _ = reduce(
-        find_best, enumerate(zip(check.data["rolls"], check.data["EAV"]))
-    )
+    best_index, _ = reduce(find_best, enumerate(zip(check.data["rolls"], check.data["EAV"])))
 
     check.data["rolls"].reroll(best_index)
 
     return str(check)
 
 
-def handle_retry(content: str, author: Member) -> Optional[str]:
+def handle_retry(content: str, author: Member) -> str | None:
     match = retry_regex.search(content)
     if not match:
         return None
@@ -119,7 +114,7 @@ def handle_retry(content: str, author: Member) -> Optional[str]:
     return str(check)
 
 
-def handle_repeat(content: str, author: Member) -> Optional[str]:
+def handle_repeat(content: str, author: Member) -> str | None:
     match = repeat_regex.search(content)
     if not match:
         return None
@@ -128,7 +123,7 @@ def handle_repeat(content: str, author: Member) -> Optional[str]:
     return str(check)
 
 
-def handle_force(content: str, author: Member) -> Optional[str]:
+def handle_force(content: str, author: Member) -> str | None:
     match = force_regex.search(content)
     if match:
         check = lastCheck[hash(author)]
@@ -144,7 +139,7 @@ def schip_split(input_string: str) -> list[bool]:
     return [letter == "r" for letter in input_string]
 
 
-def create_response(message: Message) -> Optional[Response]:
+def create_response(message: Message) -> Response | None:
     author = message.author
     content = message.content
     check = create_check(author, content)

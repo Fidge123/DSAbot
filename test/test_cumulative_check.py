@@ -120,9 +120,7 @@ class TestCumulativeCheck(TestCase):
         )
 
         mock_randint.return_value = 13
-        cc = CumulativeCheck(
-            self.author, "!Sammelprobe 5x2 Tage 11 13 9 @ 11 + 1 - 2FP"
-        )
+        cc = CumulativeCheck(self.author, "!Sammelprobe 5x2 Tage 11 13 9 @ 11 + 1 - 2FP")
         self.assertEqual(
             str(cc),
             " \n"

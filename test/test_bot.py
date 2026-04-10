@@ -39,14 +39,10 @@ class TestBot(IsolatedAsyncioTestCase):
                 await on_message(m)
                 if i == 1:
                     mock_randint.assert_called_with(1, 10)
-                    m.channel.send.assert_called_with(
-                        "@Author \n5d10: [1 + 1 + 1 + 1 + 1]\nErgebnis: **5**"
-                    )
+                    m.channel.send.assert_called_with("@Author \n5d10: [1 + 1 + 1 + 1 + 1]\nErgebnis: **5**")
                 if i == 2:
                     mock_randint.assert_called_with(1, 10)
-                    m.channel.send.assert_called_with(
-                        "@Author \n5d10: [1 + 1 + 1 + 1 + 1]\nErgebnis: **10**"
-                    )
+                    m.channel.send.assert_called_with("@Author \n5d10: [1 + 1 + 1 + 1 + 1]\nErgebnis: **10**")
                 if i == 3:
                     mock_randint.assert_called_with(1, 20)
                     m.channel.send.assert_called_with(
@@ -61,22 +57,12 @@ class TestBot(IsolatedAsyncioTestCase):
                 if i == 4:
                     mock_randint.assert_called_with(1, 20)
                     m.channel.send.assert_called_with(
-                        "@Author Schwimmen\n"
-                        "```py\n"
-                        "EEW:     14  14\n"
-                        "Würfel:   1   1\n"
-                        "Bestanden\n"
-                        "```"
+                        "@Author Schwimmen\n```py\nEEW:     14  14\nWürfel:   1   1\nBestanden\n```"
                     )
                 if i == 5:
                     mock_randint.assert_called_with(1, 20)
                     m.channel.send.assert_called_with(
-                        "@Author Breitschwert\n"
-                        "```py\n"
-                        "EEW:     14\n"
-                        "Würfel:   1 --> 1\n"
-                        "Kritischer Erfolg!\n"
-                        "```"
+                        "@Author Breitschwert\n```py\nEEW:     14\nWürfel:   1 --> 1\nKritischer Erfolg!\n```"
                     )
 
     @patch("bot.note.datetime")
@@ -109,14 +95,8 @@ class TestBot(IsolatedAsyncioTestCase):
                         "@Author\n```test_blub   7      -- a few moments ago\ntest_klik  17      -- a few moments ago```"
                     )
                 if i == 5:
-                    m.channel.send.assert_called_with(
-                        "@Author test_blub war 7 und wurde nun gelöscht."
-                    )
+                    m.channel.send.assert_called_with("@Author test_blub war 7 und wurde nun gelöscht.")
                 if i == 6:
-                    m.channel.send.assert_called_with(
-                        "@Author test_klik war 17 und wurde nun gelöscht."
-                    )
+                    m.channel.send.assert_called_with("@Author test_klik war 17 und wurde nun gelöscht.")
                 if i == 7:
-                    m.channel.send.assert_called_with(
-                        "@Author Es gibt keine Notiz test_klik."
-                    )
+                    m.channel.send.assert_called_with("@Author Es gibt keine Notiz test_klik.")

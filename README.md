@@ -519,45 +519,25 @@ If everything works, the bot will respond with `I am listening for rolls here`.
 
 ## How to install dependencies and run the script
 
-The bot uses `pipenv` for dependency management.
-If you don't have `pipenv` installed, you can install via one of the following commands or by following the [official documentation](https://pipenv.pypa.io/en/latest/install/#installing-pipenv).
+The bot uses `uv` for dependency management.
+If you don't have `uv` installed, follow the [official installation instructions](https://docs.astral.sh/uv/getting-started/installation/) or run:
 
 ```sh-session
-# Using pip
-$ pip install -U pipenv
-
-# macOS with brew
-$ brew install pipenv
-
-# Fedora
-$ sudo dnf install pipenv
+$ curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-Once `pipenv` is installed, you need to install the dependencies and dev dependencies and enable the `pre-commit` hooks (optional).
+Once `uv` is installed, sync dependencies (including dev tools) and enable the `pre-commit` hooks (optional).
 
 ```sh-session
-$ pipenv install --dev
+$ uv sync --group dev
 
-$ pipenv run pre-commit install
+$ uv run pre-commit install
 ```
 
-Afterwards execute the script via `pipenv`
+Afterwards run the bot:
 
 ```sh-session
-$ pipenv run start
-```
-
-or active the `virtualenv` to run it as you would normally.
-
-```sh-session
-$ pipenv shell
-Loading .env environment variables…
-Launching subshell in virtual environment…
-
-$ python bot/__main__.py
-...
-
-$ exit
+$ uv run python -m bot
 ```
 
 ## Run tests
@@ -565,13 +545,13 @@ $ exit
 Use the following command to run tests and generate coverage.
 
 ```sh-session
-pipenv run test
+$ uv run coverage run --source . -m unittest discover --verbose test
 ```
 
 To generate a coverage report run the command below.
 
 ```sh-session
-pipenv run cov
+$ uv run coverage report -m -i --fail-under=80 --skip-covered --skip-empty
 ```
 
 ## Create local copy of regelwiki
@@ -582,10 +562,8 @@ Add postgres URL to `.env` file.
 DATABASE_URL=postgres://localhost/DSABot
 ```
 
-This file will be loaded automatically by pipenv.
-
 To start the generation, run
 
-```
-$ pipenv run wiki
+```sh-session
+$ uv run python regelwiki/wiki_links.py
 ```

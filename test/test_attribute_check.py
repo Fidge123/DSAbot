@@ -60,12 +60,7 @@ class TestAttributeCheck(TestCase):
         self.assertEqual(ac.impossible(), False)
         self.assertEqual(
             str(ac),
-            " 🎉\n"
-            "```py\n"
-            "EEW:      8\n"
-            "Würfel:   1 --> 1\n"
-            "Kritischer Erfolg!\n"
-            "```",
+            " 🎉\n```py\nEEW:      8\nWürfel:   1 --> 1\nKritischer Erfolg!\n```",
         )
 
         mock_randint.return_value = 20
@@ -81,7 +76,7 @@ class TestAttributeCheck(TestCase):
         self.assertEqual(ac.impossible(), False)
         self.assertEqual(
             str(ac),
-            " 💥\n" "```py\n" "EEW:     18\n" "Würfel:  20 --> 20\n" "Patzer!\n" "```",
+            " 💥\n```py\nEEW:     18\nWürfel:  20 --> 20\nPatzer!\n```",
         )
 
         ac = AttributeCheck(self.author, "!18 +3 💥")
@@ -96,10 +91,5 @@ class TestAttributeCheck(TestCase):
         self.assertEqual(ac.impossible(), False)
         self.assertEqual(
             str(ac),
-            " 💥\n"
-            "```py\n"
-            "EEW:     21\n"
-            "Würfel:  20 --> 20\n"
-            "Unbestätigter Patzer\n"
-            "```",
+            " 💥\n```py\nEEW:     21\nWürfel:  20 --> 20\nUnbestätigter Patzer\n```",
         )

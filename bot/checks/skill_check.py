@@ -1,5 +1,4 @@
 import re
-from typing import List
 
 from bot.string_math import calc
 from bot.checks.generic_check import GenericCheck
@@ -28,11 +27,8 @@ class SkillCheck(GenericCheck):
     _routine = " {comment}\n```py\nRoutineprobe: {SP} FP = QS {QL}\n```"
 
     @property
-    def diffs(self) -> List[int]:
-        return [
-            min([eav - roll, 0])
-            for eav, roll in zip(self.data["EAV"], self.data["rolls"])
-        ]
+    def diffs(self) -> list[int]:
+        return [min([eav - roll, 0]) for eav, roll in zip(self.data["EAV"], self.data["rolls"])]
 
     @property
     def skill_points(self) -> int:
@@ -51,11 +47,7 @@ class SkillCheck(GenericCheck):
         return min([max([skill_points - 1, 0]) // 3 + 1, 6])
 
     def __str__(self) -> str:
-        if (
-            self.routine
-            and not getattr(self, "_force", False)
-            and not self.data["force"]
-        ):
+        if self.routine and not getattr(self, "_force", False) and not self.data["force"]:
             self._force = False
             sp = self.data["SR"] - self.data["SR"] // 2  # Rounds up
             return self._routine.format(**self.data, SP=sp, QL=self.ql(sp))

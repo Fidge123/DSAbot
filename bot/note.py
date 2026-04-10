@@ -1,6 +1,6 @@
+import datetime as _dt
 import re
 from datetime import datetime, timedelta
-from typing import Union, Optional
 
 from pony import orm
 from discord import Message, Member
@@ -42,25 +42,36 @@ def date_to_str(utc: datetime) -> str:
 
 @orm.db_session
 def notes_to_str(server: str) -> str:
-    sorted_notes = Note.select(lambda n: n.server == str(server)).order_by(
-        Note.changed_at, Note.key
+    # pony ORM is incompatible with Python 3.14 in two ways:
+    #   1. select(lambda ...) uses a bytecode decompiler that fails on 3.14's changed
+    #      generator frame format.
+    #   2. select(prop=value) fails with a deepcopy error on itertools.count inside
+    #      _apply_kwargs().
+    # Raw SQL via db.execute() bypasses both issues until pony adds Python 3.14 support.
+    rows = list(
+        db.execute(
+            "SELECT key, value, changed_at FROM note WHERE server = $server ORDER BY changed_at, key",
+            globals={"server": server},
+        )
     )
-    if len(sorted_notes) == 0:
+    if not rows:
         raise RuntimeError
-    lk = max(map(len, [n.key for n in sorted_notes])) + 1
-    lv = max(map(lambda x: len(str(x)), [n.value for n in sorted_notes]))
+    lk = max(len(r[0]) for r in rows) + 1
+    lv = max(len(str(r[1])) for r in rows)
     return "\n".join(
-        [
-            f"{n.key:<{lk}} {n.value:>{lv}}      -- {date_to_str(n.changed_at)}"
-            for n in sorted_notes
-        ]
+        # _dt (the datetime module) is used here instead of the `datetime` class
+        # imported at the top, because tests patch bot.note.datetime and that would
+        # replace fromisoformat with a MagicMock. _dt is a separate module-level
+        # alias that patches cannot reach.
+        # str() normalises both the string SQLite returns and the datetime object
+        # PostgreSQL returns; fromisoformat() accepts both representations.
+        f"{r[0]:<{lk}} {r[1]:>{lv}}      -- {date_to_str(_dt.datetime.fromisoformat(str(r[2])))}"
+        for r in rows
     )
 
 
 @orm.db_session
-def create_note(
-    note_id: str, override: bool, value: Union[int, str], user: Member
-) -> Note:
+def create_note(note_id: str, override: bool, value: int | str, user: Member) -> Note:
     note = Note.get(key=note_id, server=str(user.guild.id))
     if note:
         if override:
@@ -97,7 +108,7 @@ def delete_note(user: Member, note_id: str) -> str:
         return f" Es gibt keine Notiz {note_id}."
 
 
-def create_response(m: Message) -> Optional[Response]:
+def create_response(m: Message) -> Response | None:
     send = m.channel.send
     mention = m.author.mention
 

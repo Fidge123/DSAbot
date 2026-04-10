@@ -50,9 +50,7 @@ class CumulativeCheck(SkillCheck):
     def __str__(self) -> str:
         response = " {comment}\n```py".format(**self.data)
         while (
-            self.total_ql < 10
-            and self.round < self.data["tries"]
-            and self.total_ql >= 0  # No Botch
+            self.total_ql < 10 and self.round < self.data["tries"] and self.total_ql >= 0  # No Botch
         ):
             self.round += 1
             response += "\nRunde {:>2}: {}".format(self.round, super().__str__())

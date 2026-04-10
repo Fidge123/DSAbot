@@ -120,13 +120,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.skill_points, 4)
         self.assertEqual(
             str(sc),
-            " \n"
-            "```py\n"
-            "EEW:      11   9   9\n"
-            "Würfel:    9   9   9\n"
-            "FW 4                 = 4 FP\n"
-            "Bestanden mit QS 2\n"
-            "```",
+            " \n```py\nEEW:      11   9   9\nWürfel:    9   9   9\nFW 4                 = 4 FP\nBestanden mit QS 2\n```",
         )
 
         sc = SkillCheck(self.author, "!13 14 15@6-2 Sinnesschärfe")
@@ -172,13 +166,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.skill_points, -5)
         self.assertEqual(
             str(sc),
-            " 🎉-1\n"
-            "```py\n"
-            "EEW:       3   1   2\n"
-            "Würfel:    9   9   9\n"
-            "FW 16     -6  -8  -7 = -5 FP\n"
-            "Nicht bestanden\n"
-            "```",
+            " 🎉-1\n```py\nEEW:       3   1   2\nWürfel:    9   9   9\nFW 16     -6  -8  -7 = -5 FP\nNicht bestanden\n```",
         )
 
         sc = SkillCheck(self.author, "14 14 14@5-5FP Spezialisierung")
@@ -224,13 +212,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.skill_points, 3)
         self.assertEqual(
             str(sc),
-            " test\n"
-            "```py\n"
-            "EEW:       3   1   2\n"
-            "Würfel:    9   9   9\n"
-            "FW 16+8   -6  -8  -7 = 3 FP\n"
-            "Bestanden mit QS 1\n"
-            "```",
+            " test\n```py\nEEW:       3   1   2\nWürfel:    9   9   9\nFW 16+8   -6  -8  -7 = 3 FP\nBestanden mit QS 1\n```",
         )
 
     @patch("random.randint", new_callable=MagicMock())
@@ -280,13 +262,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.skill_points, -1)
         self.assertEqual(
             str(sc),
-            " \n"
-            "```py\n"
-            "EEW:      16  20  20\n"
-            "Würfel:   20  20  20\n"
-            "FW 3      -4         = -1 FP\n"
-            "Patzer!\n"
-            "```",
+            " \n```py\nEEW:      16  20  20\nWürfel:   20  20  20\nFW 3      -4         = -1 FP\nPatzer!\n```",
         )
 
         mock_randint.return_value = 20
@@ -331,7 +307,7 @@ class TestSkillCheck(TestCase):
         self.assertEqual(sc.impossible(), False)
         self.assertEqual(
             str(sc),
-            " \n```py\n" "Routineprobe: 4 FP = QS 2\n```",
+            " \n```py\nRoutineprobe: 4 FP = QS 2\n```",
         )
 
         sc = SkillCheck(self.author, "!force 13 14 15 @ 10 Sinnesschärfe")
