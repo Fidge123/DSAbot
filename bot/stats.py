@@ -1,3 +1,4 @@
+import json
 import re
 from datetime import datetime
 
@@ -46,21 +47,32 @@ def save_check(
 
 @orm.db_session
 def statistics_to_str(server: str) -> str:
-    sides = {s.sides for s in Statistic.select()}
-
-    if len(sides) == 0:
+    # pony ORM is incompatible with Python 3.14 in two ways:
+    #   1. select(lambda ...) uses a bytecode decompiler that fails on 3.14's changed
+    #      generator frame format.
+    #   2. select(prop=value) fails with a deepcopy error on itertools.count inside
+    #      _apply_kwargs().
+    # Raw SQL via db.execute() bypasses both issues until pony adds Python 3.14 support.
+    # SQLite stores IntArray as a JSON string; PostgreSQL returns a native list.
+    rows = list(
+        db.execute(
+            "SELECT rolls, sides FROM statistic WHERE server = $server",
+            globals={"server": server},
+        )
+    )
+    if not rows:
         raise RuntimeError
 
+    sides_rolls: dict[int, list[int]] = {}
+    for rolls_raw, side in rows:
+        rolls = json.loads(rolls_raw) if isinstance(rolls_raw, str) else list(rolls_raw)
+        sides_rolls.setdefault(side, []).extend(rolls)
+
     results = []
-
-    for side in sides:
-        checks = [s for s in Statistic.select() if s.server == str(server) and s.sides == side]
-        rolls = [roll for c in checks for roll in c.rolls]
+    for side, rolls in sorted(sides_rolls.items()):
         result_string = f"W{side}:\n"
-
         for i in range(side):
-            count = len([roll for roll in rolls if roll == i + 1])
-            result_string += f"{i + 1:2} -> {count}\n"
+            result_string += f"{i + 1:2} -> {rolls.count(i + 1)}\n"
         results.append(result_string)
     return "\n\n".join(results)
 
