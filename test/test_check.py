@@ -29,13 +29,7 @@ class TestCheck(TestCase):
         first = check.create_response(MockMessage(user, "11,9,9@4"))
         self.checkPayload(
             first,
-            " \n"
-            "```py\n"
-            "EEW:      11   9   9\n"
-            "Würfel:   12  12  12\n"
-            "FW 4      -1  -3  -3 = -3 FP\n"
-            "Nicht bestanden\n"
-            "```",
+            " \n```py\nEEW:      11   9   9\nWürfel:   12  12  12\nFW 4      -1  -3  -3 = -3 FP\nNicht bestanden\n```",
         )
         other_message = MockMessage(MockAuthor("NotTestUser"), "14,14,10@6")
         check.create_response(other_message)
@@ -45,37 +39,19 @@ class TestCheck(TestCase):
         second = check.create_response(MockMessage(user, "schips rrr"))
         self.checkPayload(
             second,
-            " \n"
-            "```py\n"
-            "EEW:      11   9   9\n"
-            "Würfel:    2   2   2\n"
-            "FW 4                 = 4 FP\n"
-            "Bestanden mit QS 2\n"
-            "```",
+            " \n```py\nEEW:      11   9   9\nWürfel:    2   2   2\nFW 4                 = 4 FP\nBestanden mit QS 2\n```",
         )
         mock_randint.return_value = 10
         third = check.create_response(MockMessage(user, "schips rkk"))
         self.checkPayload(
             third,
-            " \n"
-            "```py\n"
-            "EEW:      11   9   9\n"
-            "Würfel:   10   2   2\n"
-            "FW 4                 = 4 FP\n"
-            "Bestanden mit QS 2\n"
-            "```",
+            " \n```py\nEEW:      11   9   9\nWürfel:   10   2   2\nFW 4                 = 4 FP\nBestanden mit QS 2\n```",
         )
         mock_randint.return_value = 10
         fourth = check.create_response(MockMessage(user, "schips rkk"))
         self.checkPayload(
             fourth,
-            " \n"
-            "```py\n"
-            "EEW:      11   9   9\n"
-            "Würfel:   10   2   2\n"
-            "FW 4                 = 4 FP\n"
-            "Bestanden mit QS 2\n"
-            "```",
+            " \n```py\nEEW:      11   9   9\nWürfel:   10   2   2\nFW 4                 = 4 FP\nBestanden mit QS 2\n```",
         )
         mock_randint.return_value = 10
         fifth = check.create_response(MockMessage(user, "schips rkk"))
@@ -95,13 +71,7 @@ class TestCheck(TestCase):
         second = check.create_response(MockMessage(user, "force"))
         self.checkPayload(
             second,
-            " \n"
-            "```py\n"
-            "EEW:      14  14  14\n"
-            "Würfel:   12  12  12\n"
-            "FW 12                = 12 FP\n"
-            "Bestanden mit QS 4\n"
-            "```",
+            " \n```py\nEEW:      14  14  14\nWürfel:   12  12  12\nFW 12                = 12 FP\nBestanden mit QS 4\n```",
         )
 
     @patch("random.randint", new_callable=MagicMock())
@@ -111,37 +81,19 @@ class TestCheck(TestCase):
         first = check.create_response(MockMessage(user, "11,9,9@4"))
         self.checkPayload(
             first,
-            " \n"
-            "```py\n"
-            "EEW:      11   9   9\n"
-            "Würfel:   12  12  12\n"
-            "FW 4      -1  -3  -3 = -3 FP\n"
-            "Nicht bestanden\n"
-            "```",
+            " \n```py\nEEW:      11   9   9\nWürfel:   12  12  12\nFW 4      -1  -3  -3 = -3 FP\nNicht bestanden\n```",
         )
         mock_randint.return_value = 10
         second = check.create_response(MockMessage(user, "repeat"))
         self.checkPayload(
             second,
-            " \n"
-            "```py\n"
-            "EEW:      11   9   9\n"
-            "Würfel:   10  10  10\n"
-            "FW 4          -1  -1 = 2 FP\n"
-            "Bestanden mit QS 1\n"
-            "```",
+            " \n```py\nEEW:      11   9   9\nWürfel:   10  10  10\nFW 4          -1  -1 = 2 FP\nBestanden mit QS 1\n```",
         )
         mock_randint.return_value = 9
         third = check.create_response(MockMessage(user, "retry"))
         self.checkPayload(
             third,
-            " \n"
-            "```py\n"
-            "EEW:      10   8   8\n"
-            "Würfel:    9   9   9\n"
-            "FW 4          -1  -1 = 2 FP\n"
-            "Bestanden mit QS 1\n"
-            "```",
+            " \n```py\nEEW:      10   8   8\nWürfel:    9   9   9\nFW 4          -1  -1 = 2 FP\nBestanden mit QS 1\n```",
         )
 
     def test_find_best(self):
@@ -165,39 +117,21 @@ class TestCheck(TestCase):
         skill_check = check.create_response(MockMessage(user, "11,10,9@4"))
         self.checkPayload(
             skill_check,
-            " \n"
-            "```py\n"
-            "EEW:      11  10   9\n"
-            "Würfel:   12  12  12\n"
-            "FW 4      -1  -2  -3 = -2 FP\n"
-            "Nicht bestanden\n"
-            "```",
+            " \n```py\nEEW:      11  10   9\nWürfel:   12  12  12\nFW 4      -1  -2  -3 = -2 FP\nNicht bestanden\n```",
         )
 
         mock_randint.return_value = 9
         aptitude = check.create_response(MockMessage(user, "unfähig"))
         self.checkPayload(
             aptitude,
-            " \n"
-            "```py\n"
-            "EEW:      11  10   9\n"
-            "Würfel:   12  12   9\n"
-            "FW 4      -1  -2     = 1 FP\n"
-            "Bestanden mit QS 1\n"
-            "```",
+            " \n```py\nEEW:      11  10   9\nWürfel:   12  12   9\nFW 4      -1  -2     = 1 FP\nBestanden mit QS 1\n```",
         )
 
         mock_randint.return_value = 13
         aptitude = check.create_response(MockMessage(user, "incompetent"))
         self.checkPayload(
             aptitude,
-            " \n"
-            "```py\n"
-            "EEW:      11  10   9\n"
-            "Würfel:   12  12  13\n"
-            "FW 4      -1  -2  -4 = -3 FP\n"
-            "Nicht bestanden\n"
-            "```",
+            " \n```py\nEEW:      11  10   9\nWürfel:   12  12  13\nFW 4      -1  -2  -4 = -3 FP\nNicht bestanden\n```",
         )
 
     @patch("random.randint", new_callable=MagicMock())
@@ -208,24 +142,12 @@ class TestCheck(TestCase):
         skill_check = check.create_response(MockMessage(user, "11,9,9@4"))
         self.checkPayload(
             skill_check,
-            " \n"
-            "```py\n"
-            "EEW:      11   9   9\n"
-            "Würfel:   12  12  12\n"
-            "FW 4      -1  -3  -3 = -3 FP\n"
-            "Nicht bestanden\n"
-            "```",
+            " \n```py\nEEW:      11   9   9\nWürfel:   12  12  12\nFW 4      -1  -3  -3 = -3 FP\nNicht bestanden\n```",
         )
 
         mock_randint.return_value = 2
         aptitude = check.create_response(MockMessage(user, "begabung 2"))
         self.checkPayload(
             aptitude,
-            " \n"
-            "```py\n"
-            "EEW:      11   9   9\n"
-            "Würfel:   12   2  12\n"
-            "FW 4      -1      -3 = 0 FP\n"
-            "Bestanden mit QS 1\n"
-            "```",
+            " \n```py\nEEW:      11   9   9\nWürfel:   12   2  12\nFW 4      -1      -3 = 0 FP\nBestanden mit QS 1\n```",
         )

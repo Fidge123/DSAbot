@@ -20,9 +20,7 @@ class GenericCheck:
         re.VERBOSE | re.I,
     )
     transform: dict[str, Any] = {
-        "attributes": lambda x: Attributes(
-            [int(attr) for attr in re.split(r"[, ]+", x.strip(", "))]
-        ),
+        "attributes": lambda x: Attributes([int(attr) for attr in re.split(r"[, ]+", x.strip(", "))]),
         "modifier": lambda x: int(calc(x or "0")[0]),
         "comment": lambda x: (x or "").strip(),
     }
@@ -33,9 +31,7 @@ class GenericCheck:
         return any(int(eav) <= 0 for eav in self.data["EAV"])
 
     def recalculate(self) -> None:
-        self.data["EAV"] = Attributes(
-            [attr + self.data["modifier"] for attr in self.data["attributes"]]
-        )
+        self.data["EAV"] = Attributes([attr + self.data["modifier"] for attr in self.data["attributes"]])
         self.data["rolls"] = CheckRolls(len(self.data["attributes"]))
 
     def __init__(self, author: Member, message: str):

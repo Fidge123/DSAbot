@@ -8,9 +8,7 @@ from bot.response import Response
 from bot.checks import CumulativeCheck, SkillCheck, AttributeCheck, GenericCheck
 
 lastCheck: dict[int, GenericCheck] = {}
-fate_regex = re.compile(
-    r"^(s?chips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.I
-)
+fate_regex = re.compile(r"^(s?chips?|fate)\ (?P<reroll>((r|reroll\ ?)|(k|keep\ ?))+)$", re.I)
 aptitude_regex = re.compile(r"^(begabung|aptitude)\ (?P<reroll>[1-3])$", re.I)
 incompetence_regex = re.compile(r"^(unfaehig|unfähig|incompetence|incompetent)$", re.I)
 retry_regex = re.compile(r"retry", re.I)
@@ -95,9 +93,7 @@ def handle_incompetence(content: str, author: Member) -> str | None:
     if isinstance(check, CumulativeCheck):
         return " Einsatz von Unfähig bei Sammelproben (bisher) nicht unterstützt"
 
-    best_index, _ = reduce(
-        find_best, enumerate(zip(check.data["rolls"], check.data["EAV"]))
-    )
+    best_index, _ = reduce(find_best, enumerate(zip(check.data["rolls"], check.data["EAV"])))
 
     check.data["rolls"].reroll(best_index)
 

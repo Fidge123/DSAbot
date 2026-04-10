@@ -12,9 +12,7 @@ DB_URL = os.getenv("DATABASE_URL")
 
 def next(user: Member, hits: list[Any], search_term: str):
     yield user.mention
-    yield from [
-        "{} ({}%): <{}>".format(hit["title"], hit["score"], hit["url"]) for hit in hits
-    ]
+    yield from ["{} ({}%): <{}>".format(hit["title"], hit["score"], hit["url"]) for hit in hits]
 
 
 def _normalize(score: float, body: str, search_term: str, in_body: bool) -> int:

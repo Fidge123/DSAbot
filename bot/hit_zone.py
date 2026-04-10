@@ -36,15 +36,9 @@ def parse(message: str) -> Any | None:
     words = message.split(" ")
 
     try:
-        has_keyword = any(
-            [word in ["hz", "hitzone", "tz", "trefferzone"] for word in words]
-        )
-        size = sizes.get(
-            [word.lower() for word in words if sizes.get(word.lower(), False)][0]
-        )
-        category = categories.get(
-            [w.lower() for w in words if categories.get(w.lower(), False)][0]
-        )
+        has_keyword = any([word in ["hz", "hitzone", "tz", "trefferzone"] for word in words])
+        size = sizes.get([word.lower() for word in words if sizes.get(word.lower(), False)][0])
+        category = categories.get([w.lower() for w in words if categories.get(w.lower(), False)][0])
 
         if has_keyword and size and category:
             return size, category
@@ -131,24 +125,14 @@ def create_response(message: Message) -> Response | None:
                 area.append(hitzone_effect(hit))
         if category == "n":
             if size == "s":
-                area.append(
-                    f"Non-Humanoid (klein): {non_humanoid4(zone_die, [4, 12, 16])} getroffen"
-                )
+                area.append(f"Non-Humanoid (klein): {non_humanoid4(zone_die, [4, 12, 16])} getroffen")
             if size == "m":
-                area.append(
-                    f"Non-Humanoid (mittel): {non_humanoid4(zone_die, [4, 10, 16])} getroffen"
-                )
+                area.append(f"Non-Humanoid (mittel): {non_humanoid4(zone_die, [4, 10, 16])} getroffen")
             if size == "l":
-                area.append(
-                    f"Non-Humanoid, vierbeinig (groß): {non_humanoid4(zone_die, [5, 11, 16])} getroffen"
-                )
-                area.append(
-                    f"Non-Humanoid, sechs Gliedmaßen (groß): {non_humanoid6(zone_die, [4, 12, 14, 16, 18])} getroffen"
-                )
+                area.append(f"Non-Humanoid, vierbeinig (groß): {non_humanoid4(zone_die, [5, 11, 16])} getroffen")
+                area.append(f"Non-Humanoid, sechs Gliedmaßen (groß): {non_humanoid6(zone_die, [4, 12, 14, 16, 18])} getroffen")
             if size == "xl":
-                area.append(
-                    f"Non-Humanoid (riesig): {non_humanoid6(zone_die, [2, 10, 14, 16, 18])} getroffen"
-                )
+                area.append(f"Non-Humanoid (riesig): {non_humanoid6(zone_die, [2, 10, 14, 16, 18])} getroffen")
 
         save_check(
             message.author,

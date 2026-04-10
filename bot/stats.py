@@ -60,7 +60,7 @@ def statistics_to_str(server: str) -> str:
 
         for i in range(side):
             count = len([roll for roll in rolls if roll == i + 1])
-            result_string += f"{i+1:2} -> {count}\n"
+            result_string += f"{i + 1:2} -> {count}\n"
         results.append(result_string)
     return "\n\n".join(results)
 

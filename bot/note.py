@@ -49,18 +49,11 @@ def notes_to_str(server: str) -> str:
         raise RuntimeError
     lk = max(map(len, [n.key for n in sorted_notes])) + 1
     lv = max(map(lambda x: len(str(x)), [n.value for n in sorted_notes]))
-    return "\n".join(
-        [
-            f"{n.key:<{lk}} {n.value:>{lv}}      -- {date_to_str(n.changed_at)}"
-            for n in sorted_notes
-        ]
-    )
+    return "\n".join([f"{n.key:<{lk}} {n.value:>{lv}}      -- {date_to_str(n.changed_at)}" for n in sorted_notes])
 
 
 @orm.db_session
-def create_note(
-    note_id: str, override: bool, value: int | str, user: Member
-) -> Note:
+def create_note(note_id: str, override: bool, value: int | str, user: Member) -> Note:
     note = Note.get(key=note_id, server=str(user.guild.id))
     if note:
         if override:

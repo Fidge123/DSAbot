@@ -33,9 +33,7 @@ class CheckRolls:
 
     def __str__(self) -> str:
         if hasattr(self, "confirmation_roll"):
-            return "{roll:>4} --> {confirm}".format(
-                roll=self.rolls[0], confirm=self.confirmation_roll
-            )
+            return "{roll:>4} --> {confirm}".format(roll=self.rolls[0], confirm=self.confirmation_roll)
         else:
             return "".join("{:>4}".format(roll) for roll in self.rolls)
 

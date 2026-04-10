@@ -23,22 +23,14 @@ async def on_message(message: discord.Message) -> None:
     if message.author == client.user:
         return
 
-    if channel.is_permitted(message.channel.id) or isinstance(
-        message.channel, discord.channel.DMChannel
-    ):
-        if (
-            "DIE" == message.content
-            and message.author == (await client.application_info()).owner
-        ):
+    if channel.is_permitted(message.channel.id) or isinstance(message.channel, discord.channel.DMChannel):
+        if "DIE" == message.content and message.author == (await client.application_info()).owner:
             await message.add_reaction("\U0001f480")
             await message.channel.send("I shall die.")
             return await client.close()
 
         if "help" == message.content.lower():
-            return await message.channel.send(
-                message.author.mention
-                + " Würfelhelfer: https://fidge123.github.io/DSAbot/"
-            )
+            return await message.channel.send(message.author.mention + " Würfelhelfer: https://fidge123.github.io/DSAbot/")
 
         for create_response in [
             channel.create_response,
